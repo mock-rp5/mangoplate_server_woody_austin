@@ -8,10 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostLoginReq {
-<<<<<<< HEAD
-    private String id;
-=======
     private String email;
->>>>>>> woody
     private String password;
 }

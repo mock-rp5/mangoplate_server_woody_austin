@@ -6,24 +6,20 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
-<<<<<<< HEAD
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-=======
->>>>>>> woody
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
-=======
->>>>>>> woody
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -47,22 +43,13 @@ public class UserService {
 
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
-<<<<<<< HEAD
-        //중복
-        if (userProvider.checkEmail(postUserReq.getEmail()) == 1) {
-=======
         //이메일 중복
         if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
->>>>>>> woody
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
-
         String pwd;
-<<<<<<< HEAD
-        try {
-=======
         try{
->>>>>>> woody
+
             //암호화
             pwd = new SHA256().encrypt(postUserReq.getPassword());
             postUserReq.setPassword(pwd);
@@ -70,45 +57,22 @@ public class UserService {
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-<<<<<<< HEAD
-        try {
-            Long userIdx = userDao.createUser(postUserReq);
-            //jwt 발급.
-            String jwt = jwtService.createJwt(userIdx);
-            return new PostUserRes(jwt, userIdx);
-=======
         try{
-            int userId = userDao.createUser(postUserReq);
+            Long userId = userDao.createUser(postUserReq);
             //jwt 발급.
             String jwt = jwtService.createJwt(userId);
             return new PostUserRes(jwt,userId);
->>>>>>> woody
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-<<<<<<< HEAD
+
     public PostLoginRes createKakaoUser(PostUserKakaoReq postUserKakaoReq) {
         Long userIdx=userDao.createUserByKakao(postUserKakaoReq);
         String jwt=jwtService.createJwt(userIdx);
         return null;
     }
 
-    /*
-    public void modifyUserName(PatchUserReq patchUserReq) throws BaseException {
-        try {
-            int result = userDao.modifyUserName(patchUserReq);
-            if (result == 0) {
-                throw new BaseException(MODIFY_FAIL_USERNAME);
-            }
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-
-
-    }
-
-     */
     public String getKaKaoAccessToken(String code){
         String access_Token="";
         String refresh_Token ="";
@@ -223,18 +187,4 @@ public class UserService {
         return null;
     }
 
-
-=======
-
-    public void modifyUserName(PatchUserReq patchUserReq) throws BaseException {
-        try{
-            int result = userDao.modifyUserName(patchUserReq);
-            if(result == 0){
-                throw new BaseException(MODIFY_FAIL_USERNAME);
-            }
-        } catch(Exception exception){
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
->>>>>>> woody
 }
