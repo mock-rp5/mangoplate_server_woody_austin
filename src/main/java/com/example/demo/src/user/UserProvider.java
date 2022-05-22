@@ -73,6 +73,7 @@ public class UserProvider {
     }
 
     public int checkEmail(String email) throws BaseException{
+
         try{
             return userDao.checkEmail(email);
         } catch (Exception exception){

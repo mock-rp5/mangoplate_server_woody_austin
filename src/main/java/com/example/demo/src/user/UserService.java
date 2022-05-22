@@ -67,10 +67,19 @@ public class UserService {
         }
     }
 
-    public PostLoginRes createKakaoUser(PostUserKakaoReq postUserKakaoReq) {
-        Long userIdx=userDao.createUserByKakao(postUserKakaoReq);
-        String jwt=jwtService.createJwt(userIdx);
-        return null;
+    public PostLoginRes createKakaoUser(PostUserKakaoReq postUserKakaoReq) throws BaseException {
+        if(userProvider.checkEmail(postUserKakaoReq.getEmail()) ==1){
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
+        try{
+            Long userIdx=userDao.createUserByKakao(postUserKakaoReq);
+            String jwt=jwtService.createJwt(userIdx);
+            return new PostLoginRes(userIdx, jwt);
+        }
+        catch(Exception e)
+        {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     public String getKaKaoAccessToken(String code){
