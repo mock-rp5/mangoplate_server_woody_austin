@@ -9,5 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostUserRes {
     private String jwt;
+<<<<<<< HEAD
     private Long userIdx;
+=======
+    private int userId;
+>>>>>>> woody
 }

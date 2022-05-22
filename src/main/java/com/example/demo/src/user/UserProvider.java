@@ -50,6 +50,7 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
                     }
+<<<<<<< HEAD
     public int getKakaoLogin(String email) {
         return userDao.getUserKakaoExists(email);
     }
@@ -67,6 +68,10 @@ public class UserProvider {
     }
 
     /*
+=======
+
+
+>>>>>>> woody
     public GetUserRes getUser(int userIdx) throws BaseException {
         try {
             GetUserRes getUserRes = userDao.getUser(userIdx);
@@ -76,8 +81,11 @@ public class UserProvider {
         }
     }
 
+<<<<<<< HEAD
      */
 
+=======
+>>>>>>> woody
     public int checkEmail(String email) throws BaseException{
         try{
             return userDao.checkEmail(email);
@@ -86,9 +94,19 @@ public class UserProvider {
         }
     }
 
+<<<<<<< HEAD
     /*
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
         User user = userDao.getPwd(postLoginReq);
+=======
+    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
+        User user;
+        try {
+            user = userDao.getPwd(postLoginReq);
+        } catch (Exception exception){
+            throw new BaseException(NON_EXIST_EMAIL);
+        }
+>>>>>>> woody
         String encryptPwd;
         try {
             encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());
@@ -97,9 +115,15 @@ public class UserProvider {
         }
 
         if(user.getPassword().equals(encryptPwd)){
+<<<<<<< HEAD
             Long userIdx = user.getUserIdx();
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx,jwt);
+=======
+            int userId = user.getUserId();
+            String jwt = jwtService.createJwt(userId);
+            return new PostLoginRes(userId,jwt);
+>>>>>>> woody
         }
         else{
             throw new BaseException(FAILED_TO_LOGIN);
@@ -107,6 +131,9 @@ public class UserProvider {
 
     }
 
+<<<<<<< HEAD
      */
 
+=======
+>>>>>>> woody
 }

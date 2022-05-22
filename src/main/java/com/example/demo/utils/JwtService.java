@@ -24,7 +24,11 @@ public class JwtService {
     @param userIdx
     @return String
      */
+<<<<<<< HEAD
     public String createJwt(Long userIdx){
+=======
+    public String createJwt(int userIdx){
+>>>>>>> woody
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
@@ -49,7 +53,11 @@ public class JwtService {
     @return int
     @throws BaseException
      */
+<<<<<<< HEAD
     public Long getUserIdx() throws BaseException{
+=======
+    public int getUserIdx() throws BaseException{
+>>>>>>> woody
         //1. JWT 추출
         String accessToken = getJwt();
         if(accessToken == null || accessToken.length() == 0){
@@ -67,7 +75,11 @@ public class JwtService {
         }
 
         // 3. userIdx 추출
+<<<<<<< HEAD
         return claims.getBody().get("userIdx",Long.class);
+=======
+        return claims.getBody().get("userIdx",Integer.class);
+>>>>>>> woody
     }
 
 }

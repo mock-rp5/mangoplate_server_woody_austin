@@ -9,9 +9,12 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+<<<<<<< HEAD
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+=======
+>>>>>>> woody
 import java.util.List;
 
 
@@ -39,6 +42,7 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
+<<<<<<< HEAD
     /**
      * 회원 조회 API
      * [GET] /users
@@ -62,13 +66,18 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+=======
+>>>>>>> woody
 
     /**
      * 회원 1명 조회 API
      * [GET] /users/:userIdx
      * @return BaseResponse<GetUserRes>
      */
+<<<<<<< HEAD
     /*
+=======
+>>>>>>> woody
     // Path-variable
     @ResponseBody
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
@@ -83,8 +92,11 @@ public class UserController {
 
     }
 
+<<<<<<< HEAD
      */
 
+=======
+>>>>>>> woody
     /**
      * 회원가입 API
      * [POST] /users
@@ -94,10 +106,26 @@ public class UserController {
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
+<<<<<<< HEAD
         // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
         if(postUserReq.getEmail() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
+=======
+        //null validation
+        if(postUserReq.getEmail() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        if(postUserReq.getUserName() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_NAME);
+        }
+        if(postUserReq.getPassword() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        if(postUserReq.getPhoneNumber() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_PHONENUMBER);
+        }
+>>>>>>> woody
         //이메일 정규표현
         if(!isRegexEmail(postUserReq.getEmail())){
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
@@ -111,6 +139,7 @@ public class UserController {
     }
     /**
      * 로그인 API
+<<<<<<< HEAD
      * [POST] /users/logIn
      * @return BaseResponse<PostLoginRes>
      */
@@ -121,6 +150,24 @@ public class UserController {
         try{
             // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
             // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
+=======
+     * [POST] /users/login
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ResponseBody
+    @GetMapping("/login")
+    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
+        if(postLoginReq.getEmail() == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        if(postLoginReq.getPassword() == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        if(!isRegexEmail(postLoginReq.getEmail())){
+            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        try{
+>>>>>>> woody
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception){
@@ -128,6 +175,7 @@ public class UserController {
         }
     }
 
+<<<<<<< HEAD
      */
     /**
      * 카카오 로그인 API
@@ -164,11 +212,14 @@ public class UserController {
 
 
 
+=======
+>>>>>>> woody
     /**
      * 유저정보변경 API
      * [PATCH] /users/:userIdx
      * @return BaseResponse<String>
      */
+<<<<<<< HEAD
     /*
     @ResponseBody
     @PatchMapping("/{userIdx}")
@@ -176,6 +227,14 @@ public class UserController {
         try {
             //jwt에서 idx 추출.
             Long userIdxByJwt = jwtService.getUserIdx();
+=======
+    @ResponseBody
+    @PatchMapping("/{userIdx}")
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+>>>>>>> woody
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
@@ -189,9 +248,13 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+<<<<<<< HEAD
 
      */
 
+=======
+    }
+>>>>>>> woody
 
 
 }

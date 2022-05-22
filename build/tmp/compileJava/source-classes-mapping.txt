@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
+=======
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
+>>>>>>> woody
 com/example/demo/utils/SHA256.java
  com.example.demo.utils.SHA256
 com/example/demo/src/user/model/PostUserReq.java
@@ -10,6 +15,7 @@ com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
+<<<<<<< HEAD
 com/example/demo/src/user/model/PostUserKakaoReq.java
  com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/utils/ValidationRegex.java
@@ -32,10 +38,21 @@ com/example/demo/src/user/model/GetUserRes.java
  com.example.demo.src.user.model.GetUserRes
 com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
+=======
+com/example/demo/src/user/model/PostLoginRes.java
+ com.example.demo.src.user.model.PostLoginRes
+com/example/demo/utils/ValidationRegex.java
+ com.example.demo.utils.ValidationRegex
+com/example/demo/src/user/model/PostLoginReq.java
+ com.example.demo.src.user.model.PostLoginReq
+com/example/demo/src/user/model/GetUserRes.java
+ com.example.demo.src.user.model.GetUserRes
+>>>>>>> woody
 com/example/demo/DemoApplication.java
  com.example.demo.DemoApplication
 com/example/demo/src/WebSecurityConfig.java
  com.example.demo.src.WebSecurityConfig
+<<<<<<< HEAD
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
 com/example/demo/src/test/TestController.java
@@ -46,3 +63,25 @@ com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
+=======
+com/example/demo/src/test/TestController.java
+ com.example.demo.src.test.TestController
+com/example/demo/src/user/model/User.java
+ com.example.demo.src.user.model.User
+com/example/demo/src/user/model/PatchUserReq.java
+ com.example.demo.src.user.model.PatchUserReq
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
+com/example/demo/config/BaseResponseStatus.java
+ com.example.demo.config.BaseResponseStatus
+com/example/demo/config/BaseException.java
+ com.example.demo.config.BaseException
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
+com/example/demo/src/user/UserController.java
+ com.example.demo.src.user.UserController
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
+com/example/demo/config/BaseResponse.java
+ com.example.demo.config.BaseResponse
+>>>>>>> woody
