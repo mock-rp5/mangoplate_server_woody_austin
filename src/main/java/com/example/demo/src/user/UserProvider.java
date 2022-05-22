@@ -50,8 +50,23 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
                     }
+    public int getKakaoLogin(String email) {
+        return userDao.getUserKakaoExists(email);
+    }
 
+    public PostLoginRes logInKakao(String k_email) throws BaseException{
+        if (userDao.checkEmail(k_email) == 1) {
+            Long userIdx = userDao.getIdByEmail(k_email);
+            String jwt = jwtService.createJwt(userIdx);
+            return new PostLoginRes(userIdx, jwt);
+        }
+        else{
+            throw new BaseException(FAILED_TO_LOGIN);
+        }
 
+    }
+
+    /*
     public GetUserRes getUser(int userIdx) throws BaseException {
         try {
             GetUserRes getUserRes = userDao.getUser(userIdx);
@@ -61,6 +76,8 @@ public class UserProvider {
         }
     }
 
+     */
+
     public int checkEmail(String email) throws BaseException{
         try{
             return userDao.checkEmail(email);
@@ -69,6 +86,7 @@ public class UserProvider {
         }
     }
 
+    /*
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
         User user = userDao.getPwd(postLoginReq);
         String encryptPwd;
@@ -79,7 +97,7 @@ public class UserProvider {
         }
 
         if(user.getPassword().equals(encryptPwd)){
-            int userIdx = user.getUserIdx();
+            Long userIdx = user.getUserIdx();
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx,jwt);
         }
@@ -88,5 +106,7 @@ public class UserProvider {
         }
 
     }
+
+     */
 
 }

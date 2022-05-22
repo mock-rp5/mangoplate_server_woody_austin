@@ -9,6 +9,9 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -16,7 +19,7 @@ import static com.example.demo.config.BaseResponseStatus.*;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 
 @RestController
-@RequestMapping("/app/users")
+@RequestMapping("/users")
 public class UserController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -65,6 +68,7 @@ public class UserController {
      * [GET] /users/:userIdx
      * @return BaseResponse<GetUserRes>
      */
+    /*
     // Path-variable
     @ResponseBody
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
@@ -78,6 +82,8 @@ public class UserController {
         }
 
     }
+
+     */
 
     /**
      * 회원가입 API
@@ -108,6 +114,7 @@ public class UserController {
      * [POST] /users/logIn
      * @return BaseResponse<PostLoginRes>
      */
+    /*
     @ResponseBody
     @PostMapping("/logIn")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
@@ -121,17 +128,54 @@ public class UserController {
         }
     }
 
+     */
+    /**
+     * 카카오 로그인 API
+     * [POST] /users/oauth/code?=
+     * @return BaseResponse<PostUserKakaoRes>
+     */
+    @ResponseBody
+    @GetMapping("/oauth")
+    public BaseResponse<PostLoginRes> KakaoLogIn(@RequestParam String code) {
+
+        try {
+            String access_Token = userService.getKaKaoAccessToken(code);
+            PostUserKakaoLoginReq postUserKakaoLoginReq = userService.getKakaoUser(access_Token);
+            PostUserKakaoReq postUserKakaoReq = new PostUserKakaoReq(postUserKakaoLoginReq.getKakaoName(), postUserKakaoLoginReq.getKakaoEmail());
+
+            PostLoginRes postLoginRes = null;
+            //카카오 DB 저장 후 postUserKakaoReq 연동
+            //만약 유저 정보가 없으면 카카오 db 저장 후 유저 정보에 저장한다.
+            if (userProvider.getKakaoLogin(postUserKakaoLoginReq.getKakaoEmail()) == 0) {
+                userService.createOauthUser(postUserKakaoLoginReq);
+                postLoginRes = userService.createKakaoUser(postUserKakaoReq);
+            }
+            //만약 유저 정보가 User 테이블에 있으면 로그인 후 jwt access_Token 발급
+
+            if (userProvider.checkEmail(postUserKakaoLoginReq.getKakaoEmail()) == 1) {
+                postLoginRes = userProvider.logInKakao(postUserKakaoLoginReq.getKakaoEmail());
+
+            }
+            return new BaseResponse<>(postLoginRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
+
     /**
      * 유저정보변경 API
      * [PATCH] /users/:userIdx
      * @return BaseResponse<String>
      */
+    /*
     @ResponseBody
     @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") Long userIdx, @RequestBody User user){
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            Long userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
@@ -145,7 +189,9 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-    }
+
+     */
+
 
 
 }
