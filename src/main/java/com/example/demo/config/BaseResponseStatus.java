@@ -49,6 +49,9 @@ public enum BaseResponseStatus {
     FAILED_TO_LOGIN(false,3014,"비밀번호가 틀렸습니다."),
     NON_EXIST_EMAIL(false, 3015, "없는 이메일 입니다."),
 
+     // [GET] /stores
+    NO_REGION_VALUE(false,3020,"지역을 선택해 주세요"),
+
 
 
     /**

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mangoPlateDev@mangoplatedb.c3wb4ttnr1qr.ap-northeast-2.rds.amazonaws.com" uuid="78f491f8-9753-4e82-9083-dbabb77d6da0">
+    <data-source source="LOCAL" name="mangoPlateDev@mangoplatedb.c3wb4ttnr1qr.ap-northeast-2.rds.amazonaws.com" uuid="a903dde6-babb-4043-ae83-581de6ae46f2">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
