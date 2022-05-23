@@ -51,8 +51,13 @@ public class UserProvider {
         }
     }
 
-    public int getKakaoLogin(String email) {
-        return userDao.getUserKakaoExists(email);
+    public int getKakaoLogin(String email) throws BaseException{
+        try{
+            return userDao.getUserKakaoExists(email);
+        }
+        catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     public PostLoginRes logInKakao(String k_email) throws BaseException{
