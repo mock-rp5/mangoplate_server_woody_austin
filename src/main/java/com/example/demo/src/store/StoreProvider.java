@@ -36,7 +36,7 @@ public class StoreProvider {
             else
                 return getStoreRes;
         } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(NON_EXIST_STORE);
         }
     }
 
