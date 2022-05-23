@@ -62,7 +62,7 @@ public class StoreController {
      * * @return BaseResponse<GetStoreRes>
      */
     @ResponseBody
-    @GetMapping("/{storeId}")
+    @GetMapping("/detail/{storeId}")
     public BaseResponse<GetStoreRes> getStore(@PathVariable("storeId") int storeId) {
         try{
             GetStoreRes getStoreRes = storeProvider.getStore(storeId);
