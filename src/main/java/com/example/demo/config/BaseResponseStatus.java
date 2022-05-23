@@ -36,8 +36,6 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PHONENUMBER(false, 2020, "전화번호를 입력해주세요."),
 
 
-
-
     /**
      * 3000 : Response 오류
      */
@@ -48,6 +46,12 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"비밀번호가 틀렸습니다."),
     NON_EXIST_EMAIL(false, 3015, "없는 이메일 입니다."),
+
+    // [POST] /stores
+    UPDATE_VIEW_COUNT_FAIL(false, 3050, "조회수 업데이트에 실패하였습니다."),
+
+    // [GET] /stores
+    NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
 
 
 
