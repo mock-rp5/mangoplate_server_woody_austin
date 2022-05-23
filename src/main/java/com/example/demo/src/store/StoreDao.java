@@ -21,9 +21,10 @@ public class StoreDao {
     }
 
     public GetStoreRes getStore(int storeId){
-        String getStoreQuery = "SELECT DISTINCT S.*, COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount FROM Review R, Stores S\n" +
-                "    LEFT JOIN Wishes W ON S.id = W.storeId\n" +
-                "WHERE S.id = ? && S.id = R.storeId";
+        String getStoreQuery = "SELECT DISTINCT S.*, COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount FROM Stores S\n" +
+                "LEFT JOIN Review R on S.id = R.storeId\n" +
+                "LEFT JOIN Wishes W ON S.id = W.storeId\n" +
+                "WHERE S.id = ?";
         int getStoreParam = storeId;
         return this.jdbcTemplate.queryForObject(getStoreQuery,
                 (rs, rowNum) -> new GetStoreRes(
