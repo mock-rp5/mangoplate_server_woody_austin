@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StoreService {
+
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final StoreDao storeDao;

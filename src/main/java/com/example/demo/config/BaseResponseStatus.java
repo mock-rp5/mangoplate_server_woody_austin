@@ -36,8 +36,6 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PHONENUMBER(false, 2020, "전화번호를 입력해주세요."),
 
 
-
-
     /**
      * 3000 : Response 오류
      */
@@ -51,6 +49,11 @@ public enum BaseResponseStatus {
 
      // [GET] /stores
     NO_REGION_VALUE(false,3020,"지역을 선택해 주세요"),
+    // [POST] /stores
+    UPDATE_VIEW_COUNT_FAIL(false, 3050, "조회수 업데이트에 실패하였습니다."),
+
+    // [GET] /stores
+    NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
 
 
 
