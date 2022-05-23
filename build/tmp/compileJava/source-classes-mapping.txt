@@ -50,15 +50,15 @@ com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
 com/example/demo/src/store/model/GetMenuImgRes.java
  com.example.demo.src.store.model.GetMenuImgRes
+com/example/demo/src/store/model/GetMenuDetailRes.java
+ com.example.demo.src.store.model.GetMenuDetailRes
+com/example/demo/src/store/model/GetMenuRes.java
+ com.example.demo.src.store.model.GetMenuRes
 com/example/demo/src/store/StoreDao.java
  com.example.demo.src.store.StoreDao
 com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
-com/example/demo/src/store/model/GetMenuRes.java
- com.example.demo.src.store.model.GetMenuRes
 com/example/demo/src/store/StoreController.java
  com.example.demo.src.store.StoreController
 com/example/demo/src/store/StoreService.java
  com.example.demo.src.store.StoreService
-com/example/demo/src/store/model/GetMenuDetailRes.java
- com.example.demo.src.store.model.GetMenuDetailRes
