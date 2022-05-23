@@ -30,19 +30,27 @@ public class StoreController {
 
     @ResponseBody
     @GetMapping("/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam(value="region") String region){
-
-        try{
-            Long userIdxByJwt=jwtService.getUserIdx();
-            if(userId != userIdxByJwt){
+    public BaseResponse<List<GetStoreListRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam int page){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetStoreListReq getStoreListReq = new GetStoreListReq(userId,region);
-            List<GetStoreListRes> getStoreListRes = storeProvider.getStoreList(getStoreListReq);
+            String regionName="";
+            for(int i=0;i<region.size();i++){
+                regionName +="'"+region.get(i)+"'"+",";
+            }
+            regionName = regionName.replaceAll(",$","");
+            System.out.println(regionName);
+
+            GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,page);
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreList(getStoreListReq);
+
             return new BaseResponse<>(getStoreListRes);
-        }catch (BaseException e)
-        {
+
+        }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 }
