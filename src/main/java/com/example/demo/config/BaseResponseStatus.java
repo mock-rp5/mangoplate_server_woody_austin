@@ -58,6 +58,9 @@ public enum BaseResponseStatus {
     // [GET] /stores
     NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
 
+    // [GET] /review
+    NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),
+
 
 
     /**
