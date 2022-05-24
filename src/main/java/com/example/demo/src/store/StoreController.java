@@ -2,14 +2,13 @@ package com.example.demo.src.store;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.store.model.GetStoreListReq;
-import com.example.demo.src.store.model.GetStoreListRes;
-import com.example.demo.src.store.model.GetMenuRes;
-import com.example.demo.src.store.model.GetStoreRes;
+import com.example.demo.src.store.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
@@ -38,15 +37,32 @@ public class StoreController {
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            String regionName="";
-            for(int i=0;i<region.size();i++){
-                regionName +="'"+region.get(i)+"'"+",";
-            }
-            regionName = regionName.replaceAll(",$","");
-            System.out.println(regionName);
-
             GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,page);
             List<GetStoreListRes> getStoreListRes=storeProvider.getStoreList(getStoreListReq);
+
+            return new BaseResponse<>(getStoreListRes);
+
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 가게 검색 API
+     * [GET] /stores/{userid}?keyword=가게이름?region=지역명,지역명,
+     * * @return BaseResponse<GetStoreListRes>
+     */
+    @ResponseBody
+    @GetMapping("/search/{userId}")
+    public BaseResponse<List<GetStoreListRes>> getStoreListByKeyWord(@PathVariable("userId") Long userId,@RequestParam("keyword") String keyword,@RequestParam List<String> region
+            ,@RequestParam int page){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetStoreListByKeyWordReq getStoreListByKeyWord=new GetStoreListByKeyWordReq(userId,region,page, keyword);
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByKeyWord(getStoreListByKeyWord);
 
             return new BaseResponse<>(getStoreListRes);
 
@@ -59,7 +75,7 @@ public class StoreController {
     /**
      * 특정 가게 조회 API
      * [GET] /stores/:storeId
-     * * @return BaseResponse<GetStoreRes>
+     * * @return BaseResponse<GetStoreR es>
      */
     @ResponseBody
     @GetMapping("/detail/{storeId}")
@@ -87,5 +103,8 @@ public class StoreController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
+
 
 }

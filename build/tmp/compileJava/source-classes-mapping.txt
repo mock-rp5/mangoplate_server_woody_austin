@@ -1,5 +1,5 @@
-com/example/demo/src/store/StoreDao.java
- com.example.demo.src.store.StoreDao
+com/example/demo/src/store/model/GetStoreListReq.java
+ com.example.demo.src.store.model.GetStoreListReq
 com/example/demo/utils/SHA256.java
  com.example.demo.utils.SHA256
 com/example/demo/src/store/model/GetStoreListRes.java
@@ -32,22 +32,22 @@ com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
 com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
-com/example/demo/src/user/model/PostUserKakaoReq.java
- com.example.demo.src.user.model.PostUserKakaoReq
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
-com/example/demo/src/store/StoreService.java
- com.example.demo.src.store.StoreService
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
 com/example/demo/src/store/model/GetMenuDetailRes.java
  com.example.demo.src.store.model.GetMenuDetailRes
 com/example/demo/src/user/model/User.java
  com.example.demo.src.user.model.User
-com/example/demo/src/store/StoreProvider.java
- com.example.demo.src.store.StoreProvider
+com/example/demo/src/user/model/PostUserKakaoReq.java
+ com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/store/model/GetMenuImgRes.java
@@ -58,11 +58,23 @@ com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
 com/example/demo/DemoApplication.java
  com.example.demo.DemoApplication
-com/example/demo/src/store/model/GetStoreListReq.java
- com.example.demo.src.store.model.GetStoreListReq
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
+com/example/demo/src/store/model/GetStoreListByKeyWordReq.java
+ com.example.demo.src.store.model.GetStoreListByKeyWordReq
+com/example/demo/src/store/StoreProvider.java
+ com.example.demo.src.store.StoreProvider
+com/example/demo/src/store/StoreDao.java
+ com.example.demo.src.store.StoreDao
+com/example/demo/src/store/StoreService.java
+ com.example.demo.src.store.StoreService
+com/example/demo/src/news/NewsService.java
+ com.example.demo.src.news.NewsService
+com/example/demo/src/news/model/GetNewsRes.java
+ com.example.demo.src.news.model.GetNewsRes
 com/example/demo/src/store/StoreController.java
  com.example.demo.src.store.StoreController
+com/example/demo/src/news/NewsDao.java
+ com.example.demo.src.news.NewsDao
+com/example/demo/src/news/NewsProvider.java
+ com.example.demo.src.news.NewsProvider
+com/example/demo/src/news/NewsController.java
+ com.example.demo.src.news.NewsController
