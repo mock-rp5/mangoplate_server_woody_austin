@@ -39,6 +39,12 @@ public enum BaseResponseStatus {
     DISTANCE_VALUE_WRONG(false, 2030, "필터링할 거리값을 알맞게 입력해주세요."),
 
 
+    // [PATCH] /users
+    FAIL_TO_UPDATE_LOCATION(false, 2040, "위치정보 업데이트에 실패하였습니다."),
+    WRONG_LATITUDE_VALUE(false, 2041, "위도값을 알맞게 입력해주세요."),
+    WRONG_LONGITUDE_VALUE(false, 2042, "경도값을 알맞게 입력해주세요."),
+
+
     /**
      * 3000 : Response 오류
      */
