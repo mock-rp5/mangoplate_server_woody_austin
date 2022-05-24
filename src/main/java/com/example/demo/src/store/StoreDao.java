@@ -1,13 +1,7 @@
 package com.example.demo.src.store;
 
 
-import com.example.demo.src.store.model.GetStoreListReq;
-import com.example.demo.src.store.model.GetStoreListRes;
-
-import com.example.demo.src.store.model.GetMenuDetailRes;
-import com.example.demo.src.store.model.GetMenuImgRes;
-import com.example.demo.src.store.model.GetMenuRes;
-import com.example.demo.src.store.model.GetStoreRes;
+import com.example.demo.src.store.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +21,7 @@ public class StoreDao {
     }
     public List<GetStoreListRes> getStoreList(GetStoreListReq getStoreListReq) {
         String inSql=String.join(",",getStoreListReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT imgurl as 'reviewImg',concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect where ReviewImgSelect.reviewId=Review.id limit 1) as 'reviewImg',concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
                 "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,concat('(','리뷰 ',(select count(Review.id) from Review where Review.storeId=Stores.id),')')'reviewCount'\n" +
@@ -37,7 +31,6 @@ public class StoreDao {
         Object[] getStoreListParams=new Object[]{
                 getStoreListReq.getUserId(),(getStoreListReq.getPage()-1)*10
         };
-        System.out.println(inSql);
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getString("reviewImg"),
@@ -88,7 +81,6 @@ public class StoreDao {
         String getMenuListQuery = "SELECT * FROM Menu WHERE storeId = ?";
         String getImgListQuery = "SELECT imgUrl FROM MenuImg WHERE storeId = ?";
         int Param = storeId;
-
         List<GetMenuDetailRes> getMenuDetailRes;
         List<GetMenuImgRes> getMenuImgRes;
 
@@ -102,6 +94,30 @@ public class StoreDao {
                         (rs,rowNum) -> new GetMenuImgRes(
                                 rs.getString("imgUrl")), Param)
         );
+    }
+
+    public List<GetStoreListRes> getStoreListByKeyWord(GetStoreListByKeyWordReq getStoreListByKeyWordReq) {
+        String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
+        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect where ReviewImgSelect.reviewId=Review.id limit 1) as 'reviewImg',concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
+                "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
+                "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,concat('(','리뷰 ',(select count(Review.id) from Review where Review.storeId=Stores.id),')')'reviewCount'\n" +
+                "FROM Users,Stores\n" +
+                "    left join Review on Review.storeId=Stores.id left join ReviewImg on ReviewImg.reviewId=Review.id\n" +
+                "where Users.id=? and Stores.name like ? and Stores.subRegion IN (%s) LIMIT ?,10",inSql);
+        String keyword="%"+getStoreListByKeyWordReq.getKeyword()+"%";
+        Object[] getStoreListParams=new Object[]{
+                getStoreListByKeyWordReq.getUserId(),keyword,(getStoreListByKeyWordReq.getPage()-1)*10
+        };
+        return this.jdbcTemplate.query(getStoreListQuery,
+                (rs,rowNum)-> new GetStoreListRes(
+                        rs.getString("reviewImg"),
+                        rs.getString("distance"),
+                        rs.getString("storeName"),
+                        rs.getString("foodCategory"),
+                        rs.getFloat("rating"),
+                        rs.getString("reviewCount")
+                ),getStoreListParams);
     }
 }
 
