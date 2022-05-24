@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static com.example.demo.config.BaseResponseStatus.DISTANCE_VALUE_WRONG;
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @RestController
@@ -79,7 +81,7 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/detail/{storeId}")
-    public BaseResponse<GetStoreRes> getStore(@PathVariable("storeId") int storeId) {
+    public BaseResponse<GetStoreRes> getStore(@PathVariable("storeId") Long storeId) {
         try{
             GetStoreRes getStoreRes = storeProvider.getStore(storeId);
             return new BaseResponse<>(getStoreRes);
@@ -95,12 +97,37 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/menu/{storeId}")
-    public BaseResponse<GetMenuRes> getMenu(@PathVariable("storeId") int storeId) {
+    public BaseResponse<GetMenuRes> getMenu(@PathVariable("storeId") Long storeId) {
         try{
             GetMenuRes getMenuRes = storeProvider.getMenu(storeId);
             return new BaseResponse<>(getMenuRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 메인화면 거리별 가게 리스트 조회 API
+     * [GET] /stores/distance/:userId?distance=500&page=1
+     * * @return BaseResponse<GetStoreListRes>
+     */
+    @ResponseBody
+    @GetMapping("/distance/{userId}")
+    public BaseResponse<List<GetStoreListRes>> getStoreListByDistance(@PathVariable("userId") Long userId, @RequestParam int distance,@RequestParam int page){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            int[] POSSIBLE_DISTANCE = { 100, 300, 500, 1000, 3000 };
+            if (IntStream.of(POSSIBLE_DISTANCE).anyMatch(x -> x == distance) == false)
+                return new BaseResponse<>(DISTANCE_VALUE_WRONG);
+
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByDistance(userId, distance, page);
+            return new BaseResponse<>(getStoreListRes);
+
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
         }
     }
 

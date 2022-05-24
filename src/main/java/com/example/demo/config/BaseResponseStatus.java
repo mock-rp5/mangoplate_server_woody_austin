@@ -35,6 +35,9 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EMPTY_PHONENUMBER(false, 2020, "전화번호를 입력해주세요."),
 
+    // [GET] /stores
+    DISTANCE_VALUE_WRONG(false, 2030, "필터링할 거리값을 알맞게 입력해주세요."),
+
 
     /**
      * 3000 : Response 오류
