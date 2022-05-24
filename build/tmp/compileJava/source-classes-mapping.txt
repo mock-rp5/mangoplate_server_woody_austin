@@ -24,8 +24,8 @@ com/example/demo/src/user/model/User.java
  com.example.demo.src.user.model.User
 com/example/demo/src/news/NewsDao.java
  com.example.demo.src.news.NewsDao
-com/example/demo/src/user/UserDao.java
- com.example.demo.src.user.UserDao
+com/example/demo/src/review/model/GetCommentRes.java
+ com.example.demo.src.review.model.GetCommentRes
 com/example/demo/src/store/model/GetMenuImgRes.java
  com.example.demo.src.store.model.GetMenuImgRes
 com/example/demo/src/user/model/PatchUserReq.java
@@ -54,14 +54,24 @@ com/example/demo/src/store/model/GetStoreListReq.java
  com.example.demo.src.store.model.GetStoreListReq
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
-com/example/demo/config/BaseException.java
- com.example.demo.config.BaseException
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
+com/example/demo/src/store/StoreService.java
+ com.example.demo.src.store.StoreService
+com/example/demo/src/review/model/GetReviewDetailRes.java
+ com.example.demo.src.review.model.GetReviewDetailRes
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
+com/example/demo/src/review/ReviewDao.java
+ com.example.demo.src.review.ReviewDao
+com/example/demo/src/review/model/GetReviewRes.java
+ com.example.demo.src.review.model.GetReviewRes
+com/example/demo/src/user/model/PatchUserLocationReq.java
+ com.example.demo.src.user.model.PatchUserLocationReq
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
 com/example/demo/src/news/NewsController.java
  com.example.demo.src.news.NewsController
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
 com/example/demo/src/store/StoreController.java
  com.example.demo.src.store.StoreController
 com/example/demo/src/user/UserController.java
@@ -70,25 +80,17 @@ com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
 com/example/demo/src/news/NewsProvider.java
  com.example.demo.src.news.NewsProvider
-com/example/demo/src/store/StoreService.java
- com.example.demo.src.store.StoreService
 com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
-com/example/demo/src/review/model/GetCommentRes.java
- com.example.demo.src.review.model.GetCommentRes
-com/example/demo/src/review/model/GetReviewRes.java
- com.example.demo.src.review.model.GetReviewRes
-com/example/demo/src/review/ReviewDao.java
- com.example.demo.src.review.ReviewDao
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
+com/example/demo/config/BaseException.java
+ com.example.demo.config.BaseException
 com/example/demo/src/review/ReviewController.java
  com.example.demo.src.review.ReviewController
-com/example/demo/src/review/model/GetReviewDetailRes.java
- com.example.demo.src.review.model.GetReviewDetailRes
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider

@@ -48,6 +48,11 @@ public class UserDao {
                 getUsersByEmailParams);
     }
 
+    public int updateUserLocation(PatchUserLocationReq patchUserLocationReq, Long userId) {
+        String updateUserLocationQuery = "UPDATE Users SET latitude = ?, longitude = ? WHERE id = ?";
+        Object[] updateParams = new Object[]{patchUserLocationReq.getLatitude(), patchUserLocationReq.getLongitude(), userId};
+        return this.jdbcTemplate.update(updateUserLocationQuery,updateParams);
+    }
 
     public int postUserKakao(PostUserKakaoLoginReq postUserKakaoLoginReq) {
         String postUserKakaoQuery="insert into KakaoUsers(kakaoName, kakaoId, kakaoEmail) values(?,?,?)";

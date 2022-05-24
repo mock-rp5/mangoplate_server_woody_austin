@@ -163,5 +163,32 @@ public class UserController {
         }
     }
 
+    /**
+     * 유저 위치정보 업데이트 API
+     * [PATCH] /users/location/:userId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/location/{userId}")
+    public BaseResponse<String> updateUserLocation(@PathVariable("userId") Long userId, @RequestBody PatchUserLocationReq patchUserLocationReq) {
+        if(-90 > patchUserLocationReq.getLatitude() || patchUserLocationReq.getLatitude() > 90) {
+            return new BaseResponse<>(WRONG_LATITUDE_VALUE);
+        }
+        if(-180 > patchUserLocationReq.getLongitude() || patchUserLocationReq.getLongitude() > 180) {
+            return new BaseResponse<>(WRONG_LONGITUDE_VALUE);
+        }
+        try {
+            Long userIdByJwt = jwtService.getUserIdx();
 
-}
+            if (userId != userIdByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            userService.updateUserLocation(patchUserLocationReq, userId);
+            String result = "성공적으로 업데이트 완료";
+                return new BaseResponse<>(result);
+            } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+            }
+        }
+
+    }
