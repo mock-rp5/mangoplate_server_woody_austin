@@ -55,10 +55,10 @@ public class StoreProvider {
     }
 
     public GetMenuRes getMenu(Long storeId) throws BaseException {
+        if(storeDao.checkStoreId(storeId) == 0){
+            throw new BaseException(NON_EXIST_STORE);
+        }
         try {
-            if(storeDao.checkStoreId(storeId) == 0){
-                throw new BaseException(NON_EXIST_STORE);
-            }
             GetMenuRes getMenuRes = storeDao.getMenu(storeId);
             return getMenuRes;
         } catch (Exception exception) {

@@ -12,8 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.example.demo.config.BaseResponseStatus.DISTANCE_VALUE_WRONG;
-import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/stores")
@@ -115,6 +114,9 @@ public class StoreController {
     @GetMapping("/distance/{userId}")
     public BaseResponse<List<GetStoreListRes>> getStoreListByDistance(@PathVariable("userId") Long userId, @RequestParam int distance,@RequestParam int page){
         try {
+            if(userId == null){
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
