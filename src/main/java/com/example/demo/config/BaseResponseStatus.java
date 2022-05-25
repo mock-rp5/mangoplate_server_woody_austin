@@ -58,6 +58,7 @@ public enum BaseResponseStatus {
 
      // [GET] /stores
     NO_REGION_VALUE(false,3020,"지역을 선택해 주세요"),
+    NO_CATEGORY_VALUE(false,3021,"음식종류를 선택해 주세요"),
     // [POST] /stores
     UPDATE_VIEW_COUNT_FAIL(false, 3050, "조회수 업데이트에 실패하였습니다."),
 

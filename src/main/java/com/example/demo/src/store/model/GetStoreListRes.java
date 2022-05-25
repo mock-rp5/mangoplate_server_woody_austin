@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetStoreListRes {
+    private Long storeId;
     private String reviewImg;
     private String distance;
     private String storeName;

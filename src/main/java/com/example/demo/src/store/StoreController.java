@@ -30,6 +30,11 @@ public class StoreController {
         this.jwtService = jwtService;
     }
 
+    /**
+     * 지역별 가게 리스트 조회 API
+     * [GET] /stores/{userid}?region=지역명,지역명,
+     * * @return BaseResponse<GetStoreListRes>
+     */
     @ResponseBody
     @GetMapping("/{userId}")
     public BaseResponse<List<GetStoreListRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam int page){
@@ -133,6 +138,50 @@ public class StoreController {
         }
     }
 
+    /**
+     * 지역별 + 음식 카테고리별 가게 리스트 조회 API
+     * [GET] /stores/foodCategory/{userid}?category=음식종류&region=지역명,지역명,
+     * * @return BaseResponse<GetStoreListRes>
+     */
+    @ResponseBody
+    @GetMapping("/foodCategory/{userId}")
+    public BaseResponse<List<GetStoreListRes>> getStoresListByFood(@PathVariable("userId") Long userId, @RequestParam List<String> category, @RequestParam List<String> region, @RequestParam int page){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetStoreListByFoodReq getStoreListByFoodReq = new GetStoreListByFoodReq(userId, category, region, page);
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByFood(getStoreListByFoodReq);
+
+            return new BaseResponse<>(getStoreListRes);
+
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 지역별 + 주차가능 가게 리스트 조회 API
+     * [GET] /stores/parking/{userid}?region=지역명,지역명,
+     * * @return BaseResponse<GetStoreListRes>
+     */
+    @ResponseBody
+    @GetMapping("/parking/{userId}")
+    public BaseResponse<List<GetStoreListRes>> getStoresListByParking(@PathVariable("userId") Long userId, @RequestParam List<String> region, @RequestParam int page){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByParking(userId, region, page);
+
+            return new BaseResponse<>(getStoreListRes);
+
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 
 
