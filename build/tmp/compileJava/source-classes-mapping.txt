@@ -2,30 +2,32 @@ com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
 com/example/demo/src/review/model/GetReviewRes.java
  com.example.demo.src.review.model.GetReviewRes
-com/example/demo/src/store/StoreDao.java
- com.example.demo.src.store.StoreDao
+com/example/demo/src/news/model/GetNewsDetailRes.java
+ com.example.demo.src.news.model.GetNewsDetailRes
 com/example/demo/src/review/model/PostCommentReq.java
  com.example.demo.src.review.model.PostCommentReq
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
 com/example/demo/src/review/ReviewDao.java
  com.example.demo.src.review.ReviewDao
-com/example/demo/src/news/NewsController.java
- com.example.demo.src.news.NewsController
+com/example/demo/src/store/model/GetStoreReviewRes.java
+ com.example.demo.src.store.model.GetStoreReviewRes
+com/example/demo/src/store/StoreService.java
+ com.example.demo.src.store.StoreService
 com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
-com/example/demo/src/news/NewsProvider.java
- com.example.demo.src.news.NewsProvider
+com/example/demo/src/user/model/User.java
+ com.example.demo.src.user.model.User
 com/example/demo/src/news/NewsDao.java
  com.example.demo.src.news.NewsDao
 com/example/demo/src/store/model/GetStoreListByFoodReq.java
  com.example.demo.src.store.model.GetStoreListByFoodReq
-com/example/demo/config/BaseResponseStatus.java
- com.example.demo.config.BaseResponseStatus
+com/example/demo/src/store/model/GetMenuImgRes.java
+ com.example.demo.src.store.model.GetMenuImgRes
 com/example/demo/src/store/model/GetStoreRes.java
  com.example.demo.src.store.model.GetStoreRes
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
+com/example/demo/src/news/model/GetNewsImgRes.java
+ com.example.demo.src.news.model.GetNewsImgRes
 com/example/demo/src/review/model/GetReviewDetailRes.java
  com.example.demo.src.review.model.GetReviewDetailRes
 com/example/demo/src/user/model/PostUserKakaoLoginReq.java
@@ -34,20 +36,20 @@ com/example/demo/src/user/model/PatchUserLocationReq.java
  com.example.demo.src.user.model.PatchUserLocationReq
 com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
-com/example/demo/src/store/StoreController.java
- com.example.demo.src.store.StoreController
+com/example/demo/src/user/model/PostUserKakaoReq.java
+ com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
-com/example/demo/config/BaseResponse.java
- com.example.demo.config.BaseResponse
-com/example/demo/src/store/StoreProvider.java
- com.example.demo.src.store.StoreProvider
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
+com/example/demo/src/store/model/GetStoreListReq.java
+ com.example.demo.src.store.model.GetStoreListReq
+com/example/demo/src/store/model/GetMenuDetailRes.java
+ com.example.demo.src.store.model.GetMenuDetailRes
+com/example/demo/src/user/model/GetUserRes.java
+ com.example.demo.src.user.model.GetUserRes
 com/example/demo/src/review/model/GetCommentRes.java
  com.example.demo.src.review.model.GetCommentRes
-com/example/demo/config/BaseException.java
- com.example.demo.config.BaseException
+com/example/demo/src/review/model/GetReviewLikeReq.java
+ com.example.demo.src.review.model.GetReviewLikeReq
 com/example/demo/src/store/model/GetStoreListByKeyWordReq.java
  com.example.demo.src.store.model.GetStoreListByKeyWordReq
 com/example/demo/utils/SHA256.java
@@ -84,35 +86,35 @@ com/example/demo/src/review/model/ReviewImg.java
  com.example.demo.src.review.model.ReviewImg
 com/example/demo/src/review/model/PostReviewImgReq.java
  com.example.demo.src.review.model.PostReviewImgReq
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
-com/example/demo/src/user/UserController.java
- com.example.demo.src.user.UserController
-com/example/demo/src/store/StoreService.java
- com.example.demo.src.store.StoreService
-com/example/demo/src/store/model/GetMenuDetailRes.java
- com.example.demo.src.store.model.GetMenuDetailRes
-com/example/demo/src/user/model/User.java
- com.example.demo.src.user.model.User
-com/example/demo/src/news/model/GetNewsImgRes.java
- com.example.demo.src.news.model.GetNewsImgRes
-com/example/demo/src/review/model/GetReviewLikeReq.java
- com.example.demo.src.review.model.GetReviewLikeReq
-com/example/demo/src/store/model/GetMenuImgRes.java
- com.example.demo.src.store.model.GetMenuImgRes
-com/example/demo/src/user/model/GetUserRes.java
- com.example.demo.src.user.model.GetUserRes
 com/example/demo/DemoApplication.java
  com.example.demo.DemoApplication
+com/example/demo/src/store/StoreDao.java
+ com.example.demo.src.store.StoreDao
+com/example/demo/src/news/NewsController.java
+ com.example.demo.src.news.NewsController
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
+com/example/demo/src/store/StoreController.java
+ com.example.demo.src.store.StoreController
+com/example/demo/src/user/UserController.java
+ com.example.demo.src.user.UserController
+com/example/demo/config/BaseResponse.java
+ com.example.demo.config.BaseResponse
+com/example/demo/src/news/NewsProvider.java
+ com.example.demo.src.news.NewsProvider
+com/example/demo/src/store/StoreProvider.java
+ com.example.demo.src.store.StoreProvider
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
+com/example/demo/config/BaseResponseStatus.java
+ com.example.demo.config.BaseResponseStatus
+com/example/demo/config/BaseException.java
+ com.example.demo.config.BaseException
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
-com/example/demo/src/store/model/GetStoreListReq.java
- com.example.demo.src.store.model.GetStoreListReq
 com/example/demo/src/user/UserProvider.java
  com.example.demo.src.user.UserProvider
-com/example/demo/src/user/model/PostUserKakaoReq.java
- com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/src/review/ReviewService.java
  com.example.demo.src.review.ReviewService
-com/example/demo/src/news/model/GetNewsDetailRes.java
- com.example.demo.src.news.model.GetNewsDetailRes
