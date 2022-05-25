@@ -43,7 +43,7 @@ public class StoreController {
 
             return new BaseResponse<>(getStoreListRes);
 
-        }catch (BaseException e) {
+            }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }

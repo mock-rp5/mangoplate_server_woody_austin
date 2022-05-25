@@ -106,7 +106,7 @@ com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
 com/example/demo/src/store/StoreDao.java
  com.example.demo.src.store.StoreDao
-com/example/demo/src/store/StoreController.java
- com.example.demo.src.store.StoreController
 com/example/demo/src/store/StoreService.java
  com.example.demo.src.store.StoreService
+com/example/demo/src/store/StoreController.java
+ com.example.demo.src.store.StoreController
