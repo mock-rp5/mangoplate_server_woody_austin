@@ -2,6 +2,7 @@ package com.example.demo.src.store;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -183,6 +185,33 @@ public class StoreController {
         }
     }
 
+    /**
+     * 가게별 리뷰 조회 API
+     * [GET] /stores/reviews/:storeId
+     * * @return BaseResponse<GetStoreReviewRes>
+     */
+    @ResponseBody
+    @GetMapping("/reviews/{storeId}")
+    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @RequestParam(defaultValue = "1") List<Integer> filter, @RequestParam int page){
+        try {
+            List<String> evaluation = new ArrayList<>(filter.size());
+            for (int i = 0; i < filter.size(); i++) {
+                if (filter.get(i) == 1) {
+                    evaluation.add("맛있다!");
+                } else if (filter.get(i) == 2) {
+                    evaluation.add("괜찮다");
+                } else if (filter.get(i) == 3){
+                    evaluation.add("별로");
+                } else {
+                    return new BaseResponse<>(WRONG_FILTER_VALUE);
+                }
+            }
+            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,evaluation,page);
+            return new BaseResponse<>(getStoreReviewRes);
+        }catch(BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 
 }

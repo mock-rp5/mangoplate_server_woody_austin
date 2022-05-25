@@ -2,6 +2,7 @@ package com.example.demo.src.store;
 
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,6 +209,36 @@ public class StoreDao {
                         rs.getInt("viewCount"),
                         rs.getInt("reviewCount")
                 ),getStoreListParams);
+    }
+
+    public List<GetStoreReviewRes> getStoreReviews(Long storeId, List<String> evaluation, int page) {
+        String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
+        String getStoreReviewQuery = String.format("SELECT Review.id AS reviewId, Users.profileImgUrl, Users.id AS userId, Users.name AS userName, isHolic,\n" +
+                "(SELECT COUNT(R.id) from Review R where R.userId=Users.id) reviewCount,\n" +
+                "(SELECT COUNT(F.id) FROM Following F WHERE F.follwedUserId = Review.userId) followCount, evaluation, review, Review.updatedAt,\n" +
+                "(SELECT CONCAT('[', jsonarray, ']')FROM (SELECT GROUP_CONCAT('{', jsonitem, '}' SEPARATOR ',') AS jsonarray\n" +
+                "FROM (SELECT CONCAT('\"imgUrl\":', '\"', ReviewImg.imgUrl, '\"') AS jsonitem from ReviewImg\n" +
+                "left join Review ImgByReview on ReviewImg.reviewId=ImgByReview.id where ImgByReview.id=Review.id) AS singlejson) AS alljsonas )imgUrlList,\n" +
+                "(select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
+                "(select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                "from Users, Review, Stores\n" +
+                "WHERE Review.userId=Users.id && Stores.id = Review.storeId && Stores.id = ? &&Review.evaluation IN (%s) limit ?,10",inSql);
+        return this.jdbcTemplate.query(getStoreReviewQuery,
+                (rs, rowNum) -> new GetStoreReviewRes(
+                        rs.getLong("reviewId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getLong("userId"),
+                        rs.getString("userName"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followCount"),
+                        rs.getString("evaluation"),
+                        rs.getString("review"),
+                        rs.getString("updatedAt"),
+                        rs.getString("imgUrlList"),
+                        rs.getInt("reviewLikes"),
+                        rs.getInt("reviewComments")
+                ),storeId, (page-1)*10);
     }
 }
 
