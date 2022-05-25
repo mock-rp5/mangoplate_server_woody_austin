@@ -26,7 +26,7 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreList(GetStoreListReq getStoreListReq) {
         String inSql=String.join(",",getStoreListReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+        String getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg',\n" +
                 "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
@@ -106,7 +106,7 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreListByKeyWord(GetStoreListByKeyWordReq getStoreListByKeyWordReq) {
         String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+        String getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg',\n" +
                 "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
