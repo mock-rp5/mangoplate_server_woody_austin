@@ -76,6 +76,35 @@ public class StoreProvider {
         }
     }
 
+    public List<GetStoreListRes> getStoreListByFood(GetStoreListByFoodReq getStoreListByFoodReq)throws BaseException {
+        if(getStoreListByFoodReq.getCategory().size()==0){
+            throw new BaseException(NO_REGION_VALUE);
+        }
+        if(getStoreListByFoodReq.getRegion().size()==0){
+            throw new BaseException(NO_CATEGORY_VALUE);
+        }
+        try {
+            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByFood(getStoreListByFoodReq);
+            return getStoreListRes;
+
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetStoreListRes> getStoreListByParking(Long userId, List<String> region, int page)throws BaseException{
+        if(region.size()==0){
+            throw new BaseException(NO_REGION_VALUE);
+        }
+        try {
+            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByParking(userId, region, page);
+            return getStoreListRes;
+
+        }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) throws BaseException {
         try {
             List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByDistance(userId, distance, page);
