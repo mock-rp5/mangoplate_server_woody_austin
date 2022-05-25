@@ -2,13 +2,15 @@ package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.review.model.GetReviewRes;
+import com.example.demo.src.review.model.*;
 import com.example.demo.src.store.model.GetStoreRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @RestController
 @RequestMapping("/review")
@@ -43,4 +45,25 @@ public class ReviewController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    @ResponseBody
+    @PostMapping("/{userId}")
+    public BaseResponse<String> createReview(@PathVariable("userId") Long userId, @RequestBody PostReviewReq postReviewReq) throws BaseException {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            PostReviewListReq postReviewListReq = new PostReviewListReq(userId, postReviewReq.getStoreId(), postReviewReq.getReview(), postReviewReq.getEvaluation());
+            Long lastInsertId = reviewService.createReview(postReviewListReq);
+            for (ReviewImg reviewImg : postReviewReq.getReviewImg()) {
+                PostReviewImgReq postReviewImgReq = new PostReviewImgReq(lastInsertId, reviewImg.getImgUrl());
+                reviewService.createReviewImg(postReviewImgReq);
+            }
+            String result = "";
+            return new BaseResponse<>(result);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        }
 }
