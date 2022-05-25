@@ -110,7 +110,7 @@ public class UserController {
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
-    @GetMapping("/login")
+    @PostMapping("/login")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
         if(postLoginReq.getEmail() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
