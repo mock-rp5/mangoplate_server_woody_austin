@@ -111,5 +111,46 @@ public class ReviewDao {
                         rs.getString("subRegion")
         ),searchKeyword);
     }
+
+    public int createReviewLike(Long reviewId, Long userId) {
+        String createReviewLikeQuery="insert into ReviewLikes(reviewId,userId) values(?,?)";
+        Object[] createReviewLikeParams=new Object[]{
+                reviewId,userId
+        };
+
+        return this.jdbcTemplate.update(createReviewLikeQuery,createReviewLikeParams);
+    }
+
+    public int chckReviewLike(Long reviewId, Long userId) {
+        String checkReviewLikeQuery="select exists(select userId from ReviewLikes where reviewId=? and userId=?)";
+        Object[] checkReviewLikeParams=new Object[]{
+                reviewId,userId
+        };
+        return this.jdbcTemplate.queryForObject(checkReviewLikeQuery,int.class,checkReviewLikeParams);
+    }
+
+    public int checkReviewExists(Long reviewId) {
+        String checkReviewExists="select exists(select id from Review where id=?)";
+        System.out.println(this.jdbcTemplate.queryForObject(checkReviewExists,int.class,reviewId));
+        return this.jdbcTemplate.queryForObject(checkReviewExists,int.class,reviewId);
+
+    }
+
+    public int deleteReviewLike(Long reviewId, Long userId) {
+        String deleteReviewLikeQuery="delete from ReviewLikes where reviewId =? and userId=?";
+        Object[] checkReviewLikeParams=new Object[]{
+                reviewId,userId
+        };
+        return this.jdbcTemplate.update(deleteReviewLikeQuery,checkReviewLikeParams);
+    }
+
+    public int createReviewComment(Long reviewId, Long userId, PostCommentReq postCommentReq) {
+        String createReviewLikeQuery="insert into ReviewComments(reviewId,userId,comment,tagUserId) values(?,?,?,?)";
+        Object[] createReviewLikeParams=new Object[]{
+                reviewId,userId,postCommentReq.getComment(),postCommentReq.getTagUserId()
+        };
+
+        return this.jdbcTemplate.update(createReviewLikeQuery,createReviewLikeParams);
+    }
 }
 
