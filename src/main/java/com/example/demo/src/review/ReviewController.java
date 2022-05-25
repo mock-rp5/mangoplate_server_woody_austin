@@ -3,12 +3,13 @@ package com.example.demo.src.review;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.review.model.*;
-import com.example.demo.src.store.model.GetStoreRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
@@ -46,6 +47,23 @@ public class ReviewController {
         }
     }
 
+
+
+    @ResponseBody
+    @GetMapping("/stores_review")
+    public BaseResponse<List<GetReviewStoreRes>> getReviewStore(@RequestParam String keyWord)throws BaseException{
+        try {
+            List<GetReviewStoreRes> getReviewStoreRes = reviewProvider.getReviewStore(keyWord);
+            return new BaseResponse<>(getReviewStoreRes);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 리뷰 생성 API
+     * [POST] /review/:userId
+     * * @return BaseResponse<String>
+     */
     @ResponseBody
     @PostMapping("/{userId}")
     public BaseResponse<String> createReview(@PathVariable("userId") Long userId, @RequestBody PostReviewReq postReviewReq) throws BaseException {
@@ -60,7 +78,7 @@ public class ReviewController {
                 PostReviewImgReq postReviewImgReq = new PostReviewImgReq(lastInsertId, reviewImg.getImgUrl());
                 reviewService.createReviewImg(postReviewImgReq);
             }
-            String result = "";
+            String result = "리뷰 등록 성공";
             return new BaseResponse<>(result);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

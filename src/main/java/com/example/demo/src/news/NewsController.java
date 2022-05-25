@@ -41,7 +41,6 @@ public class NewsController {
                     evaluation.add("별로");
                 }
             }
-
             List<GetNewsRes> getNewsRes = newsProvider.getNews(evaluation,page);
             System.out.println(getNewsRes);
             return new BaseResponse<>(getNewsRes);
