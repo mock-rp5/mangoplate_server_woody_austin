@@ -1,11 +1,6 @@
 package com.example.demo.src.review;
 
-import com.example.demo.src.review.model.GetCommentRes;
-import com.example.demo.src.review.model.GetReviewDetailRes;
-import com.example.demo.src.review.model.GetReviewRes;
-import com.example.demo.src.store.model.GetMenuDetailRes;
-import com.example.demo.src.store.model.GetMenuImgRes;
-import com.example.demo.src.store.model.GetMenuRes;
+import com.example.demo.src.review.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -83,6 +78,27 @@ public class ReviewDao {
                                 rs.getString("updatedAt")
                         ), param)
         );
+    }
+
+    public Long createReview(PostReviewListReq postReviewListReq) {
+        String createReviewQuery="insert into Review(storeId,userId,review,evaluation) values(?,?,?,?)";
+        Object[] createReviewParam=new Object[]{
+                postReviewListReq.getStoreId(),postReviewListReq.getUserId(),postReviewListReq.getReview(),postReviewListReq.getEvaluation()
+        };
+
+        this.jdbcTemplate.update(createReviewQuery,createReviewParam);
+
+        String lastInsertIdQuery="select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,Long.class);
+    }
+
+    public int createReviewImg(PostReviewImgReq postReviewImgReq) {
+        String createReviewImgQuery="insert into ReviewImg(reviewId,ImgUrl) values(?,?)";
+        Object[] createReviewImgParam=new Object[]{
+                postReviewImgReq.getReviewId(),postReviewImgReq.getImgUrl()
+        };
+        return this.jdbcTemplate.update(createReviewImgQuery,createReviewImgParam);
+
     }
 }
 

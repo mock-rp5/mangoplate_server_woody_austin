@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @RestController
 @RequestMapping("/news")
 public class NewsController {
@@ -50,9 +52,13 @@ public class NewsController {
 
     @ResponseBody
     @GetMapping("/following/{userid}")
-    public BaseResponse<List<GetNewsRes>> getNewsByFollowing(@PathVariable("userid") Long userid,
+    public BaseResponse<List<GetNewsRes>> getNewsByFollowing(@PathVariable("userid") Long userId,
                                                              @RequestParam(defaultValue = "1") List<Integer> filter,@RequestParam(defaultValue = "1") int page){
         try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<String> evaluation = new ArrayList<>(filter.size());
             for (int i = 0; i < filter.size(); i++) {
                 if (filter.get(i) == 1) {
@@ -63,7 +69,7 @@ public class NewsController {
                     evaluation.add("별로");
                 }
             }
-            GetNewsByFollowingReq getNewsByFollowingReq = new GetNewsByFollowingReq(userid,evaluation,page);
+            GetNewsByFollowingReq getNewsByFollowingReq = new GetNewsByFollowingReq(userId,evaluation,page);
             List<GetNewsRes> getNewsRes=newsProvider.getNewsByFollowing(getNewsByFollowingReq);
             System.out.println(getNewsRes);
             return new BaseResponse<>(getNewsRes);
