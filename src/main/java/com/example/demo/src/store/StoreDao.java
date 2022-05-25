@@ -26,9 +26,9 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreList(GetStoreListReq getStoreListReq) {
         String inSql=String.join(",",getStoreListReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+        String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id limit 1)as 'reviewImg',\n" +
-                "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "       concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
                 "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
@@ -40,6 +40,7 @@ public class StoreDao {
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(
+                        rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
@@ -105,9 +106,9 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreListByKeyWord(GetStoreListByKeyWordReq getStoreListByKeyWordReq) {
         String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+        String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id limit 1)as 'reviewImg',\n" +
-                "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "       concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
                 "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
@@ -120,6 +121,7 @@ public class StoreDao {
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(
+                        rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
@@ -137,20 +139,68 @@ public class StoreDao {
                 checkStoreIdParams);
     }
 
+    public List<GetStoreListRes> getStoreListByFood(GetStoreListByFoodReq getStoreListByFoodReq) {
+        String categoryList=String.join(",",getStoreListByFoodReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String regionList=String.join(",",getStoreListByFoodReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
+
+        String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg,\n" +
+                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
+                "FROM Users,Stores\n" +
+                "WHERE Users.id=? && Stores.foodCategory IN (%s) && Stores.subRegion IN (%s) \n" +
+                "LIMIT ?,10",categoryList, regionList);
+        Object[] getStoreListByFoodParams=new Object[]{
+                getStoreListByFoodReq.getUserId(),(getStoreListByFoodReq.getPage()-1)*10
+        };
+        return this.jdbcTemplate.query(getStoreListQuery,
+                (rs,rowNum)-> new GetStoreListRes(
+                        rs.getLong("storeId"),
+                        rs.getString("reviewImg"),
+                        rs.getString("distance"),
+                        rs.getString("storeName"),
+                        rs.getFloat("rating"),
+                        rs.getInt("viewCount"),
+                        rs.getInt("reviewCount")
+                ),getStoreListByFoodParams);
+    }
+
+    public List<GetStoreListRes> getStoreListByParking(Long userId, List<String> region, int page) {
+        String regionList=String.join(",",region.stream().map(region_ -> "'"+region_+"'").collect(Collectors.toList()));
+        String getStoreListByParkingQuery = String.format("SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg,\n" +
+                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
+                "FROM Users,Stores\n" +
+                "WHERE Users.id=? && Stores.parkingInfo = '가능' && Stores.subRegion IN (%s)\n" +
+                "LIMIT ?,10", regionList);
+        Object[] getStoreListByParkingParams = new Object[] {userId, (page - 1) * 10};
+        return this.jdbcTemplate.query(getStoreListByParkingQuery,
+                (rs,rowNum)-> new GetStoreListRes(
+                        rs.getLong("storeId"),
+                        rs.getString("reviewImg"),
+                        rs.getString("distance"),
+                        rs.getString("storeName"),
+                        rs.getFloat("rating"),
+                        rs.getInt("viewCount"),
+                        rs.getInt("reviewCount")
+                ),getStoreListByParkingParams);
+    }
+
+
     public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) {
-        String getStoreListByDistanceQuery = "SELECT (SELECT RI.imgurl FROM ReviewImg RI WHERE RI.reviewId=Review.id limit 1) AS reviewImg,\n" +
-                "    Stores.name AS storeName, CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "   *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
-                "    rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
-                "    FROM Users,Stores\n" +
-                "    LEFT JOIN Review ON Review.storeId=Stores.id LEFT JOIN ReviewImg ON ReviewImg.reviewId=Review.id\n" +
-                "    WHERE Users.id=? && (6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "   *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
-                "   +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))) <= ?\n" +
-                "    LIMIT ?,10";
+        String getStoreListByDistanceQuery = "SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg,\n" +
+                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
+                "FROM Users,Stores\n" +
+                "WHERE Users.id=? && (6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "*cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))) <= ?\n" +
+                "LIMIT ?,10";
         Object[] getStoreListParams=new Object[]{userId, distance * 0.001, (page-1)*10};
         return this.jdbcTemplate.query(getStoreListByDistanceQuery,
                 (rs,rowNum)-> new GetStoreListRes(
+                        rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
