@@ -100,5 +100,16 @@ public class ReviewDao {
         return this.jdbcTemplate.update(createReviewImgQuery,createReviewImgParam);
 
     }
+
+    public List<GetReviewStoreRes> getReviewStore(String keyWord) {
+        String getReviewStoreQuery="select id as 'storeId',name,subRegion from Stores where name like ?";
+        String searchKeyword="%"+keyWord+"%";
+        return this.jdbcTemplate.query(getReviewStoreQuery,
+                (rs,rowNum)->new GetReviewStoreRes(
+                        rs.getLong("storeId"),
+                        rs.getString("name"),
+                        rs.getString("subRegion")
+        ),searchKeyword);
+    }
 }
 

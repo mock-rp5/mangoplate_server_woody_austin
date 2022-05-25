@@ -26,12 +26,14 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreList(GetStoreListReq getStoreListReq) {
         String inSql=String.join(",",getStoreListReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect where ReviewImgSelect.reviewId=Review.id limit 1) as 'reviewImg',concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+                "        join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id limit 1)as 'reviewImg',\n" +
+                "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
-                "    AS distance,concat(Stores.name)'storeName', rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
+                "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
+                "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                 "FROM Users,Stores\n" +
-                "    left join Review on Review.storeId=Stores.id left join ReviewImg on ReviewImg.reviewId=Review.id\n" +
                 "where Users.id=? and Stores.subRegion IN (%s) LIMIT ?,10",inSql);
         Object[] getStoreListParams=new Object[]{
                 getStoreListReq.getUserId(),(getStoreListReq.getPage()-1)*10
@@ -103,13 +105,15 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreListByKeyWord(GetStoreListByKeyWordReq getStoreListByKeyWordReq) {
         String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
-        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect where ReviewImgSelect.reviewId=Review.id limit 1) as 'reviewImg',concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+        String getStoreListQuery = String.format("SELECT (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+                "        join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id limit 1)as 'reviewImg',\n" +
+                "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
-                "    AS distance,concat(Stores.name)'storeName',rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
+                "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
+                "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                 "FROM Users,Stores\n" +
-                "    left join Review on Review.storeId=Stores.id left join ReviewImg on ReviewImg.reviewId=Review.id\n" +
-                "where Users.id=? and Stores.name like ? and Stores.subRegion IN (%s) LIMIT ?,10",inSql);
+                "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? LIMIT ?,10 ",inSql);
         String keyword="%"+getStoreListByKeyWordReq.getKeyword()+"%";
         Object[] getStoreListParams=new Object[]{
                 getStoreListByKeyWordReq.getUserId(),keyword,(getStoreListByKeyWordReq.getPage()-1)*10
