@@ -35,7 +35,7 @@ public class StoreProvider {
     }
 
     @Transactional (rollbackOn = BaseException.class)
-    public GetStoreRes getStore(int storeId) throws BaseException {
+    public GetStoreRes getStore(Long storeId) throws BaseException {
         // 조회수 늘리기
         try {
             storeDao.increaseViewCount(storeId);
@@ -54,7 +54,10 @@ public class StoreProvider {
         }
     }
 
-    public GetMenuRes getMenu(int storeId) throws BaseException {
+    public GetMenuRes getMenu(Long storeId) throws BaseException {
+        if(storeDao.checkStoreId(storeId) == 0){
+            throw new BaseException(NON_EXIST_STORE);
+        }
         try {
             GetMenuRes getMenuRes = storeDao.getMenu(storeId);
             return getMenuRes;
@@ -69,6 +72,15 @@ public class StoreProvider {
             return getStoreListRes;
 
         }catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) throws BaseException {
+        try {
+            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByDistance(userId, distance, page);
+            return getStoreListRes;
+        }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }

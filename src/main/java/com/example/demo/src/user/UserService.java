@@ -73,6 +73,18 @@ public class UserService {
         return null;
     }
 
+    public void updateUserLocation(PatchUserLocationReq patchUserLocationReq, Long userId) throws BaseException {
+        try{
+            int result = userDao.updateUserLocation(patchUserLocationReq, userId);
+            if(result == 0){
+                throw new BaseException(FAIL_TO_UPDATE_LOCATION);
+            }
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
     public String getKaKaoAccessToken(String code){
         String access_Token="";
         String refresh_Token ="";
