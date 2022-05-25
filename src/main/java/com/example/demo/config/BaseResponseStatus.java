@@ -67,6 +67,8 @@ public enum BaseResponseStatus {
 
     // [GET] /review
     NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),
+    EXISTS_REVIEW_LIKE(false,3001,"이미 존재하는 리뷰 좋아요 입니다."),
+    NON_EXIST_REViEW_LIKE(false,3002,"존재 하지 않는 리뷰 좋아요 입니다."),
 
 
 

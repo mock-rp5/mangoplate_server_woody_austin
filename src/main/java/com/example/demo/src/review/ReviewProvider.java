@@ -41,7 +41,28 @@ public class ReviewProvider {
     }
 
     public List<GetReviewStoreRes> getReviewStore(String keyWord) throws BaseException{
-        List<GetReviewStoreRes> getReviewStoreRes =reviewDao.getReviewStore(keyWord);
-        return getReviewStoreRes;
+        try {
+            List<GetReviewStoreRes> getReviewStoreRes = reviewDao.getReviewStore(keyWord);
+            return getReviewStoreRes;
+    } catch (Exception exception) {
+        throw new BaseException(DATABASE_ERROR);
+    }
+    }
+
+
+    public int checkReviewLike(Long reviewId, Long userId) throws BaseException{
+        try {
+            return reviewDao.chckReviewLike(reviewId, userId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+        }
+
+    public int checkReviewExists(Long reviewId) throws BaseException{
+        try {
+            return reviewDao.checkReviewExists(reviewId);
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }

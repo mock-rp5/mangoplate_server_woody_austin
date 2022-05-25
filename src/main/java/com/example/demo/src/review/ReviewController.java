@@ -84,4 +84,62 @@ public class ReviewController {
             return new BaseResponse<>(e.getStatus());
         }
         }
+
+    /**
+     * 리뷰 생성 API
+     * [POST] /review/like/:reviewId/:userId
+     * * @return BaseResponse<String>
+     */
+
+        @ResponseBody
+        @PostMapping("/like/{reviewId}/{userId}")
+        public BaseResponse<String> createReviewLike(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId){
+            try {
+                Long userIdxByJwt = jwtService.getUserIdx();
+                if (userId != userIdxByJwt) {
+                    return new BaseResponse<>(INVALID_USER_JWT);
+                }
+                String result="좋아요 성공";
+                reviewService.createReviewLike(reviewId,userId);
+                return new BaseResponse<>(result);
+            } catch (BaseException e) {
+                return new BaseResponse<>(e.getStatus());
+            }
+
+        }
+
+        @ResponseBody
+        @DeleteMapping("/like/{reviewId}/{userId}")
+        public BaseResponse<String> deleteReviewLike(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId){
+            try {
+                Long userIdxByJwt = jwtService.getUserIdx();
+                if (userId != userIdxByJwt) {
+                    return new BaseResponse<>(INVALID_USER_JWT);
+                }
+                String result="좋아요 취소 성공";
+                reviewService.deleteReviewLike(reviewId,userId);
+                return new BaseResponse<>(result);
+            } catch (BaseException e) {
+                return new BaseResponse<>(e.getStatus());
+            }
+        }
+
+        @ResponseBody
+        @PostMapping("/comments/{reviewId}/{userId}")
+        public BaseResponse<String> createReviewComment(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId,@RequestBody PostCommentReq postCommentReq){
+            try {
+                Long userIdxByJwt = jwtService.getUserIdx();
+                if (userId != userIdxByJwt) {
+                    return new BaseResponse<>(INVALID_USER_JWT);
+                }
+                String result="리뷰 댓글 달기 성공";
+                reviewService.createReviewComment(reviewId,userId,postCommentReq);
+                return new BaseResponse<>(result);
+            } catch (BaseException e) {
+                return new BaseResponse<>(e.getStatus());
+            }
+        }
+
+
+
 }
