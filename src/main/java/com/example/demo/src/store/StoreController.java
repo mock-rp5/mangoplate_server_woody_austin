@@ -2,6 +2,7 @@ package com.example.demo.src.store;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -183,6 +185,75 @@ public class StoreController {
         }
     }
 
+    /**
+     * 가게별 리뷰 조회 API
+     * [GET] /stores/reviews/:storeId
+     * * @return BaseResponse<GetStoreReviewRes>
+     */
+    @ResponseBody
+    @GetMapping("/reviews/{storeId}")
+    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @RequestParam(defaultValue = "1") List<Integer> filter, @RequestParam int page){
+        try {
+            List<String> evaluation = new ArrayList<>(filter.size());
+            for (int i = 0; i < filter.size(); i++) {
+                if (filter.get(i) == 1) {
+                    evaluation.add("맛있다!");
+                } else if (filter.get(i) == 2) {
+                    evaluation.add("괜찮다");
+                } else if (filter.get(i) == 3){
+                    evaluation.add("별로");
+                } else {
+                    return new BaseResponse<>(WRONG_FILTER_VALUE);
+                }
+            }
+            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,evaluation,page);
+            return new BaseResponse<>(getStoreReviewRes);
+        }catch(BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
+    /**
+     * 가게 가고싶다 생성 API
+     * [POST] /Stores/wishes/:storeId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/wishes/{storeId}/{userId}")
+    public BaseResponse<String> createWish(@PathVariable("storeId") Long storeId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가고싶다 생성 성공";
+            storeService.createWish(storeId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+    /**
+     * 가게 가고싶다 삭제 API
+     * [DELETE] /Stores/wishes/:storeId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/wishes/{storeId}/{userId}")
+    public BaseResponse<String> deleteWish(@PathVariable("storeId") Long storeId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가고싶다 취소 성공";
+            storeService.deleteWish(storeId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 }

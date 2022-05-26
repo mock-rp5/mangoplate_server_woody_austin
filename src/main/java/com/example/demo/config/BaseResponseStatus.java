@@ -59,11 +59,15 @@ public enum BaseResponseStatus {
      // [GET] /stores
     NO_REGION_VALUE(false,3020,"지역을 선택해 주세요"),
     NO_CATEGORY_VALUE(false,3021,"음식종류를 선택해 주세요"),
+    WRONG_FILTER_VALUE(false,3022,"평가 필터를 1,2,3중에 입력해 주세요"),
     // [POST] /stores
     UPDATE_VIEW_COUNT_FAIL(false, 3050, "조회수 업데이트에 실패하였습니다."),
 
     // [GET] /stores
     NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
+    EXISTS_WISH(false,3071,"이미 가고싶다를 생성한 가게입니다."),
+    NON_EXISTS_WISH(false,3071,"가고싶다 한 적 없는 가게입니다."),
+    EXISTS_VISITED(false,3072,"이미 방문한 가게입니다."),
 
     // [GET] /review
     NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),

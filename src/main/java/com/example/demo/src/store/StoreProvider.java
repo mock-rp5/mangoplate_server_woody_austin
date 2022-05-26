@@ -1,6 +1,7 @@
 package com.example.demo.src.store;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,6 +111,18 @@ public class StoreProvider {
             List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByDistance(userId, distance, page);
             return getStoreListRes;
         }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetStoreReviewRes> getStoreReviews(Long storeId, List<String> evaluation, int page) throws BaseException {
+        if(storeDao.checkStoreId(storeId) == 0){
+            throw new BaseException(NON_EXIST_STORE);
+        }
+        try {
+            List<GetStoreReviewRes> getStoreReviewRes = storeDao.getStoreReviews(storeId, evaluation,page);
+            return getStoreReviewRes;
+        } catch(Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
