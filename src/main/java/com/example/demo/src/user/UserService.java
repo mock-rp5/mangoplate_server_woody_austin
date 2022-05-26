@@ -199,4 +199,17 @@ public class UserService {
         return null;
     }
 
+    public void createUserFollow(GetUserFollowReq getUserFollowReq)throws BaseException {
+        if (userProvider.checkFollowExist(getUserFollowReq)==1){
+            throw new BaseException(EXIST_FOLLOW);
+        }
+        if(userProvider.checkUserExist(getUserFollowReq.getFollowedUserId())==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            userDao.createUserFollow(getUserFollowReq);
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

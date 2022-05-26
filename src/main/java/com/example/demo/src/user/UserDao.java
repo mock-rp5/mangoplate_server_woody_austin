@@ -125,4 +125,26 @@ public class UserDao {
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,Long.class);
     }
 
+    public int createUserFollow(GetUserFollowReq getUserFollowReq) {
+        String createUserFollowQuery="insert into Following(userId,follwedUserId) values(?,?)";
+        Object[] createUserFollowParams = new Object[]{
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId()
+        };
+
+        return this.jdbcTemplate.update(createUserFollowQuery,createUserFollowParams);
+    }
+
+    public int checkFollowExist(GetUserFollowReq getUserFollowReq) {
+        String checkReviewExistQuery="select exists (select id from Following where userId=? and follwedUserId=?)";
+        Object[] checkFollowExistParams = new Object[]{
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId()
+        };
+
+        return this.jdbcTemplate.queryForObject(checkReviewExistQuery,int.class,checkFollowExistParams);
+    }
+
+    public int checkUserExist(Long followedUserId) {
+        String checkUserExistQuery="select exists (select id from Users where id = ?)";
+        return this.jdbcTemplate.queryForObject(checkUserExistQuery,int.class,followedUserId);
+    }
 }

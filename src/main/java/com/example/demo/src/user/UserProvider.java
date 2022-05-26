@@ -105,4 +105,19 @@ public class UserProvider {
 
     }
 
+    public int checkFollowExist(GetUserFollowReq getUserFollowReq) throws BaseException{
+        try{
+            return userDao.checkFollowExist(getUserFollowReq);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkUserExist(Long followedUserId) throws BaseException{
+        try{
+            return userDao.checkUserExist(followedUserId);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

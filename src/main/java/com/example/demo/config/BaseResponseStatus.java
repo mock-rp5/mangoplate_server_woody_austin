@@ -55,6 +55,8 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"비밀번호가 틀렸습니다."),
     NON_EXIST_EMAIL(false, 3015, "없는 이메일 입니다."),
+    EXIST_FOLLOW(false,3016,"이미 해당 유저를 팔로우 하고 있습니다."),
+    NON_EXIST_USER(false,3017,"해당 유저가 존재하지 않습니다."),
 
      // [GET] /stores
     NO_REGION_VALUE(false,3020,"지역을 선택해 주세요"),

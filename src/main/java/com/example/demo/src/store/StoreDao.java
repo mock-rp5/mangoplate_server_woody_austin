@@ -197,7 +197,8 @@ public class StoreDao {
         String categoryList=String.join(",",getStoreListByFoodReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
         String regionList=String.join(",",getStoreListByFoodReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
 
-        String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg," +
+        String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+                "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
@@ -223,7 +224,8 @@ public class StoreDao {
 
     public List<GetStoreListRes> getStoreListByParking(Long userId, List<String> region, int page) {
         String regionList=String.join(",",region.stream().map(region_ -> "'"+region_+"'").collect(Collectors.toList()));
-        String getStoreListByParkingQuery = String.format("SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg," +
+        String getStoreListByParkingQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
+                "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
@@ -247,7 +249,8 @@ public class StoreDao {
 
 
     public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) {
-        String getStoreListByDistanceQuery = "SELECT Stores.id AS storeId, (SELECT RI.imgurl FROM ReviewImg RI, Review R WHERE RI.reviewId=R.id limit 1) AS reviewImg," +
+        String getStoreListByDistanceQuery = "SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect \n" +
+                "                            left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
