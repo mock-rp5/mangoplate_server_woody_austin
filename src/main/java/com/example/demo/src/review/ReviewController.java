@@ -172,11 +172,11 @@ public class ReviewController {
 
     /**
      * 리뷰 댓글 수정 API
-     * [PUT] /comments/:commentId/:userId
+     * [PATCH] /comments/:commentId/:userId
      * * @return BaseResponse<String>
      */
     @ResponseBody
-    @PutMapping("/comments/{commentId}/{userId}")
+    @PatchMapping("/comments/{commentId}/{userId}")
     public BaseResponse<String> putReviewComment(@PathVariable("commentId") Long commentId,@PathVariable("userId") Long userId,@RequestBody PutCommentsReq putCommentsReq){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
