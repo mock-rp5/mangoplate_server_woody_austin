@@ -140,6 +140,26 @@ public class StoreDao {
                 checkStoreIdParams);
     }
 
+    public int checkWish(Long storeId, Long userId) {
+        String checkWishQuery="select exists(select Wishes.id from Wishes where storeId=? and userId=?)";
+        return this.jdbcTemplate.queryForObject(checkWishQuery,int.class,storeId, userId);
+    }
+
+    public int checkVisited(Long storeId, Long userId) {
+        String checkVisitedQuery="select exists(select Visited.id from Visited where storeId=? and userId=?)";
+        return this.jdbcTemplate.queryForObject(checkVisitedQuery,int.class,storeId, userId);
+    }
+
+    public int createWish(Long storeId, Long userId) {
+        String createWishQuery="insert into Wishes(storeId,userId) values(?,?)";
+        return this.jdbcTemplate.update(createWishQuery, storeId, userId);
+    }
+
+    public int deleteWish(Long storeId, Long userId) {
+        String createWishQuery="delete from Wishes where storeId = ? && userId = ?";
+        return this.jdbcTemplate.update(createWishQuery, storeId, userId);
+    }
+
     public List<GetStoreListRes> getStoreListByFood(GetStoreListByFoodReq getStoreListByFoodReq) {
         String categoryList=String.join(",",getStoreListByFoodReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
         String regionList=String.join(",",getStoreListByFoodReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
