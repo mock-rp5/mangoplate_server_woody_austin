@@ -65,4 +65,12 @@ public class ReviewProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkReviewCommentExists(Long commentId) throws BaseException{
+        try {
+        return reviewDao.checkReviewCommentExists(commentId);
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
