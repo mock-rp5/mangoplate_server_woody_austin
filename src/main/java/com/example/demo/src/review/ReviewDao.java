@@ -199,5 +199,30 @@ public class ReviewDao {
     }
 
 
+    public List<GetReviewLikeUserRes> getReviewLikesUser(Long reviewId, Long userId) {
+        String getReviewLikesUserQuery="select Users.id as 'userId',profileImgUrl,Users.name,isHolic,\n" +
+                "       (select count(userId) from Review join Users on Users.id=Review.userId where Review.userId=ReviewLikes.userId)'reviewCount',\n" +
+                "       (select count(follwedUserId) from Following where follwedUserId=ReviewLikes.userId)'followCount',\n" +
+                "       (select exists(select Following.id from Following where userId=? and ReviewLikes.userId=follwedUserId ))'followCheck'\n" +
+                "    from Users,Stores\n" +
+                "    join Review on storeId=Stores.id\n" +
+                "    join ReviewLikes on ReviewLikes.reviewId = Review.id\n" +
+                "where Review.id=? and ReviewLikes.userId=Users.id";
+        Object[] getReviewLikesUserParams=new Object[]{
+                userId,reviewId
+        };
+        return this.jdbcTemplate.query(getReviewLikesUserQuery,
+                (rs,rowNum)->new GetReviewLikeUserRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followCount"),
+                        rs.getInt("followCheck")
+
+                ),getReviewLikesUserParams
+        );
+    }
 }
 

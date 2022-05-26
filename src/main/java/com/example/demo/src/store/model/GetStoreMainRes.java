@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetStoreListRes {
+public class GetStoreMainRes {
     private Long storeId;
     private String reviewImg;
     private int wishCheck;
