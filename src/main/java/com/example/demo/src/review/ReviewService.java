@@ -1,10 +1,7 @@
 package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.review.model.PostCommentReq;
-import com.example.demo.src.review.model.PostReviewImgReq;
-import com.example.demo.src.review.model.PostReviewListReq;
-import com.example.demo.src.review.model.PostReviewReq;
+import com.example.demo.src.review.model.*;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +79,42 @@ public class ReviewService {
             throw new BaseException(NON_EXIST_REVIEW);
         }try {
             reviewDao.createReviewComment(reviewId, userId,postCommentReq);
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void deleteReviewComment(Long commentId, Long userId) throws BaseException{
+        Long reviewId=reviewDao.selectReviewId(commentId,userId);
+        Long userIdByComment=reviewDao.selectUserId(commentId,reviewId);
+        if(userIdByComment!=userId){
+            throw new BaseException(INVALID_USER);
+        }
+        if(reviewProvider.checkReviewExists(reviewId)==0){
+            throw new BaseException(NON_EXIST_REVIEW);
+        }if(reviewProvider.checkReviewCommentExists(commentId)==0){
+            throw new BaseException(NON_EXIST_COMMENT);
+        }
+        try {
+            reviewDao.deleteReviewComment(commentId, userId);
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void putReviewComment(Long commentId, Long userId, PutCommentsReq putCommentsReq) throws BaseException {
+        Long reviewId=reviewDao.selectReviewId(commentId,userId);
+        Long userIdByComment=reviewDao.selectUserId(commentId,reviewId);
+        if(userIdByComment!=userId){
+            throw new BaseException(INVALID_USER);
+        }
+        if(reviewProvider.checkReviewExists(reviewId)==0){
+            throw new BaseException(NON_EXIST_REVIEW);
+        }if(reviewProvider.checkReviewCommentExists(commentId)==0){
+            throw new BaseException(NON_EXIST_COMMENT);
+        }
+        try {
+            reviewDao.putReviewComment(commentId, userId,putCommentsReq);
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }

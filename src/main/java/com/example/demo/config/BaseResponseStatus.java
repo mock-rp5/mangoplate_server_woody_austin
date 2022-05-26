@@ -75,6 +75,13 @@ public enum BaseResponseStatus {
     NON_EXIST_REViEW_LIKE(false,3002,"존재 하지 않는 리뷰 좋아요 입니다."),
 
 
+    NON_EXIST_COMMENT(false,3003,"존재하지 않는 댓글입니다"),
+
+    //[DELETE] /comment
+
+    INVALID_USER(false,3004,"권한이 없는 유저의 접근입니다."),
+
+
 
     /**
      * 4000 : Database, Server 오류

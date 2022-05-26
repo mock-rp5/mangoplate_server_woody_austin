@@ -2,6 +2,7 @@ package com.example.demo.src.review;
 
 import com.example.demo.src.review.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -131,7 +132,6 @@ public class ReviewDao {
 
     public int checkReviewExists(Long reviewId) {
         String checkReviewExists="select exists(select id from Review where id=?)";
-        System.out.println(this.jdbcTemplate.queryForObject(checkReviewExists,int.class,reviewId));
         return this.jdbcTemplate.queryForObject(checkReviewExists,int.class,reviewId);
 
     }
@@ -152,5 +152,52 @@ public class ReviewDao {
 
         return this.jdbcTemplate.update(createReviewLikeQuery,createReviewLikeParams);
     }
+
+    public int deleteReviewComment(Long commentId, Long userId) {
+        String deleteCommentQuery="delete from ReviewComments where id=? and userId=? ";
+        Object[] deleteCommentParams = new Object[]{
+                commentId,userId
+        };
+        return this.jdbcTemplate.update(deleteCommentQuery,deleteCommentParams);
+    }
+
+    public int checkReviewCommentExists(Long commentId) {
+        String checkReviewCommentExistsQuery="select exists(select id from ReviewComments where id=?)";
+        return this.jdbcTemplate.queryForObject(checkReviewCommentExistsQuery,int.class,commentId);
+    }
+
+    public Long selectReviewId(Long commentId, Long userId) {
+        String selectReviewIdQuery="select reviewId from ReviewComments where id=? and userId=? ";
+        Object[] selectReviewIdParmas=new Object[]{
+                commentId,userId
+        };
+        try {
+            return this.jdbcTemplate.queryForObject(selectReviewIdQuery, Long.class, selectReviewIdParmas);
+        }catch(EmptyResultDataAccessException e){
+            return Long.valueOf(0);
+        }
+    }
+    public Long selectUserId(Long commentId, Long reviewId) {
+        String selectReviewIdQuery="select userId from ReviewComments where id=? and reviewId=? ";
+        Object[] selectReviewIdParmas=new Object[]{
+                commentId,reviewId
+        };
+        try {
+            return this.jdbcTemplate.queryForObject(selectReviewIdQuery, Long.class, selectReviewIdParmas);
+        }catch(EmptyResultDataAccessException e){
+            return Long.valueOf(0);
+        }
+    }
+
+    public int putReviewComment(Long commentId, Long userId, PutCommentsReq putCommentsReq) {
+        String putReviewCommentQuery="update ReviewComments set comment=?,tagUserId=? where id=? and userId=?";
+        Object[] putReviewCommentParams=new Object[]{
+                putCommentsReq.getComment(),putCommentsReq.getTagUserId(),commentId,userId
+        };
+
+        return this.jdbcTemplate.update(putReviewCommentQuery,putReviewCommentParams);
+    }
+
+
 }
 

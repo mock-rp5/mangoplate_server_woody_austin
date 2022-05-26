@@ -16,7 +16,7 @@ import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 @RestController
 @RequestMapping("/review")
 public class ReviewController {
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    final Logger  logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private final ReviewProvider reviewProvider;
@@ -86,7 +86,7 @@ public class ReviewController {
         }
 
     /**
-     * 리뷰 생성 API
+     * 리뷰 좋아요 생성 API
      * [POST] /review/like/:reviewId/:userId
      * * @return BaseResponse<String>
      */
@@ -108,6 +108,11 @@ public class ReviewController {
 
         }
 
+    /**
+     * 리뷰 좋아요 삭제 API
+     * [DELETE] /review/like/:reviewId/:userId
+     * * @return BaseResponse<String>
+     */
         @ResponseBody
         @DeleteMapping("/like/{reviewId}/{userId}")
         public BaseResponse<String> deleteReviewLike(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId){
@@ -124,6 +129,11 @@ public class ReviewController {
             }
         }
 
+    /**
+     * 리뷰 댓글 생성 API
+     * [POST] /comments/:reviewId/:userId
+     * * @return BaseResponse<String>
+     */
         @ResponseBody
         @PostMapping("/comments/{reviewId}/{userId}")
         public BaseResponse<String> createReviewComment(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId,@RequestBody PostCommentReq postCommentReq){
@@ -139,6 +149,47 @@ public class ReviewController {
                 return new BaseResponse<>(e.getStatus());
             }
         }
+    /**
+     * 리뷰 댓글 삭제 API
+     * [DELETE] /comments/:commentId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/comments/{commentId}/{userId}")
+    public BaseResponse<String> deleteReviewComment(@PathVariable("commentId") Long commentId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="리뷰 댓글 삭제 성공";
+            reviewService.deleteReviewComment(commentId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 리뷰 댓글 수정 API
+     * [PUT] /comments/:commentId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PutMapping("/comments/{commentId}/{userId}")
+    public BaseResponse<String> putReviewComment(@PathVariable("commentId") Long commentId,@PathVariable("userId") Long userId,@RequestBody PutCommentsReq putCommentsReq){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="리뷰 댓글 수정 성공";
+            reviewService.putReviewComment(commentId,userId,putCommentsReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 
 
