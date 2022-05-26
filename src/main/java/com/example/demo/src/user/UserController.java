@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -190,5 +191,28 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
             }
         }
+
+    /**
+     * 팔로우 API
+     * [POST] /follow/{userId}/{followedUserId}
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ResponseBody
+    @PostMapping("/follow/{userId}/{followedUserId}")
+    public BaseResponse<String> createUserFollow(@PathVariable("userId")Long userId,@PathVariable("followedUserId")Long followedUserId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetUserFollowReq getUserFollowReq = new GetUserFollowReq(userId, followedUserId);
+            userService.createUserFollow(getUserFollowReq);
+            String result = "팔로우 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
 
     }
