@@ -213,5 +213,47 @@ public class StoreController {
         }
     }
 
+    /**
+     * 가게 가고싶다 생성 API
+     * [POST] /Stores/wishes/:storeId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/wishes/{storeId}/{userId}")
+    public BaseResponse<String> createWish(@PathVariable("storeId") Long storeId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가고싶다 생성 성공";
+            storeService.createWish(storeId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+    /**
+     * 가게 가고싶다 삭제 API
+     * [DELETE] /Stores/wishes/:storeId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/wishes/{storeId}/{userId}")
+    public BaseResponse<String> deleteWish(@PathVariable("storeId") Long storeId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가고싶다 취소 성공";
+            storeService.deleteWish(storeId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 }

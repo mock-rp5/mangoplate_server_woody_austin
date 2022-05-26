@@ -65,6 +65,9 @@ public enum BaseResponseStatus {
 
     // [GET] /stores
     NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
+    EXISTS_WISH(false,3071,"이미 가고싶다를 생성한 가게입니다."),
+    NON_EXISTS_WISH(false,3071,"가고싶다 한 적 없는 가게입니다."),
+    EXISTS_VISITED(false,3072,"이미 방문한 가게입니다."),
 
     // [GET] /review
     NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),
