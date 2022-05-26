@@ -24,4 +24,6 @@ public class GetNewsRes {
     private String imgUrl;
     private int reviewLikes;
     private int reviewComments;
+    private int wishCheck;
+    private int likeCheck;
 }

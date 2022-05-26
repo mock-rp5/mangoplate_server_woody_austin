@@ -54,7 +54,9 @@ public class NewsDao {
                 "    ) AS singlejson\n" +
                 ") AS alljsonas )imgUrl,\n" +
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
-                "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
+                "       (select exists(select Wishes.id from Wishes where Wishes.userId=4 and Wishes.storeId=Stores.id))'wishCheck'\n" +
+                "       ,(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=4 and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) order by Review.createdAt desc limit ?,10  ", inSql);
@@ -74,7 +76,9 @@ public class NewsDao {
                         rs.getString("reviewCreated"),
                         rs.getString("imgUrl"),
                         rs.getInt("reviewLikes"),
-                        rs.getInt("reviewComments")
+                        rs.getInt("reviewComments"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("likeCheck")
                 ),param
         );
 
@@ -116,7 +120,9 @@ public class NewsDao {
                 "    ) AS singlejson\n" +
                 ") AS alljsonas )imgUrl,\n" +
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
-                "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=4 and Wishes.storeId=Stores.id))'wishCheck'\n" +
+                ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=4 and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
@@ -140,7 +146,9 @@ public class NewsDao {
                         rs.getString("reviewCreated"),
                         rs.getString("imgUrl"),
                         rs.getInt("reviewLikes"),
-                        rs.getInt("reviewComments")
+                        rs.getInt("reviewComments"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("likeCheck")
                 ),getNewsParams);
 
     }

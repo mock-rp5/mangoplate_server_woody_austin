@@ -23,16 +23,14 @@ public class StoreProvider {
         this.storeDao=storeDao;
     }
 
-    public List<GetStoreListRes> getStoreList(GetStoreListReq getStoreListReq) throws BaseException {
+    public List<GetStoreMainRes> getStoreList(GetStoreListReq getStoreListReq) throws BaseException {
         if(getStoreListReq.getRegion().size()==0){
             throw new BaseException(NO_REGION_VALUE);
         }
-        try {
-            List<GetStoreListRes> getStoreListRes=storeDao.getStoreList(getStoreListReq);
+
+            List<GetStoreMainRes> getStoreListRes=storeDao.getStoreList(getStoreListReq);
             return getStoreListRes;
-        }catch (Exception e){
-            throw new BaseException(DATABASE_ERROR);
-        }
+
     }
 
     @Transactional (rollbackOn = BaseException.class)

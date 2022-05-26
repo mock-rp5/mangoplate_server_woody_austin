@@ -1,6 +1,7 @@
 package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.review.model.GetReviewLikeUserRes;
 import com.example.demo.src.review.model.GetReviewRes;
 import com.example.demo.src.review.model.GetReviewStoreRes;
 import com.example.demo.utils.JwtService;
@@ -72,5 +73,10 @@ public class ReviewProvider {
         }catch(Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    public List<GetReviewLikeUserRes> getReviewLikesUser(Long reviewId, Long userId) throws BaseException {
+        List<GetReviewLikeUserRes> getReviewLikeUserRes=reviewDao.getReviewLikesUser(reviewId,userId);
+        return getReviewLikeUserRes;
     }
 }

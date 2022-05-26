@@ -34,19 +34,31 @@ public class StoreController {
 
     /**
      * 지역별 가게 리스트 조회 API
-     * [GET] /stores/{userid}?region=지역명,지역명,
+     * [GET] /stores/{userid}?region=지역명,지역명&filter=1&page=1
      * * @return BaseResponse<GetStoreListRes>
      */
     @ResponseBody
     @GetMapping("/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam int page){
+    public BaseResponse<List<GetStoreMainRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam(defaultValue = "1") int filter,@RequestParam int page){
         try {
+            System.out.println(filter);
+            String filtering="";
+            if(filter==1){
+                filtering="rating";
+            }
+            else if(filter==2){
+                filtering="distance";
+            }
+            else if(filter==3){
+                filtering="reviewCount";
+            }
+            System.out.println(filtering);
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,page);
-            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreList(getStoreListReq);
+            GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,page,filtering);
+            List<GetStoreMainRes> getStoreListRes=storeProvider.getStoreList(getStoreListReq);
 
             return new BaseResponse<>(getStoreListRes);
 

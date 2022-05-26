@@ -172,23 +172,43 @@ public class ReviewController {
 
     /**
      * 리뷰 댓글 수정 API
-     * [PATCH] /comments/:commentId/:userId
+     * [Patch] /comments/:commentId/:userId
      * * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/comments/{commentId}/{userId}")
-    public BaseResponse<String> putReviewComment(@PathVariable("commentId") Long commentId,@PathVariable("userId") Long userId,@RequestBody PutCommentsReq putCommentsReq){
+    public BaseResponse<String> putReviewComment(@PathVariable("commentId") Long commentId,@PathVariable("userId") Long userId,@RequestBody PutCommentsReq putCommentsReq) {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            String result="리뷰 댓글 수정 성공";
-            reviewService.putReviewComment(commentId,userId,putCommentsReq);
+            String result="댓글 수정 성공";
+            reviewService.putReviewComment(commentId, userId, putCommentsReq);
             return new BaseResponse<>(result);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
+    }
+    /**
+    * 리뷰 좋아요 한 사람 조회 API
+    * [GET] /like/:reviewId/:userId
+    * * @return BaseResponse<String>
+    */
+    @ResponseBody
+    @GetMapping("/like/{reviewId}/{userId}")
+    public BaseResponse<List<GetReviewLikeUserRes>> getReviewLikesUser(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetReviewLikeUserRes> getReviewLikesUserRes=reviewProvider.getReviewLikesUser(reviewId,userId);
+            return new BaseResponse<>(getReviewLikesUserRes);
+        }catch(BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
     }
 
 
