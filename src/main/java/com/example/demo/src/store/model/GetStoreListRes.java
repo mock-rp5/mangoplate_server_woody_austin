@@ -11,6 +11,7 @@ public class GetStoreListRes {
     private Long storeId;
     private String reviewImg;
     private int wishCheck;
+    private int visitedCheck;
     private String distance;
     private String storeName;
     private float rating;
