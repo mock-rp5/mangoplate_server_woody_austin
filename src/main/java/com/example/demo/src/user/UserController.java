@@ -245,7 +245,7 @@ public class UserController {
      * 팔로워 조회 API
      * [GET] /follower/{userId}/{followedUserId}
      *
-     * @return BaseResponse<PostLoginRes>
+     * @return BaseResponse<GetFollowerListRes>
      */
     @ResponseBody
     @GetMapping("/follower/{userId}/{followedUserId}")
@@ -268,7 +268,7 @@ public class UserController {
      * 팔로잉 조회 API
      * [GET] /following/{userId}/{followedUserId}
      *
-     * @return BaseResponse<PostLoginRes>
+     * @return BaseResponse<GetFollowerListRes>
      */
     @ResponseBody
     @GetMapping("/following/{userId}/{followedUserId}")
@@ -287,4 +287,116 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+    /**
+     * 프로필 조회 API
+     * [GET] /profile/{userId}/{followedUserId}
+     *
+     * @return BaseResponse<GetUserProfileRes>
+     */
+    @ResponseBody
+    @GetMapping("/profile/{userId}/{profileUserId}")
+    public BaseResponse<List<GetUserProfileRes>> getUserProfile(@PathVariable("userId") Long userId, @PathVariable("profileUserId") Long profileUserId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetUserProfileReq getUserProfileReq = new GetUserProfileReq(userId, profileUserId);
+            List<GetUserProfileRes> getUserProfileRes = userProvider.getUserProfile(getUserProfileReq);
+            return new BaseResponse<>(getUserProfileRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 이메일수정 API
+     * [PATCH] /profile_img//{userId}
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/profile_img/{userId}")
+    public BaseResponse<String> patchUserProfileImg(@PathVariable("userId")Long userId,@RequestBody PatchUserProfileImgReq patchUserProfileImgReq){
+        try {
+
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            userService.patchUserProfileImg(userId, patchUserProfileImgReq);
+            String result="수정 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 이름 수정 API
+     * [PATCH] /name/{userId}
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/name/{userId}")
+    public BaseResponse<String> patchUserName(@PathVariable("userId")Long userId,@RequestBody PatchUserNameReq patchUserNameReq){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            userService.patchUserName(userId,patchUserNameReq);
+            String result="수정 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 이메일수정 API
+     * [PATCH] /email/{userId}
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/email/{userId}")
+    public BaseResponse<String> patchUserEmial(@PathVariable("userId")Long userId,@RequestBody PatchUserEmailReq patchUserEmailReq){
+        try {
+            if (!isRegexEmail(patchUserEmailReq.getEmail())) {
+                return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+            }
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            userService.patchUserEmail(userId, patchUserEmailReq);
+            String result="수정 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 전화번호 수정 API
+     * [PATCH] /phone_number//{userId}
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/phone_number/{userId}")
+    public BaseResponse<String> patchUserPhoneNumber(@PathVariable("userId")Long userId,@RequestBody PatchUserPhoneNumberReq patchUserPhoneNumberReq){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            userService.patchUserPhoneNumber(userId,patchUserPhoneNumberReq);
+            String result="수정 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
+
 }
