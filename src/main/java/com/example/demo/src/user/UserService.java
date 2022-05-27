@@ -225,4 +225,54 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void patchUserPhoneNumber(Long userId, PatchUserPhoneNumberReq patchUserPhoneNumberReq) throws BaseException{
+
+        if(userProvider.checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }try{
+            userDao.patchUserPhoneNumber(userId,patchUserPhoneNumberReq);
+
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void patchUserEmail(Long userId, PatchUserEmailReq patchUserEmailReq) throws BaseException{
+        if(userProvider.checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        //이메일 중복
+        if(userProvider.checkEmail(patchUserEmailReq.getEmail()) ==1){
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }try{
+            userDao.patchUserEmail(userId,patchUserEmailReq);
+
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void patchUserName(Long userId, PatchUserNameReq patchUserNameReq) throws BaseException{
+        if(userProvider.checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            userDao.patchUserName(userId,patchUserNameReq);
+
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void patchUserProfileImg(Long userId, PatchUserProfileImgReq patchUserProfileImgReq) throws BaseException{
+        if(userProvider.checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            userDao.patchUserProfileImg(userId,patchUserProfileImgReq);
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
