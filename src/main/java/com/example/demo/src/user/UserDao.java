@@ -165,4 +165,53 @@ public class UserDao {
 
         return this.jdbcTemplate.update(deleteUserFollowReqQuery,deleteUserFollowReqParams);
     }
+
+    public List<GetUserFollowerListRes> getUserFollower(GetUserFollowListReq getUserFollowReq) {
+        String getUserFollowerQuery="select Users.id as 'userId',profileImgUrl,name,isHolic,\n" +
+                "       (select count(userId) from Review join Users on Users.id=Review.userId where Review.userId=Following.userId)'reviewCount',\n" +
+                "        (select count(follwedUserId) from Following where Following.follwedUserId=Users.id)'followerCount',\n" +
+                "        (select exists(select Following.id from Following where userId=? and follwedUserId=Users.id ))'followCheck'\n" +
+                "from Users join Following on Users.id=Following.userId\n" +
+                "where follwedUserId=? limit ?,10";
+        Object[] getUserFollowerParams = new Object[]{
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId(),(getUserFollowReq.getPage()-1)*20
+        };
+
+        return this.jdbcTemplate.query(getUserFollowerQuery,
+                (rs,rowNum)->new GetUserFollowerListRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followerCount"),
+                        rs.getInt("followCheck")
+                ),getUserFollowerParams
+        );
+
+    }
+
+    public List<GetUserFollowerListRes> getUserFollowing(GetUserFollowListReq getUserFollowReq) {
+        String getUserFollowingQuery ="select Users.id as 'userId', profileImgUrl,name,isHolic,\n" +
+                "       (select count(userId) from Review join Users on Users.id=Review.userId where Review.userId=Following.follwedUserId)'reviewCount',\n" +
+                "       (select count(follwedUserId) from Following where Following.userId=Users.id)'followerCount',\n" +
+                "       (select exists(select Following.id from Following where userId=? and follwedUserId=Users.id ))'followCheck'\n" +
+                "from Users join Following on Users.id=Following.follwedUserId where Following.userId=? limit ?,10";
+        Object[] getUserFollowingParams = new Object[]{
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId(),(getUserFollowReq.getPage()-1)*20
+        };
+
+        return this.jdbcTemplate.query(getUserFollowingQuery,
+                (rs,rowNum)->new GetUserFollowerListRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followerCount"),
+                        rs.getInt("followCheck")
+                ),getUserFollowingParams
+        );
+
+    }
 }
