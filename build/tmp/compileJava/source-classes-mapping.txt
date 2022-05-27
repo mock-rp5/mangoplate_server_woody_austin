@@ -104,27 +104,31 @@ com/example/demo/src/news/NewsProvider.java
  com.example.demo.src.news.NewsProvider
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
 com/example/demo/src/store/StoreService.java
  com.example.demo.src.store.StoreService
 com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
-com/example/demo/src/user/UserDao.java
- com.example.demo.src.user.UserDao
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
+com/example/demo/src/news/NewsDao.java
+ com.example.demo.src.news.NewsDao
+com/example/demo/src/news/NewsController.java
+ com.example.demo.src.news.NewsController
 com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
 com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
 com/example/demo/src/review/ReviewController.java
  com.example.demo.src.review.ReviewController
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
-com/example/demo/src/news/NewsDao.java
- com.example.demo.src.news.NewsDao
-com/example/demo/src/news/NewsController.java
- com.example.demo.src.news.NewsController
+com/example/demo/src/user/model/GetUserFollowerListRes.java
+ com.example.demo.src.user.model.GetUserFollowerListRes
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
+com/example/demo/src/user/model/GetUserFollowListReq.java
+ com.example.demo.src.user.model.GetUserFollowListReq
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController

@@ -2,7 +2,6 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
@@ -125,6 +124,30 @@ public class UserProvider {
         try{
             return userDao.checkFollowExistToUnFollow(deleteUserFollowReq);
         } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserFollowerListRes> getUserFollower(GetUserFollowListReq getUserFollowReq) throws BaseException{
+        if(checkUserExist(getUserFollowReq.getFollowedUserId())==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetUserFollowerListRes> getUserFollowerListRes =userDao.getUserFollower(getUserFollowReq);
+            return getUserFollowerListRes;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserFollowerListRes> getUserFollowing(GetUserFollowListReq getUserFollowReq)throws BaseException {
+        if(checkUserExist(getUserFollowReq.getFollowedUserId())==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetUserFollowerListRes> getUserFollowerListRes =userDao.getUserFollowing(getUserFollowReq);
+            return getUserFollowerListRes;
+        }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
