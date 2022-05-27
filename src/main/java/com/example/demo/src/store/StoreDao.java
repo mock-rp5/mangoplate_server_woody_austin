@@ -31,7 +31,8 @@ public class StoreDao {
         if(getStoreListReq.getFiltering()=="distance") {
             getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                    "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                    "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                    "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                     "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                     "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
@@ -43,7 +44,8 @@ public class StoreDao {
         else if(getStoreListReq.getFiltering()=="rating"){
             getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                    "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                    "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                    "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                     "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                     "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
@@ -55,7 +57,8 @@ public class StoreDao {
         else if(getStoreListReq.getFiltering()=="reviewCount"){
             getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                    "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                    "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                    "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                     "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                     "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
@@ -67,13 +70,14 @@ public class StoreDao {
 
 
         Object[] getStoreListParams=new Object[]{
-                getStoreListReq.getUserId(),getStoreListReq.getUserId(),(getStoreListReq.getPage()-1)*10
+                getStoreListReq.getUserId(),(getStoreListReq.getPage()-1)*10
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreMainRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
@@ -140,7 +144,8 @@ public class StoreDao {
         String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
         String getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                "       (select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                "       (select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                 "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
                 "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
@@ -150,13 +155,14 @@ public class StoreDao {
                 "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? LIMIT ?,10 ",inSql);
         String keyword="%"+getStoreListByKeyWordReq.getKeyword()+"%";
         Object[] getStoreListParams=new Object[]{
-                getStoreListByKeyWordReq.getUserId(),getStoreListByKeyWordReq.getUserId(),keyword,(getStoreListByKeyWordReq.getPage()-1)*10
+                getStoreListByKeyWordReq.getUserId(),keyword,(getStoreListByKeyWordReq.getPage()-1)*10
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
@@ -199,7 +205,8 @@ public class StoreDao {
 
         String getStoreListQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
@@ -207,13 +214,14 @@ public class StoreDao {
                 "WHERE Users.id=? && Stores.foodCategory IN (%s) && Stores.subRegion IN (%s) \n" +
                 "LIMIT ?,10",categoryList, regionList);
         Object[] getStoreListByFoodParams=new Object[]{
-                getStoreListByFoodReq.getUserId(),getStoreListByFoodReq.getUserId(),(getStoreListByFoodReq.getPage()-1)*10
+                getStoreListByFoodReq.getUserId(),(getStoreListByFoodReq.getPage()-1)*10
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
@@ -226,19 +234,21 @@ public class StoreDao {
         String regionList=String.join(",",region.stream().map(region_ -> "'"+region_+"'").collect(Collectors.toList()));
         String getStoreListByParkingQuery = String.format("SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
                 "FROM Users,Stores\n" +
                 "WHERE Users.id=? && Stores.parkingInfo = '가능' && Stores.subRegion IN (%s)\n" +
                 "LIMIT ?,10", regionList);
-        Object[] getStoreListByParkingParams = new Object[] {userId,userId, (page - 1) * 10};
+        Object[] getStoreListByParkingParams = new Object[] {userId,(page - 1) * 10};
         return this.jdbcTemplate.query(getStoreListByParkingQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
@@ -251,7 +261,8 @@ public class StoreDao {
     public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) {
         String getStoreListByDistanceQuery = "SELECT Stores.id AS storeId, (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect \n" +
                 "                            left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
-                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
+                "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
                 "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
@@ -259,12 +270,13 @@ public class StoreDao {
                 "WHERE Users.id=? && (6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "*cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))) <= ?\n" +
                 "LIMIT ?,10";
-        Object[] getStoreListParams=new Object[]{userId,userId, distance * 0.001, (page-1)*10};
+        Object[] getStoreListParams=new Object[]{userId,distance * 0.001, (page-1)*10};
         return this.jdbcTemplate.query(getStoreListByDistanceQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getString("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
