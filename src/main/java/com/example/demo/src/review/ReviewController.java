@@ -7,6 +7,7 @@ import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,14 +34,18 @@ public class ReviewController {
 
     /**
      * 리뷰 상세 조회 API
-     * [GET] /review/:reviewId
+     * [GET] /review/:reviewId/:userId
      * * @return BaseResponse<GetReviewRes>
      */
     @ResponseBody
-    @GetMapping("/{reviewId}")
-    public BaseResponse<GetReviewRes> getReview(@PathVariable("reviewId") Long reviewId) {
+    @GetMapping("/{reviewId}/{userId}")
+    public BaseResponse<GetReviewRes> getReview(@PathVariable("reviewId") Long reviewId, @PathVariable("userId") Long userId) {
         try{
-            GetReviewRes getReviewRes = reviewProvider.getReview(reviewId);
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetReviewRes getReviewRes = reviewProvider.getReview(reviewId, userId);
             return new BaseResponse<>(getReviewRes);
         } catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());

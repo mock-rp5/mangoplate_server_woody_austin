@@ -15,6 +15,8 @@ public class GetStoreRes {
     private Long reviewCount;
     private Long wishCount;
     private float rating;
+    private int wishCheck;
+    private int visitedCount;
     private String address;
     private double latitude;
     private double longitude;

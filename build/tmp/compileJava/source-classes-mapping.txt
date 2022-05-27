@@ -1,17 +1,17 @@
 com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
-com/example/demo/src/review/model/GetReviewRes.java
- com.example.demo.src.review.model.GetReviewRes
+com/example/demo/src/store/model/GetStoreListRes.java
+ com.example.demo.src.store.model.GetStoreListRes
 com/example/demo/src/news/model/GetNewsDetailRes.java
  com.example.demo.src.news.model.GetNewsDetailRes
 com/example/demo/src/review/model/PostCommentReq.java
  com.example.demo.src.review.model.PostCommentReq
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
-com/example/demo/src/review/ReviewDao.java
- com.example.demo.src.review.ReviewDao
-com/example/demo/src/store/model/GetStoreReviewRes.java
- com.example.demo.src.store.model.GetStoreReviewRes
+com/example/demo/src/store/StoreService.java
+ com.example.demo.src.store.StoreService
+com/example/demo/src/store/model/GetStoreMainRes.java
+ com.example.demo.src.store.model.GetStoreMainRes
 com/example/demo/src/user/model/GetUserFollowReq.java
  com.example.demo.src.user.model.GetUserFollowReq
 com/example/demo/src/news/NewsController.java
@@ -26,12 +26,12 @@ com/example/demo/src/store/model/GetStoreListByFoodReq.java
  com.example.demo.src.store.model.GetStoreListByFoodReq
 com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
-com/example/demo/src/store/model/GetStoreRes.java
- com.example.demo.src.store.model.GetStoreRes
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
-com/example/demo/src/review/model/GetReviewDetailRes.java
- com.example.demo.src.review.model.GetReviewDetailRes
+com/example/demo/src/store/model/GetStoreReviewRes.java
+ com.example.demo.src.store.model.GetStoreReviewRes
+com/example/demo/src/store/StoreProvider.java
+ com.example.demo.src.store.StoreProvider
+com/example/demo/src/store/StoreController.java
+ com.example.demo.src.store.StoreController
 com/example/demo/src/user/model/PostUserKakaoLoginReq.java
  com.example.demo.src.user.model.PostUserKakaoLoginReq
 com/example/demo/src/user/model/PatchUserLocationReq.java
@@ -44,8 +44,8 @@ com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
+com/example/demo/src/store/model/GetStoreRes.java
+ com.example.demo.src.store.model.GetStoreRes
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/review/model/GetCommentRes.java
@@ -92,8 +92,8 @@ com/example/demo/src/review/model/ReviewImg.java
  com.example.demo.src.review.model.ReviewImg
 com/example/demo/src/review/model/PostReviewImgReq.java
  com.example.demo.src.review.model.PostReviewImgReq
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
+com/example/demo/src/store/StoreDao.java
+ com.example.demo.src.store.StoreDao
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
 com/example/demo/src/review/model/PutCommentsReq.java
@@ -116,15 +116,15 @@ com/example/demo/DemoApplication.java
  com.example.demo.DemoApplication
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
-com/example/demo/src/store/model/GetStoreListRes.java
- com.example.demo.src.store.model.GetStoreListRes
-com/example/demo/src/store/model/GetStoreMainRes.java
- com.example.demo.src.store.model.GetStoreMainRes
-com/example/demo/src/store/StoreDao.java
- com.example.demo.src.store.StoreDao
-com/example/demo/src/store/StoreProvider.java
- com.example.demo.src.store.StoreProvider
-com/example/demo/src/store/StoreController.java
- com.example.demo.src.store.StoreController
-com/example/demo/src/store/StoreService.java
- com.example.demo.src.store.StoreService
+com/example/demo/src/review/model/GetReviewRes.java
+ com.example.demo.src.review.model.GetReviewRes
+com/example/demo/src/review/ReviewDao.java
+ com.example.demo.src.review.ReviewDao
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController
+com/example/demo/src/review/model/GetReviewDetailRes.java
+ com.example.demo.src.review.model.GetReviewDetailRes
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
