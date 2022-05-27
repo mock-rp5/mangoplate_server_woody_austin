@@ -120,4 +120,12 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkFollowExistToUnFollow(DeleteUserFollowReq deleteUserFollowReq)throws BaseException {
+        try{
+            return userDao.checkFollowExistToUnFollow(deleteUserFollowReq);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

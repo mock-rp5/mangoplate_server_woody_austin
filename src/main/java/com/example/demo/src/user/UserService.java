@@ -212,4 +212,17 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void userUnFollow(DeleteUserFollowReq deleteUserFollowReq) throws BaseException{
+        if (userProvider.checkFollowExistToUnFollow(deleteUserFollowReq)==0){
+            throw new BaseException(NON_EXIST_FOLLOW);
+        }
+        if(userProvider.checkUserExist(deleteUserFollowReq.getFollowedUserId())==0){
+            throw new BaseException(NON_EXIST_USER);
+        }try{
+            userDao.userUnFollow(deleteUserFollowReq);
+        }catch(Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
