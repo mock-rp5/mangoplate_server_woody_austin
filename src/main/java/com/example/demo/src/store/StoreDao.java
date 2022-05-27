@@ -86,12 +86,14 @@ public class StoreDao {
                 ),getStoreListParams);
     }
 
-    public GetStoreRes getStore(Long storeId){
-        String getStoreQuery = "SELECT DISTINCT S.*, COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount FROM Stores S\n" +
-                "LEFT JOIN Review R on S.id = R.storeId\n" +
-                "LEFT JOIN Wishes W ON S.id = W.storeId\n" +
-                "WHERE S.id = ?";
-        Long getStoreParam = storeId;
+    public GetStoreRes getStore(Long storeId, Long userId){
+        String getStoreQuery = "SELECT DISTINCT S.*,  COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount,\n" +
+                "                (select exists(select Wishes.id from Wishes where Wishes.userId=U.id && Wishes.storeId=S.id))'wishCheck',\n" +
+                "                (select COUNT(Visited.id) from Visited where Visited.userId = U.id && Visited.storeId = S.id)'visitedCount'\n" +
+                "                FROM Users U, Stores S LEFT JOIN Review R on S.id = R.storeId\n" +
+                "                LEFT JOIN Wishes W ON S.id = W.storeId\n" +
+                "                WHERE S.id = ? && U.id = ?";
+
         return this.jdbcTemplate.queryForObject(getStoreQuery,
                 (rs, rowNum) -> new GetStoreRes(
                         rs.getString("name"),
@@ -99,6 +101,8 @@ public class StoreDao {
                         rs.getLong("reviewCount"),
                         rs.getLong("wishCount"),
                         rs.getFloat("rating"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("visitedCount"),
                         rs.getString("address"),
                         rs.getDouble("latitude"),
                         rs.getDouble("longitude"),
@@ -112,7 +116,7 @@ public class StoreDao {
                         rs.getString("website"),
                         rs.getLong("creatorId"),
                         rs.getString("updatedAt")),
-                getStoreParam);
+                storeId, userId);
     }
 
     public void increaseViewCount(Long storeId){
@@ -285,7 +289,7 @@ public class StoreDao {
                 ),getStoreListParams);
     }
 
-    public List<GetStoreReviewRes> getStoreReviews(Long storeId, List<String> evaluation, int page) {
+    public List<GetStoreReviewRes> getStoreReviews(Long storeId, Long userId, List<String> evaluation, int page) {
         String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
         String getStoreReviewQuery = String.format("SELECT Review.id AS reviewId, Users.profileImgUrl, Users.id AS userId, Users.name AS userName, isHolic,\n" +
                 "(SELECT COUNT(R.id) from Review R where R.userId=Users.id) reviewCount,\n" +
@@ -294,7 +298,8 @@ public class StoreDao {
                 "FROM (SELECT CONCAT('\"imgUrl\":', '\"', ReviewImg.imgUrl, '\"') AS jsonitem from ReviewImg\n" +
                 "left join Review ImgByReview on ReviewImg.reviewId=ImgByReview.id where ImgByReview.id=Review.id) AS singlejson) AS alljsonas )imgUrlList,\n" +
                 "(select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
-                "(select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                "(select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
+                "(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "from Users, Review, Stores\n" +
                 "WHERE Review.userId=Users.id && Stores.id = Review.storeId && Stores.id = ? &&Review.evaluation IN (%s) limit ?,10",inSql);
         return this.jdbcTemplate.query(getStoreReviewQuery,
@@ -311,8 +316,9 @@ public class StoreDao {
                         rs.getString("updatedAt"),
                         rs.getString("imgUrlList"),
                         rs.getInt("reviewLikes"),
-                        rs.getInt("reviewComments")
-                ),storeId, (page-1)*10);
+                        rs.getInt("reviewComments"),
+                        rs.getInt("likeCheck")
+                ),userId, storeId, (page-1)*10);
     }
 }
 

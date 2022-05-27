@@ -26,11 +26,14 @@ public class ReviewDao {
                 checkReviewIdParams);
     }
 
-    public GetReviewRes getReview(Long reviewId) {
+    public GetReviewRes getReview(Long reviewId, Long userId) {
         String getReviewDetailQuery = "SELECT U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic, COUNT(DISTINCT R2.id) AS userReviewCount, COUNT(DISTINCT F.id) AS userFollowCount,\n" +
                 "       R.evaluation, S.id AS storeId, S.name AS storeName, R.review, R.updatedAt,\n" +
                 "       (SELECT COUNT(DISTINCT L.id) FROM ReviewLikes L, Review R WHERE L.reviewId = ?) AS likeCount,\n" +
-                "       (SELECT COUNT(DISTINCT C.id) FROM ReviewComments C, Review R WHERE C.reviewId = ?) AS commentCount\n" +
+                "       (SELECT COUNT(DISTINCT C.id) FROM ReviewComments C, Review R WHERE C.reviewId = ?) AS commentCount,\n" +
+                " (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && Wishes.storeId=R.storeId))'wishCheck',\n" +
+                " (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id and Visited.storeId=R.storeId))'visitedCheck'," +
+                "(select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and R.id=ReviewLikes.reviewId))'likeCheck'" +
                 "FROM Review R, Users U, Stores S, Review R2, Following F\n" +
                 "WHERE  R.id = ? && R.userId = U.id && R.storeId = S.id && R2.userId = U.id && F.follwedUserId = U.id";
         String getReviewImgQuery = "SELECT I.imgUrl\n" +
@@ -63,7 +66,10 @@ public class ReviewDao {
                                 rs.getString("review"),
                                 rs.getString("updatedAt"),
                                 rs.getInt("likeCount"),
-                                rs.getInt("commentCount")
+                                rs.getInt("commentCount"),
+                                rs.getInt("wishCheck"),
+                                rs.getInt("visitedCheck"),
+                                rs.getInt("likeCheck")
                         ), getReviewDetailParams),
                 reviewImgList = this.jdbcTemplate.query(getReviewImgQuery,
                         (rs,rowNum) -> new String(
