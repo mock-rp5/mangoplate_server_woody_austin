@@ -30,8 +30,7 @@ public class UserController {
     private final JwtService jwtService;
 
 
-
-    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
+    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService) {
         this.userProvider = userProvider;
         this.userService = userService;
         this.jwtService = jwtService;
@@ -43,21 +42,22 @@ public class UserController {
      * [GET] /users
      * 회원 번호 및 이메일 검색 조회 API
      * [GET] /users? Email=
-     * @return BaseResponse<List<GetUserRes>>
+     *
+     * @return BaseResponse<List < GetUserRes>>
      */
     //Query String
     @ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/app/users
     public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String Email) {
-        try{
-            if(Email == null){
+        try {
+            if (Email == null) {
                 List<GetUserRes> getUsersRes = userProvider.getUsers();
                 return new BaseResponse<>(getUsersRes);
             }
             // Get Users
             List<GetUserRes> getUsersRes = userProvider.getUsersByEmail(Email);
             return new BaseResponse<>(getUsersRes);
-        } catch(BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
@@ -65,6 +65,7 @@ public class UserController {
     /**
      * 회원가입 API
      * [POST] /users
+     *
      * @return BaseResponse<PostUserRes>
      */
     // Body
@@ -72,56 +73,58 @@ public class UserController {
     @PostMapping("")
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
 
-        if(postUserReq.getEmail() == null){
+        if (postUserReq.getEmail() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
 
         //null validation
-        if(postUserReq.getEmail() == null){
+        if (postUserReq.getEmail() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
-        if(postUserReq.getUserName() == null){
+        if (postUserReq.getUserName() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_NAME);
         }
-        if(postUserReq.getPassword() == null){
+        if (postUserReq.getPassword() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
-        if(postUserReq.getPhoneNumber() == null){
+        if (postUserReq.getPhoneNumber() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PHONENUMBER);
         }
 
         //이메일 정규표현
-        if(!isRegexEmail(postUserReq.getEmail())){
+        if (!isRegexEmail(postUserReq.getEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
-        try{
+        try {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
-        } catch(BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
     /**
      * 로그인 API
      * [POST] /users/login
+     *
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
     @PostMapping("/login")
-    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
-        if(postLoginReq.getEmail() == null) {
+    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
+        if (postLoginReq.getEmail() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
-        if(postLoginReq.getPassword() == null) {
+        if (postLoginReq.getPassword() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
-        if(!isRegexEmail(postLoginReq.getEmail())){
+        if (!isRegexEmail(postLoginReq.getEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
-        try{
+        try {
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
-        } catch (BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
@@ -130,6 +133,7 @@ public class UserController {
     /**
      * 카카오 로그인 API
      * [POST] /users/oauth/code?=
+     *
      * @return BaseResponse<PostUserKakaoRes>
      */
     @ResponseBody
@@ -163,15 +167,16 @@ public class UserController {
     /**
      * 유저 위치정보 업데이트 API
      * [PATCH] /users/location/:userId
+     *
      * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/location/{userId}")
     public BaseResponse<String> updateUserLocation(@PathVariable("userId") Long userId, @RequestBody PatchUserLocationReq patchUserLocationReq) {
-        if(-90 > patchUserLocationReq.getLatitude() || patchUserLocationReq.getLatitude() > 90) {
+        if (-90 > patchUserLocationReq.getLatitude() || patchUserLocationReq.getLatitude() > 90) {
             return new BaseResponse<>(WRONG_LATITUDE_VALUE);
         }
-        if(-180 > patchUserLocationReq.getLongitude() || patchUserLocationReq.getLongitude() > 180) {
+        if (-180 > patchUserLocationReq.getLongitude() || patchUserLocationReq.getLongitude() > 180) {
             return new BaseResponse<>(WRONG_LONGITUDE_VALUE);
         }
         try {
@@ -182,20 +187,21 @@ public class UserController {
             }
             userService.updateUserLocation(patchUserLocationReq, userId);
             String result = "성공적으로 업데이트 완료";
-                return new BaseResponse<>(result);
-            } catch (BaseException exception) {
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
-            }
         }
+    }
 
     /**
      * 팔로우 API
      * [POST] /follow/{userId}/{followedUserId}
+     *
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
     @PostMapping("/follow/{userId}/{followedUserId}")
-    public BaseResponse<String> createUserFollow(@PathVariable("userId")Long userId,@PathVariable("followedUserId")Long followedUserId) {
+    public BaseResponse<String> createUserFollow(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId) {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
@@ -210,14 +216,16 @@ public class UserController {
         }
 
     }
+
     /**
      * 언팔로우 API
      * [POST] /follow/{userId}/{followedUserId}
+     *
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
     @DeleteMapping("/follow/{userId}/{followedUserId}")
-    public BaseResponse<String> userUnFollow(@PathVariable("userId")Long userId,@PathVariable("followedUserId")Long followedUserId) {
+    public BaseResponse<String> userUnFollow(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId) {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
@@ -233,4 +241,50 @@ public class UserController {
 
     }
 
+    /**
+     * 팔로워 조회 API
+     * [GET] /follower/{userId}/{followedUserId}
+     *
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ResponseBody
+    @GetMapping("/follower/{userId}/{followedUserId}")
+    public BaseResponse<List<GetUserFollowerListRes>> getUserFollower(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId,
+                                                                      @RequestParam(defaultValue = "1") int page)  {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId,page);
+            List<GetUserFollowerListRes> getUserFollowerListRes = userProvider.getUserFollower(getUserFollowReq);
+            return new BaseResponse<>(getUserFollowerListRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
+
+    /**
+     * 팔로잉 조회 API
+     * [GET] /following/{userId}/{followedUserId}
+     *
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ResponseBody
+    @GetMapping("/following/{userId}/{followedUserId}")
+    public BaseResponse<List<GetUserFollowerListRes>> getUserFollowing(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId,
+                                                                       @RequestParam(defaultValue = "1") int page)
+    {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId,page);
+            List<GetUserFollowerListRes> getUserFollowerListRes = userProvider.getUserFollowing(getUserFollowReq);
+            return new BaseResponse<>(getUserFollowerListRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+}
