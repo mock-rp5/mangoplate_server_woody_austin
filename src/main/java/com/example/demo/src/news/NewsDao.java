@@ -24,7 +24,7 @@ public class NewsDao {
         String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
         char quotes='"';
         String getNewsQuery = String.format("select Review.id as 'reviewId',Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
-                "       (select count(follwedUserId) from Following)'followCount',evaluation,\n" +
+                "       (select count(follwedUserId) from Following where follwedUserId=Review.userId)'followCount',evaluation,\n" +
                 "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
                 "       case when YEAR(Review.createdAt)<YEAR(now())\n" +
                 "                    then concat(YEAR(Review.createdAt),'년 ',MONTH(Review.createdAt),'월 ',DAY(Review.createdAt),'일')\n" +
@@ -90,7 +90,7 @@ public class NewsDao {
     public List<GetNewsRes> getNewsByFollowing(GetNewsByFollowingReq getNewsByFollowingReq) {
         String inSql=String.join(",",getNewsByFollowingReq.getEvaluation().stream().map(evaluationFilter->"'"+evaluationFilter+"'").collect(Collectors.toList()));
         String getNewsQuery=String.format("select Review.id as 'reviewId' ,Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
-                "       (select count(follwedUserId) from Following)'followCount',evaluation,\n" +
+                "       (select count(follwedUserId) from Following where follwedUserId=Review.userId)'followCount',evaluation,\n" +
                 "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
                 "       case when YEAR(Review.createdAt)<YEAR(now())\n" +
                 "                    then concat(YEAR(Review.createdAt),'년 ',MONTH(Review.createdAt),'월 ',DAY(Review.createdAt),'일')\n" +

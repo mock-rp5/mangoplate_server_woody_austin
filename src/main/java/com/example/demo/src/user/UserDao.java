@@ -147,4 +147,22 @@ public class UserDao {
         String checkUserExistQuery="select exists (select id from Users where id = ?)";
         return this.jdbcTemplate.queryForObject(checkUserExistQuery,int.class,followedUserId);
     }
+
+    public int checkFollowExistToUnFollow(DeleteUserFollowReq deleteUserFollowReq) {
+        String checkReviewExistQuery="select exists (select id from Following where userId=? and follwedUserId=?)";
+        Object[] checkFollowExistParams = new Object[]{
+                deleteUserFollowReq.getUserId(),deleteUserFollowReq.getFollowedUserId()
+        };
+
+        return this.jdbcTemplate.queryForObject(checkReviewExistQuery,int.class,checkFollowExistParams);
+    }
+
+    public int userUnFollow(DeleteUserFollowReq deleteUserFollowReq) {
+        String deleteUserFollowReqQuery="delete from Following where userId=? and follwedUserId=?";
+        Object[] deleteUserFollowReqParams = new Object[]{
+                deleteUserFollowReq.getUserId(),deleteUserFollowReq.getFollowedUserId()
+        };
+
+        return this.jdbcTemplate.update(deleteUserFollowReqQuery,deleteUserFollowReqParams);
+    }
 }

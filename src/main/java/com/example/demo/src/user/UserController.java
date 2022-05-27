@@ -1,5 +1,6 @@
 package com.example.demo.src.user;
 
+import com.example.demo.src.user.model.DeleteUserFollowReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
@@ -10,11 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import java.io.IOException;
-
-import java.sql.SQLException;
 import java.util.List;
 
 
@@ -208,6 +204,28 @@ public class UserController {
             GetUserFollowReq getUserFollowReq = new GetUserFollowReq(userId, followedUserId);
             userService.createUserFollow(getUserFollowReq);
             String result = "팔로우 성공";
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+    /**
+     * 언팔로우 API
+     * [POST] /follow/{userId}/{followedUserId}
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ResponseBody
+    @DeleteMapping("/follow/{userId}/{followedUserId}")
+    public BaseResponse<String> userUnFollow(@PathVariable("userId")Long userId,@PathVariable("followedUserId")Long followedUserId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            DeleteUserFollowReq deleteUserFollowReq = new DeleteUserFollowReq(userId, followedUserId);
+            userService.userUnFollow(deleteUserFollowReq);
+            String result = "팔로우 취소 성공";
             return new BaseResponse<>(result);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
