@@ -151,4 +151,16 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetUserProfileRes> getUserProfile(GetUserProfileReq getUserProfileReq) throws BaseException{
+        if(checkUserExist(getUserProfileReq.getProfileUserId())==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetUserProfileRes> getUserProfileRes=userDao.getUserProfile(getUserProfileReq);
+            return getUserProfileRes;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

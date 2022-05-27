@@ -214,4 +214,68 @@ public class UserDao {
         );
 
     }
+
+    public List<GetUserProfileRes> getUserProfile(GetUserProfileReq getUserProfileReq) {
+        String getUserProfileQuery="select Users.id as 'userId',profileImgUrl,count(Following.id)'followerCount',\n" +
+                "       (select count(Following.id) from Following where Following.userId=Users.id)as'followingCount',\n" +
+                "       (select exists(select Following.id from Following where Following.userId=? and Following.follwedUserId=Users.id))as'followCheck',name,isHolic,\n" +
+                "       (select count(Review.id)from Review where Review.userId=Users.id)as 'reviewCount',\n" +
+                "       (select count(Visited.id) from Visited where Visited.userId=Users.id)as 'visitedCount',\n" +
+                "       (select count(ReviewImg.id)from ReviewImg join Review on Review.id=reviewId where Review.userId=Users.id) as 'imgCount',\n" +
+                "       (select count(Wishes.id) from Wishes where Wishes.userId=Users.id) as 'wishesCount',\n" +
+                "       (select count(Mylists.id) from Mylists where Mylists.userId=Users.id) as 'myListCount'\n" +
+                "from Users join Following on Following.follwedUserId=Users.id where Users.id=?";
+        Object[] getUserProfileParams = new Object[]{
+                getUserProfileReq.getUserId(),getUserProfileReq.getProfileUserId()
+        };
+
+        return this.jdbcTemplate.query(getUserProfileQuery,
+                (rs,rowNum) ->new GetUserProfileRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getInt("followerCount"),
+                        rs.getInt("followingCount"),
+                        rs.getInt("followCheck"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("visitedCount"),
+                        rs.getInt("imgCount"),
+                        rs.getInt("wishesCount"),
+                        rs.getInt("myListCount")
+                ),getUserProfileParams);
+    }
+
+    public int patchUserPhoneNumber(Long userId, PatchUserPhoneNumberReq patchUserPhoneNumberReq) {
+        String patchUserPhoneNumberQuery="update Users set phoneNumber=? where id=?";
+        Object[] params = new Object[]{
+            patchUserPhoneNumberReq.getPhoneNumber(),userId
+        };
+        return this.jdbcTemplate.update(patchUserPhoneNumberQuery,params);
+    }
+
+    public int patchUserEmail(Long userId, PatchUserEmailReq patchUserEmailReq) {
+        String patchUserEmailQuery="update Users set email=? where id=?";
+        Object[] params = new Object[]{
+            patchUserEmailReq.getEmail(),userId
+        };
+        return this.jdbcTemplate.update(patchUserEmailQuery,params);
+    }
+
+    public int patchUserName(Long userId, PatchUserNameReq patchUserNameReq) {
+        String patchUserNameQuery="update Users set name=? where id=?";
+        Object[] params = new Object[]{
+                patchUserNameReq.getName(),userId
+
+        };
+        return this.jdbcTemplate.update(patchUserNameQuery,params);
+    }
+
+    public int patchUserProfileImg(Long userId, PatchUserProfileImgReq patchUserProfileImgReq) {
+        String patchUserProfileImgQuery="update Users set profileImgUrl=? where id=?";
+        Object[] params = new Object[]{
+           patchUserProfileImgReq.getProfileImgUrl(),userId
+        };
+        return this.jdbcTemplate.update(patchUserProfileImgQuery,params);
+    }
 }
