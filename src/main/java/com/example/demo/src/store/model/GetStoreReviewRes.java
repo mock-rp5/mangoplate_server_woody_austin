@@ -21,4 +21,5 @@ public class GetStoreReviewRes {
     private String imgUrlList;
     private int reviewLikes;
     private int reviewComments;
+    private int likeCheck;
 }

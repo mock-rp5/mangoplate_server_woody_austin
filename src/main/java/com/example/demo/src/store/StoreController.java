@@ -94,14 +94,18 @@ public class StoreController {
 
     /**
      * 특정 가게 조회 API
-     * [GET] /stores/:storeId
+     * [GET] /stores/:storeId/:userId
      * * @return BaseResponse<GetStoreR es>
      */
     @ResponseBody
-    @GetMapping("/detail/{storeId}")
-    public BaseResponse<GetStoreRes> getStore(@PathVariable("storeId") Long storeId) {
+    @GetMapping("/detail/{storeId}/{userId}")
+    public BaseResponse<GetStoreRes> getStore(@PathVariable("storeId") Long storeId, @PathVariable("userId") Long userId) {
         try{
-            GetStoreRes getStoreRes = storeProvider.getStore(storeId);
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetStoreRes getStoreRes = storeProvider.getStore(storeId, userId);
             return new BaseResponse<>(getStoreRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -199,13 +203,17 @@ public class StoreController {
 
     /**
      * 가게별 리뷰 조회 API
-     * [GET] /stores/reviews/:storeId
+     * [GET] /stores/reviews/:storeId/:userId
      * * @return BaseResponse<GetStoreReviewRes>
      */
     @ResponseBody
-    @GetMapping("/reviews/{storeId}")
-    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @RequestParam(defaultValue = "1") List<Integer> filter, @RequestParam int page){
+    @GetMapping("/reviews/{storeId}/{userId}")
+    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @PathVariable("userId") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter, @RequestParam int page){
         try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<String> evaluation = new ArrayList<>(filter.size());
             for (int i = 0; i < filter.size(); i++) {
                 if (filter.get(i) == 1) {
@@ -218,7 +226,7 @@ public class StoreController {
                     return new BaseResponse<>(WRONG_FILTER_VALUE);
                 }
             }
-            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,evaluation,page);
+            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,userId, evaluation,page);
             return new BaseResponse<>(getStoreReviewRes);
         }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());

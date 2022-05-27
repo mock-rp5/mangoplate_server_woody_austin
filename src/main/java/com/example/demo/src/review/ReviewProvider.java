@@ -29,12 +29,12 @@ public class ReviewProvider {
         this.jwtService = jwtService;
     }
 
-    public GetReviewRes getReview(Long reviewId) throws BaseException {
+    public GetReviewRes getReview(Long reviewId, Long userId) throws BaseException {
         if(reviewDao.checkReviewId(reviewId) == 0){
             throw new BaseException(NON_EXIST_REVIEW);
         }
         try {
-            GetReviewRes getReviewRes = reviewDao.getReview(reviewId);
+            GetReviewRes getReviewRes = reviewDao.getReview(reviewId, userId);
             return getReviewRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

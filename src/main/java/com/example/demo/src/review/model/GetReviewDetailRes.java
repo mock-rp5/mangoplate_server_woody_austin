@@ -21,4 +21,7 @@ public class GetReviewDetailRes {
     private String updatedAt;
     private int likeCount;
     private int commentCount;
+    private int wishCheck;
+    private int visitedCheck;
+    private int likeCheck;
 }
