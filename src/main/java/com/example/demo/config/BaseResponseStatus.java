@@ -73,7 +73,7 @@ public enum BaseResponseStatus {
     NON_EXISTS_WISH(false,3072,"가고싶다 한 적 없는 가게입니다."),
     EXISTS_VISITED(false,3073,"이미 방문한 가게입니다."),
     DELETE_WISH_FAIL(false,3074,"가고싶다 삭제에 실패하였습니다."),
-    ALREADY_VISITED_TODAY(false,3075,"가봤어요는 가게당 하루에 한번만 생성 가능합니다."),
+    ALREADY_VISITED_TODAY(false,3075,"가봤어요는 가게당 24시간에 한번만 생성 가능합니다."),
     NON_EXIST_VISITED(false, 3076, "존재하지 않는 가봤어요 아이디 입니다."),
     WRONG_USERID(false, 3077, "해당 가봤어요를 생성한 유저가 아닙니다."),
 

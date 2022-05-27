@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class PatchVisitedReq {
-    private String isPublic;
-    private String description;
+public class GetVisitedRes {
+    GetVisitedDetailRes getVisitedDetailRes;
+    List<GetVisitedCommentsRes> getVisitedCommentsResList;
 }

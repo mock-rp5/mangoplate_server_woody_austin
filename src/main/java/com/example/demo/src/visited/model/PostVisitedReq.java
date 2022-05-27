@@ -11,4 +11,5 @@ public class PostVisitedReq {
     private Long userId;
     private Long storeId;
     private String isPublic;
+    private String description;
 }

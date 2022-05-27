@@ -8,6 +8,7 @@ import com.example.demo.src.review.model.PostReviewImgReq;
 import com.example.demo.src.review.model.PostReviewListReq;
 import com.example.demo.src.review.model.PostReviewReq;
 import com.example.demo.src.review.model.ReviewImg;
+import com.example.demo.src.visited.model.GetVisitedRes;
 import com.example.demo.src.visited.model.PatchVisitedReq;
 import com.example.demo.src.visited.model.PostVisitedReq;
 import com.example.demo.utils.JwtService;
@@ -85,15 +86,35 @@ public class VisitedController {
      */
     @ResponseBody
     @PatchMapping("/{visitedId}/{userId}")
-    public BaseResponse<String> modifyVisited(@PathVariable("visitedId") Long visitedId, @PathVariable("userId") Long userId, @RequestParam String isPublic) {
+    public BaseResponse<String> modifyVisited(@PathVariable("visitedId") Long visitedId, @PathVariable("userId") Long userId, @RequestBody PatchVisitedReq patchVisitedReq) {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            visitedService.modifyVisited(visitedId, userId, isPublic);
+            visitedService.modifyVisited(visitedId, userId, patchVisitedReq);
             String result = "가봤어요 수정 성공";
             return new BaseResponse<>(result);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 가봤어요 상세 조회 API
+     * [GET] /visited/:visitedId/:userId
+     * * @return BaseResponse<GetVisitedRes>
+     */
+    @ResponseBody
+    @GetMapping("/{visitedId}/{userId}")
+    public BaseResponse<GetVisitedRes> getVisited(@PathVariable("visitedId") Long visitedId, @PathVariable("userId") Long userId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetVisitedRes getVisitedRes = visitedProvider.getVisited(visitedId, userId);
+            return new BaseResponse<>(getVisitedRes);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
