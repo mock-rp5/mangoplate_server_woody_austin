@@ -58,4 +58,32 @@ public class VisitedService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void deleteVisited(Long visitedId, Long userId) throws BaseException {
+        if(visitedDao.checkVisitedId(visitedId) == 0){
+            throw new BaseException(NON_EXIST_VISITED);
+        }
+        if(visitedDao.checkCreateUser(visitedId) != userId){
+            throw new BaseException(WRONG_USERID);
+        }
+        try {
+            visitedDao.deleteVisited(visitedId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void modifyVisited(Long visitedId, Long userId, String isPublic) throws BaseException {
+        if(visitedDao.checkVisitedId(visitedId) == 0){
+            throw new BaseException(NON_EXIST_VISITED);
+        }
+        if(visitedDao.checkCreateUser(visitedId) != userId){
+            throw new BaseException(WRONG_USERID);
+        }
+        try {
+            visitedDao.modifyVisited(visitedId, isPublic);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

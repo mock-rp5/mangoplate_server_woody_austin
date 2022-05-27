@@ -14,8 +14,8 @@ com/example/demo/src/review/ReviewDao.java
  com.example.demo.src.review.ReviewDao
 com/example/demo/src/user/model/GetUserFollowReq.java
  com.example.demo.src.user.model.GetUserFollowReq
-com/example/demo/src/review/model/PutCommentsReq.java
- com.example.demo.src.review.model.PutCommentsReq
+com/example/demo/src/user/model/PostUserKakaoReq.java
+ com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
 com/example/demo/src/user/model/GetUserFollowListReq.java
@@ -32,8 +32,8 @@ com/example/demo/src/store/model/GetStoreRes.java
  com.example.demo.src.store.model.GetStoreRes
 com/example/demo/src/store/model/GetMenuDetailRes.java
  com.example.demo.src.store.model.GetMenuDetailRes
-com/example/demo/src/user/model/PostUserKakaoReq.java
- com.example.demo.src.user.model.PostUserKakaoReq
+com/example/demo/src/review/model/PutCommentsReq.java
+ com.example.demo.src.review.model.PutCommentsReq
 com/example/demo/src/review/model/GetReviewDetailRes.java
  com.example.demo.src.review.model.GetReviewDetailRes
 com/example/demo/src/user/model/PostUserKakaoLoginReq.java
@@ -138,7 +138,9 @@ com/example/demo/src/visited/VisitedDao.java
  com.example.demo.src.visited.VisitedDao
 com/example/demo/src/visited/VisitedProvider.java
  com.example.demo.src.visited.VisitedProvider
-com/example/demo/src/visited/VisitedController.java
- com.example.demo.src.visited.VisitedController
 com/example/demo/src/visited/VisitedService.java
  com.example.demo.src.visited.VisitedService
+com/example/demo/src/visited/VisitedController.java
+ com.example.demo.src.visited.VisitedController
+com/example/demo/src/visited/model/PatchVisitedReq.java
+ com.example.demo.src.visited.model.PatchVisitedReq

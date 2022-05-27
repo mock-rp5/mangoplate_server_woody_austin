@@ -30,4 +30,24 @@ public class VisitedDao {
         String checkDateQuery = "select exists(select Visited.id from Visited where storeId=? && userId=? && DATE(createdAt) = ?)";
         return this.jdbcTemplate.queryForObject(checkDateQuery, int.class, storeId, userId, LocalDate.now());
     }
+
+    public int checkVisitedId(Long visitedId) {
+        String checkVisitedQuery="select exists(select Visited.id from Visited where id = ?)";
+        return this.jdbcTemplate.queryForObject(checkVisitedQuery,int.class,visitedId);
+    }
+
+    public int checkCreateUser(Long visitedId) {
+        String checkVisitedQuery="select userId from Visited where id = ? ";
+        return this.jdbcTemplate.queryForObject(checkVisitedQuery,int.class,visitedId);
+    }
+
+    public void deleteVisited(Long visitedId) {
+        String deleteVisitedQuery = "delete from Visited where id = ?";
+        this.jdbcTemplate.update(deleteVisitedQuery,visitedId);
+    }
+
+    public void modifyVisited(Long visitedId, String isPublic) {
+        String modifyVisitedQuery = "update Visited set isPublic = ? where id = ?";
+        this.jdbcTemplate.update(modifyVisitedQuery,isPublic,visitedId);
+    }
 }
