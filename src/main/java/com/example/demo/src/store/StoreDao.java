@@ -2,6 +2,7 @@ package com.example.demo.src.store;
 
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.news.model.GetImgRes;
 import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 
@@ -18,6 +19,8 @@ import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 @Repository
 public class StoreDao {
     private JdbcTemplate jdbcTemplate;
+
+    List<GetStoreReviewImgRes> imgList;
 
     @Autowired
     public void setDataSource(DataSource dataSource){
@@ -294,14 +297,14 @@ public class StoreDao {
         String getStoreReviewQuery = String.format("SELECT Review.id AS reviewId, Users.profileImgUrl, Users.id AS userId, Users.name AS userName, isHolic,\n" +
                 "(SELECT COUNT(R.id) from Review R where R.userId=Users.id) reviewCount,\n" +
                 "(SELECT COUNT(F.id) FROM Following F WHERE F.follwedUserId = Review.userId) followCount, evaluation, review, Review.updatedAt,\n" +
-                "(SELECT CONCAT('[', jsonarray, ']')FROM (SELECT GROUP_CONCAT('{', jsonitem, '}' SEPARATOR ',') AS jsonarray\n" +
-                "FROM (SELECT CONCAT('\"imgUrl\":', '\"', ReviewImg.imgUrl, '\"') AS jsonitem from ReviewImg\n" +
-                "left join Review ImgByReview on ReviewImg.reviewId=ImgByReview.id where ImgByReview.id=Review.id) AS singlejson) AS alljsonas )imgUrlList,\n" +
                 "(select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
                 "(select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
                 "(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "from Users, Review, Stores\n" +
                 "WHERE Review.userId=Users.id && Stores.id = Review.storeId && Stores.id = ? &&Review.evaluation IN (%s) limit ?,10",inSql);
+        String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
+                "    join Review on Review.storeId=Stores.id\n" +
+                "    left join ReviewImg on ReviewImg.reviewId=Review.id where Review.id=? order by Review.createdAt ";
         return this.jdbcTemplate.query(getStoreReviewQuery,
                 (rs, rowNum) -> new GetStoreReviewRes(
                         rs.getLong("reviewId"),
@@ -314,10 +317,14 @@ public class StoreDao {
                         rs.getString("evaluation"),
                         rs.getString("review"),
                         rs.getString("updatedAt"),
-                        rs.getString("imgUrlList"),
                         rs.getInt("reviewLikes"),
                         rs.getInt("reviewComments"),
-                        rs.getInt("likeCheck")
+                        rs.getInt("likeCheck"),
+                        imgList=this.jdbcTemplate.query(getImgQuery,
+                                (rk,rownum)->new GetStoreReviewImgRes(
+                                        rk.getLong("reviewId"),
+                                        rk.getString("imgUrl")
+                                ),rs.getLong("reviewId"))
                 ),userId, storeId, (page-1)*10);
     }
 }

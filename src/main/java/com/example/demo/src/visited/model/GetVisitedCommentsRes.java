@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetVisitedCommentsRes {
+    private Long commentId;
     private Long userId;
     private String profileImgUrl;
     private String userName;

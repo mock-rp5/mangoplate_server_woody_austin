@@ -4,12 +4,10 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.review.ReviewProvider;
 import com.example.demo.src.review.ReviewService;
-import com.example.demo.src.review.model.PostReviewImgReq;
-import com.example.demo.src.review.model.PostReviewListReq;
-import com.example.demo.src.review.model.PostReviewReq;
-import com.example.demo.src.review.model.ReviewImg;
+import com.example.demo.src.review.model.*;
 import com.example.demo.src.visited.model.GetVisitedRes;
 import com.example.demo.src.visited.model.PatchVisitedReq;
+import com.example.demo.src.visited.model.PostVisitedCommentsReq;
 import com.example.demo.src.visited.model.PostVisitedReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -116,6 +114,94 @@ public class VisitedController {
             GetVisitedRes getVisitedRes = visitedProvider.getVisited(visitedId, userId);
             return new BaseResponse<>(getVisitedRes);
         } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 가봤어요 좋아요 생성 API
+     * [POST] /visited/like/:visitedId/:userId
+     * * @return BaseResponse<String>
+     */
+
+    @ResponseBody
+    @PostMapping("/likes/{visitedId}/{userId}")
+    public BaseResponse<String> createVisitedLike(@PathVariable("visitedId") Long visitedId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="좋아요 성공";
+            visitedService.createVisitedLike(visitedId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+    /**
+     * 가봤어요 좋아요 취소 API
+     * [DELETE] /visited/like/:visitedId/:userId
+     * * @return BaseResponse<String>
+     */
+
+    @ResponseBody
+    @DeleteMapping("/likes/{visitedId}/{userId}")
+    public BaseResponse<String> deleteVisitedLike(@PathVariable("visitedId") Long visitedId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="좋아요 취소 성공";
+            visitedService.deleteVisitedLike(visitedId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+    /**
+     * 가봤어요 댓글 생성 API
+     * [POST] /comments
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/comments")
+    public BaseResponse<String> createVisitedComment(@RequestBody PostVisitedCommentsReq postVisitedCommentsReq){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (postVisitedCommentsReq.getUserId() != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가봤어요 댓글 달기 성공";
+            visitedService.createVisitedComment(postVisitedCommentsReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 가봤어요 댓글 삭제 API
+     * [DELETE] /comments/:commentId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/comments/{commentId}/{userId}")
+    public BaseResponse<String> deleteVisitedComment(@PathVariable ("commentId") Long commentId, @PathVariable ("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가봤어요 댓글 삭제 성공";
+            visitedService.deleteVisitedComment(commentId, userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }

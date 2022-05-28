@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetVisitedDetailRes {
+    private Long visitedId;
     private Long userId;
     private String profileImgUrl;
     private String userName;
