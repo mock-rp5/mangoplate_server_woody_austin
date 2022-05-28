@@ -60,8 +60,8 @@ public class UserProvider {
     }
 
     public PostLoginRes logInKakao(String k_email) throws BaseException{
-        if (userDao.checkEmail(k_email) == 1) {
-            Long userIdx = userDao.getIdByEmail(k_email);
+        if (userDao.checkKakaoEmail(k_email) == 1) {
+            Long userIdx = userDao.getIdByKakaoEmail(k_email);
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx, jwt);
         }
@@ -163,4 +163,42 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetUserNameRes> getUserName(Long userId) throws BaseException {
+        if(checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetUserNameRes> getUserNameRes=userDao.getUserName(userId);
+            return getUserNameRes;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserEmailRes> getUserEmail(Long userId) throws BaseException {
+        if(checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetUserEmailRes> getUserEmailRes=userDao.getUserEmail(userId);
+            return getUserEmailRes;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    public List<GetMyProfileRes> getMyProfile(Long userId) throws BaseException{
+        if(checkUserExist(userId)==0){
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try{
+            List<GetMyProfileRes> getMyProfileRes=userDao.getMyProfile(userId);
+            return getMyProfileRes;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
+

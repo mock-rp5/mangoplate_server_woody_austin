@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.SQLException;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -67,10 +66,10 @@ public class UserService {
         }
     }
 
-    public PostLoginRes createKakaoUser(PostUserKakaoReq postUserKakaoReq) {
+    public Long createKakaoUser(PostUserKakaoReq postUserKakaoReq) {
         Long userIdx=userDao.createUserByKakao(postUserKakaoReq);
         String jwt=jwtService.createJwt(userIdx);
-        return null;
+        return userIdx;
     }
 
     public void updateUserLocation(PatchUserLocationReq patchUserLocationReq, Long userId) throws BaseException {
@@ -141,9 +140,9 @@ public class UserService {
     }
 
 
-    @Transactional(rollbackFor= SQLException.class)
-    public int createOauthUser(PostUserKakaoLoginReq postUserKakaoLoginReq) {
-        return userDao.postUserKakao(postUserKakaoLoginReq);
+    @Transactional(rollbackFor= BaseException.class)
+    public int createOauthUser(PostUserKakaoLoginReq postUserKakaoLoginReq,Long userId) {
+        return userDao.postUserKakao(postUserKakaoLoginReq,userId);
 
     }
     public PostUserKakaoLoginReq getKakaoUser(String token) throws BaseException {
@@ -275,4 +274,6 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 }
