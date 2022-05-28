@@ -5,6 +5,7 @@ import com.example.demo.src.review.ReviewDao;
 import com.example.demo.src.review.ReviewProvider;
 import com.example.demo.src.review.model.PostReviewListReq;
 import com.example.demo.src.store.StoreDao;
+import com.example.demo.src.visited.model.PatchVisitedReq;
 import com.example.demo.src.visited.model.PostVisitedReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class VisitedService {
         }
     }
 
-    public void modifyVisited(Long visitedId, Long userId, String isPublic) throws BaseException {
+    public void modifyVisited(Long visitedId, Long userId, PatchVisitedReq patchVisitedReq) throws BaseException {
         if(visitedDao.checkVisitedId(visitedId) == 0){
             throw new BaseException(NON_EXIST_VISITED);
         }
@@ -81,7 +82,7 @@ public class VisitedService {
             throw new BaseException(WRONG_USERID);
         }
         try {
-            visitedDao.modifyVisited(visitedId, isPublic);
+            visitedDao.modifyVisited(visitedId, patchVisitedReq);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -31,8 +31,8 @@ public class ReviewDao {
                 "       R.evaluation, S.id AS storeId, S.name AS storeName, R.review, R.updatedAt,\n" +
                 "       (SELECT COUNT(DISTINCT L.id) FROM ReviewLikes L, Review R WHERE L.reviewId = ?) AS likeCount,\n" +
                 "       (SELECT COUNT(DISTINCT C.id) FROM ReviewComments C, Review R WHERE C.reviewId = ?) AS commentCount,\n" +
-                " (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && Wishes.storeId=R.storeId))'wishCheck',\n" +
-                " (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id and Visited.storeId=R.storeId))'visitedCheck'," +
+                " (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && U2.id = ? && Wishes.storeId=R.storeId))'wishCheck',\n" +
+                " (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id && U2.id = ? && Visited.storeId=R.storeId))'visitedCheck'," +
                 "(select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and R.id=ReviewLikes.reviewId))'likeCheck'" +
                 "FROM Review R, Users U, Stores S, Review R2, Following F\n" +
                 "WHERE  R.id = ? && R.userId = U.id && R.storeId = S.id && R2.userId = U.id && F.follwedUserId = U.id";
@@ -44,7 +44,7 @@ public class ReviewDao {
                 "FROM Users U, ReviewComments C\n" +
                 "LEFT JOIN Users U2 ON U2.id = C.tagUserId\n" +
                 "WHERE C.userId = U.id && C.reviewId = ?";
-        Object[] getReviewDetailParams=new Object[]{reviewId, reviewId, reviewId};
+        Object[] getReviewDetailParams=new Object[]{reviewId, reviewId, userId, userId, reviewId};
         Long param = reviewId;
 
         GetReviewDetailRes getReviewDetailRes;
