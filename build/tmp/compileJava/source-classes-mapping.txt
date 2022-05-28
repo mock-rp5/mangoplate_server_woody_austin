@@ -12,16 +12,16 @@ com/example/demo/src/review/ReviewDao.java
  com.example.demo.src.review.ReviewDao
 com/example/demo/src/store/model/GetStoreReviewRes.java
  com.example.demo.src.store.model.GetStoreReviewRes
-com/example/demo/src/news/NewsController.java
- com.example.demo.src.news.NewsController
+com/example/demo/src/user/model/PostUserKakaoReq.java
+ com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/src/user/model/GetUserFollowReq.java
  com.example.demo.src.user.model.GetUserFollowReq
 com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
-com/example/demo/src/news/NewsProvider.java
- com.example.demo.src.news.NewsProvider
-com/example/demo/src/news/NewsDao.java
- com.example.demo.src.news.NewsDao
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
+com/example/demo/src/review/model/GetReviewLikeUserRes.java
+ com.example.demo.src.review.model.GetReviewLikeUserRes
 com/example/demo/src/store/model/GetStoreListByFoodReq.java
  com.example.demo.src.store.model.GetStoreListByFoodReq
 com/example/demo/config/BaseResponseStatus.java
@@ -66,8 +66,8 @@ com/example/demo/src/visited/VisitedDao.java
  com.example.demo.src.visited.VisitedDao
 com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
-com/example/demo/src/user/model/PostUserKakaoReq.java
- com.example.demo.src.user.model.PostUserKakaoReq
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
 com/example/demo/src/review/model/GetCommentRes.java
  com.example.demo.src.review.model.GetCommentRes
 com/example/demo/config/BaseException.java
@@ -100,8 +100,8 @@ com/example/demo/src/user/model/PostLoginRes.java
  com.example.demo.src.user.model.PostLoginRes
 com/example/demo/src/user/model/GetUserFollowerListRes.java
  com.example.demo.src.user.model.GetUserFollowerListRes
-com/example/demo/src/news/model/GetNewsDetailRes.java
- com.example.demo.src.news.model.GetNewsDetailRes
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
 com/example/demo/src/user/model/PatchUserReq.java
  com.example.demo.src.user.model.PatchUserReq
 com/example/demo/src/WebSecurityConfig.java
@@ -110,8 +110,10 @@ com/example/demo/src/user/model/GetUserEmailRes.java
  com.example.demo.src.user.model.GetUserEmailRes
 com/example/demo/src/test/TestController.java
  com.example.demo.src.test.TestController
-com/example/demo/src/news/model/GetNewsRes.java
- com.example.demo.src.news.model.GetNewsRes
+com/example/demo/src/visited/model/GetVisitedDetailRes.java
+ com.example.demo.src.visited.model.GetVisitedDetailRes
+com/example/demo/src/news/model/GetImgRes.java
+ com.example.demo.src.news.model.GetImgRes
 com/example/demo/src/news/NewsService.java
  com.example.demo.src.news.NewsService
 com/example/demo/src/review/model/GetReviewStoreRes.java
@@ -120,22 +122,26 @@ com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
 com/example/demo/src/review/model/ReviewImg.java
  com.example.demo.src.review.model.ReviewImg
+com/example/demo/src/visited/model/GetVisitedRes.java
+ com.example.demo.src.visited.model.GetVisitedRes
 com/example/demo/src/review/model/PostReviewImgReq.java
  com.example.demo.src.review.model.PostReviewImgReq
 com/example/demo/src/review/ReviewProvider.java
  com.example.demo.src.review.ReviewProvider
 com/example/demo/src/user/model/PatchUserProfileImgReq.java
  com.example.demo.src.user.model.PatchUserProfileImgReq
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
+com/example/demo/src/user/UserController.java
+ com.example.demo.src.user.UserController
+com/example/demo/src/visited/model/GetVisitedCommentsRes.java
+ com.example.demo.src.visited.model.GetVisitedCommentsRes
 com/example/demo/src/review/model/PutCommentsReq.java
  com.example.demo.src.review.model.PutCommentsReq
 com/example/demo/src/store/StoreService.java
  com.example.demo.src.store.StoreService
 com/example/demo/src/store/model/GetMenuDetailRes.java
  com.example.demo.src.store.model.GetMenuDetailRes
-com/example/demo/src/news/model/GetNewsImgRes.java
- com.example.demo.src.news.model.GetNewsImgRes
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
 com/example/demo/src/review/model/GetReviewLikeReq.java
  com.example.demo.src.review.model.GetReviewLikeReq
 com/example/demo/src/user/model/User.java
@@ -152,13 +158,15 @@ com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
 com/example/demo/src/store/model/GetStoreListReq.java
  com.example.demo.src.store.model.GetStoreListReq
-com/example/demo/src/review/model/GetReviewLikeUserRes.java
- com.example.demo.src.review.model.GetReviewLikeUserRes
-com/example/demo/src/user/UserDao.java
- com.example.demo.src.user.UserDao
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
-com/example/demo/src/user/UserController.java
- com.example.demo.src.user.UserController
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
+com/example/demo/src/news/model/GetNewsDetailRes.java
+ com.example.demo.src.news.model.GetNewsDetailRes
+com/example/demo/src/news/model/GetNewsImgRes.java
+ com.example.demo.src.news.model.GetNewsImgRes
+com/example/demo/src/news/model/GetNewsRes.java
+ com.example.demo.src.news.model.GetNewsRes
+com/example/demo/src/news/NewsDao.java
+ com.example.demo.src.news.NewsDao
+com/example/demo/src/news/NewsController.java
+ com.example.demo.src.news.NewsController
+com/example/demo/src/news/NewsProvider.java
+ com.example.demo.src.news.NewsProvider
