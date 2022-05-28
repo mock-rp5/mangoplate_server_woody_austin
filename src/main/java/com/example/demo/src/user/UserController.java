@@ -149,12 +149,13 @@ public class UserController {
             //카카오 DB 저장 후 postUserKakaoReq 연동
             //만약 유저 정보가 없으면 카카오 db 저장 후 유저 정보에 저장한다.
             if (userProvider.getKakaoLogin(postUserKakaoLoginReq.getKakaoEmail()) == 0) {
-                userService.createOauthUser(postUserKakaoLoginReq);
-                postLoginRes = userService.createKakaoUser(postUserKakaoReq);
-            }
-            //만약 유저 정보가 User 테이블에 있으면 로그인 후 jwt access_Token 발급
+                Long userIdx = userService.createKakaoUser(postUserKakaoReq);
+                userService.createOauthUser(postUserKakaoLoginReq,userIdx);
 
-            if (userProvider.checkEmail(postUserKakaoLoginReq.getKakaoEmail()) == 1) {
+            }
+            //만약 유저 정보가 카카오 테이블에 있으면 로그인 후 jwt access_Token 발급
+
+            if (userProvider.getKakaoLogin(postUserKakaoLoginReq.getKakaoEmail()) == 1) {
                 postLoginRes = userProvider.logInKakao(postUserKakaoLoginReq.getKakaoEmail());
 
             }
@@ -392,6 +393,69 @@ public class UserController {
             userService.patchUserPhoneNumber(userId,patchUserPhoneNumberReq);
             String result="수정 성공";
             return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 정보 수정을 위한 GET API
+     * [GET] /my_profile/{userId}
+     *
+     * @return BaseResponse<GetUserNameRes>
+     */
+    @ResponseBody
+    @GetMapping("/my_profile/{userId}")
+    public BaseResponse<List<GetMyProfileRes>> getUserMyProfile(@PathVariable("userId")Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetMyProfileRes> getMyProfileRes=userProvider.getMyProfile(userId);
+            return new BaseResponse<>(getMyProfileRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 유저 이름 수정을 위한 GET API
+     * [GET] /name/{userId}
+     *
+     * @return BaseResponse<GetUserNameRes>
+     */
+    @ResponseBody
+    @GetMapping("/name/{userId}")
+    public BaseResponse<List<GetUserNameRes>> getUserName(@PathVariable("userId")Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetUserNameRes> getUserNameRes=userProvider.getUserName(userId);
+            return new BaseResponse<>(getUserNameRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    /**
+     * 유저 이메일수정을 위한 GET API
+     * [GET] /email/{userId}
+     *
+     * @return BaseResponse<GetUserEmailRes>
+     */
+    @ResponseBody
+    @GetMapping("/email/{userId}")
+    public BaseResponse<List<GetUserEmailRes>> getUserEmial(@PathVariable("userId")Long userId){
+        try {
+
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetUserEmailRes> getUserEmailRes=userProvider.getUserEmail(userId);
+
+            return new BaseResponse<>(getUserEmailRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

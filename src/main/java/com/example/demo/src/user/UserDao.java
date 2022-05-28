@@ -54,10 +54,10 @@ public class UserDao {
         return this.jdbcTemplate.update(updateUserLocationQuery,updateParams);
     }
 
-    public int postUserKakao(PostUserKakaoLoginReq postUserKakaoLoginReq) {
-        String postUserKakaoQuery="insert into KakaoUsers(kakaoName, kakaoId, kakaoEmail) values(?,?,?)";
+    public int postUserKakao(PostUserKakaoLoginReq postUserKakaoLoginReq, Long userId) {
+        String postUserKakaoQuery="insert into KakaoUsers(userId,kakaoName, kakaoId, kakaoEmail) values(?,?,?,?)";
         Object[] postUserKakaoParams=new Object[]{
-                postUserKakaoLoginReq.getKakaoName(), postUserKakaoLoginReq.getKakaoId(), postUserKakaoLoginReq.getKakaoEmail()
+                userId,postUserKakaoLoginReq.getKakaoName(), postUserKakaoLoginReq.getKakaoId(), postUserKakaoLoginReq.getKakaoEmail()
         };
 
         return this.jdbcTemplate.update(postUserKakaoQuery,postUserKakaoParams);
@@ -86,6 +86,15 @@ public class UserDao {
                 checkEmailParams);
 
     }
+    public int checkKakaoEmail(String email){
+        String checkEmailQuery = "select exists(select kakaoEmail from KakaoUsers where kakaoEmail = ?)";
+        String checkEmailParams = email;
+        return this.jdbcTemplate.queryForObject(checkEmailQuery,
+                int.class,
+                checkEmailParams);
+
+    }
+
 
 
     public Long getIdByEmail(String email){
@@ -277,5 +286,40 @@ public class UserDao {
            patchUserProfileImgReq.getProfileImgUrl(),userId
         };
         return this.jdbcTemplate.update(patchUserProfileImgQuery,params);
+    }
+
+    public List<GetUserEmailRes> getUserEmail(Long userId) {
+        String getUserEmailQuery="select id as 'userId', email from Users where Users.id=?";
+        return this.jdbcTemplate.query(getUserEmailQuery,
+                (rs,rowNum)->new GetUserEmailRes(
+                        rs.getLong("userId"),
+                        rs.getString("email")
+                ),userId);
+    }
+
+    public List<GetUserNameRes> getUserName(Long userId) {
+        String getUserEmailQuery="select id as 'userId', name from Users where Users.id=?";
+        return this.jdbcTemplate.query(getUserEmailQuery,
+                (rs,rowNum)->new GetUserNameRes(
+                        rs.getLong("userId"),
+                        rs.getString("name")
+                ),userId);
+    }
+
+    public List<GetMyProfileRes> getMyProfile(Long userId) {
+        String getUserEmailQuery="select id as 'userId',profileImgUrl,name, email,phoneNumber from Users where Users.id=?";
+        return this.jdbcTemplate.query(getUserEmailQuery,
+                (rs,rowNum)->new GetMyProfileRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("phoneNumber")
+                ),userId);
+    }
+
+    public Long getIdByKakaoEmail(String k_email) {
+        String getIdByEmail="select userId from KakaoUsers where kakaoEmail=?";
+        return this.jdbcTemplate.queryForObject(getIdByEmail,Long.class,k_email);
     }
 }
