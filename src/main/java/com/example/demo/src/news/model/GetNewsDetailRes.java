@@ -20,7 +20,7 @@ public class GetNewsDetailRes {
     private String storeName;
     private String review;
     private String reviewCreated;
-    private List<String> imgUrl;
+    private List<GetImgRes> imgUrlList;
     private int reviewLikes;
     private int reviewComments;
 }

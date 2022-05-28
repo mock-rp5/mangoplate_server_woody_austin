@@ -18,12 +18,13 @@ public class GetNewsRes {
     private int reviewCount;
     private int followCount;
     private String evaluation;
+    private Long storeId;
     private String storeName;
     private String review;
     private String reviewCreated;
-    private String imgUrl;
     private int reviewLikes;
     private int reviewComments;
     private int wishCheck;
     private int likeCheck;
+    private List<GetImgRes> ImgList;
 }
