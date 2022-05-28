@@ -57,7 +57,7 @@ public class VisitedDao {
     }
 
     public GetVisitedRes getVisited(Long visitedId, Long userId) {
-        String getVisitedDetailQuery = "SELECT U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic, COUNT(DISTINCT R2.id) AS userReviewCount, COUNT(DISTINCT F.id) AS userFollowCount,\n" +
+        String getVisitedDetailQuery = "SELECT V.id AS visitedId, U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic, COUNT(DISTINCT R2.id) AS userReviewCount, COUNT(DISTINCT F.id) AS userFollowCount,\n" +
                 "S.id AS storeId, S.name AS storeName,(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and V.storeId=Review.storeId limit 1)as 'storeImgUrl',\n" +
                 "S.subRegion, V.description, S.foodCategory, S.viewCount AS storeViewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=V.storeId) AS storeReviewCount, V.updatedAt,\n" +
@@ -68,7 +68,7 @@ public class VisitedDao {
                 "(select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and V.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "FROM Visited V, Users U, Stores S, Visited R2, Following F\n" +
                 "WHERE  V.id = ? && V.userId = U.id && V.storeId = S.id && R2.userId = U.id && F.follwedUserId = U.id";
-        String getVisitedCommentsQuery = "SELECT U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic,\n" +
+        String getVisitedCommentsQuery = "SELECT C.id AS commentId, U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic,\n" +
                 "                       U2.name AS tagUserName, C.comment, C.updatedAt\n" +
                 "                FROM Users U, VisitedComments C\n" +
                 "                LEFT JOIN Users U2 ON U2.id = C.tagUserId\n" +
@@ -79,6 +79,7 @@ public class VisitedDao {
         return new GetVisitedRes(
                 getVisitedDetailRes = this.jdbcTemplate.queryForObject(getVisitedDetailQuery,
                         (rs,rowNum) -> new GetVisitedDetailRes(
+                                rs.getLong("visitedId"),
                                 rs.getLong("userId"),
                                 rs.getString("profileImgUrl"),
                                 rs.getString("userName"),
@@ -102,6 +103,7 @@ public class VisitedDao {
                         ), userId, userId, visitedId),
                 getVisitedCommentsResList = this.jdbcTemplate.query(getVisitedCommentsQuery,
                         (rs,rowNum) -> new GetVisitedCommentsRes(
+                                rs.getLong("commentId"),
                                 rs.getLong("userId"),
                                 rs.getString("profileImgUrl"),
                                 rs.getString("userName"),
@@ -112,4 +114,50 @@ public class VisitedDao {
                         ), visitedId)
         );
     }
+
+    public int checkVisitedLike(Long visitedId, Long userId) {
+        String checkVisitedLikeQuery="select exists(select id from VisitedLikes where visitedId=? and userId=?)";
+        return this.jdbcTemplate.queryForObject(checkVisitedLikeQuery,int.class, visitedId, userId);
+    }
+
+    public void createVisitedLike(Long visitedId, Long userId) {
+        String createVisitedLikeQuery="insert into VisitedLikes(visitedId,userId) values(?,?)";
+        this.jdbcTemplate.update(createVisitedLikeQuery, visitedId, userId);
+    }
+
+    public int checkTagUserId(Long userId) {
+        String checkTagUserIdQuery = "select exists(select id from Users where id = ?)";
+        return this.jdbcTemplate.queryForObject(checkTagUserIdQuery,int.class,userId);
+    }
+
+    public int deleteVisitedLike(Long visitedId, Long userId) {
+        String createVisitedLikeQuery="delete from VisitedLikes where visitedId = ? && userId = ? ";
+        return this.jdbcTemplate.update(createVisitedLikeQuery, visitedId, userId);
+    }
+
+    public void createVisitedComment(PostVisitedCommentsReq postVisitedCommentsReq) {
+        String postCommentQuery="insert into VisitedComments(visitedId, userId, tagUserId, comment) values(?,?,?,?)";
+        Object[] postCommentParams = new Object[] {
+                postVisitedCommentsReq.getVisitedId(), postVisitedCommentsReq.getUserId(),
+                postVisitedCommentsReq.getTagUserId(), postVisitedCommentsReq.getComment()
+        };
+        this.jdbcTemplate.update(postCommentQuery,postCommentParams);
+    }
+
+    public int checkCommentId(Long commentId) {
+        String checkCommentIdQuery = "select exists(select id from VisitedComments where id = ?)";
+        return this.jdbcTemplate.queryForObject(checkCommentIdQuery,int.class,commentId);
+    }
+
+    public int checkCommentCreateUser(Long commentId) {
+        String checkCommentCreateUserQuery="select userId from VisitedComments where id = ? ";
+        return this.jdbcTemplate.queryForObject(checkCommentCreateUserQuery,int.class,commentId);
+    }
+
+    public void deleteVisitedComment(Long commentId) {
+        String deleteVisitedCommentQuery="delete from VisitedComments where id = ?";
+        this.jdbcTemplate.update(deleteVisitedCommentQuery, commentId);
+    }
+
+
 }
