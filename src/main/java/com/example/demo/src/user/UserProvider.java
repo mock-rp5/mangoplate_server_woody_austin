@@ -2,6 +2,7 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
@@ -200,5 +201,12 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetReviewRes> getUserReview(GetUserReviewReq getUserReviewReq) {
+        List<GetReviewRes> getNewsRes=userDao.getUserReview(getUserReviewReq);
+        return getNewsRes;
+    }
+
+
 }
 

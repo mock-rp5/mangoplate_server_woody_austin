@@ -3,8 +3,6 @@ package com.example.demo.src.news;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.news.model.GetNewsByFollowingReq;
-import com.example.demo.src.news.model.GetNewsDetailRes;
-import com.example.demo.src.news.model.GetNewsImgRes;
 import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
