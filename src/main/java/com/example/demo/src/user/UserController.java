@@ -134,18 +134,37 @@ public class UserController {
 
 
     /**
+     * 카카오 로그인 액세스 토큰 발급
+     */
+    @ResponseBody
+    @GetMapping("/oauth")
+    public BaseResponse<String> getKaKaoAccessToken(@RequestParam String code){
+        List<GetKakaoTokenRes> getKaKaoAccessToken = null;
+        try {
+            String accessToken = userService.getKaKaoAccessToken(code);
+            return  new BaseResponse<>(accessToken);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+
+    /**
      * 카카오 로그인 API
      * [POST] /users/oauth/code?=
      *
      * @return BaseResponse<PostUserKakaoRes>
      */
+
+
     @ResponseBody
-    @GetMapping("/oauth")
-    public BaseResponse<PostLoginRes> KakaoLogIn(@RequestParam String code) {
+    @PostMapping("/oauth/logIn")
+    public BaseResponse<PostLoginRes> KakaoLogIn(@RequestBody PostKakaoLogInReq postKakaoLogInReq) {
 
         try {
-            String access_Token = userService.getKaKaoAccessToken(code);
-            PostUserKakaoLoginReq postUserKakaoLoginReq = userService.getKakaoUser(access_Token);
+
+            PostUserKakaoLoginReq postUserKakaoLoginReq = userService.getKakaoUser(postKakaoLogInReq.getAccessToken());
             PostUserKakaoReq postUserKakaoReq = new PostUserKakaoReq(postUserKakaoLoginReq.getKakaoName(), postUserKakaoLoginReq.getKakaoEmail());
 
             PostLoginRes postLoginRes = null;
@@ -167,6 +186,7 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 
     /**
      * 유저 위치정보 업데이트 API
@@ -253,14 +273,13 @@ public class UserController {
      */
     @ResponseBody
     @GetMapping("/follower/{userId}/{followedUserId}")
-    public BaseResponse<List<GetUserFollowerListRes>> getUserFollower(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId,
-                                                                      @RequestParam(defaultValue = "1") int page)  {
+    public BaseResponse<List<GetUserFollowerListRes>> getUserFollower(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId)  {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId,page);
+            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId);
             List<GetUserFollowerListRes> getUserFollowerListRes = userProvider.getUserFollower(getUserFollowReq);
             return new BaseResponse<>(getUserFollowerListRes);
         } catch (BaseException e) {
@@ -276,15 +295,14 @@ public class UserController {
      */
     @ResponseBody
     @GetMapping("/following/{userId}/{followedUserId}")
-    public BaseResponse<List<GetUserFollowerListRes>> getUserFollowing(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId,
-                                                                       @RequestParam(defaultValue = "1") int page)
+    public BaseResponse<List<GetUserFollowerListRes>> getUserFollowing(@PathVariable("userId") Long userId, @PathVariable("followedUserId") Long followedUserId)
     {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId,page);
+            GetUserFollowListReq getUserFollowReq = new GetUserFollowListReq(userId, followedUserId);
             List<GetUserFollowerListRes> getUserFollowerListRes = userProvider.getUserFollowing(getUserFollowReq);
             return new BaseResponse<>(getUserFollowerListRes);
         } catch (BaseException e) {
@@ -472,8 +490,7 @@ public class UserController {
     @GetMapping("/reviews/new/{userId}/{profileUserId}")
     public BaseResponse<List<GetReviewRes>> getUserReview(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
                                                           @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "0") List<Integer> category,
-                                                        @RequestParam(required = false,defaultValue = "0") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking,
-                                                        @RequestParam(required = false,defaultValue ="1") int page){
+                                                        @RequestParam(required = false,defaultValue = "0") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking){
         try {
             String filter="";
             if(order==1){
@@ -556,7 +573,7 @@ public class UserController {
                 }
             }
             System.out.println(price);
-            GetUserReviewReq getUserReviewReq=new GetUserReviewReq(userId, profileUserId, filter,region,foodCategory, price, parkingInfo,page);
+            GetUserReviewReq getUserReviewReq=new GetUserReviewReq(userId, profileUserId, filter,region,foodCategory, price, parkingInfo);
             List<GetReviewRes> getNewsRes=userProvider.getUserReview(getUserReviewReq);
             return new BaseResponse<>(getNewsRes);
         } catch (BaseException e) {
@@ -573,8 +590,8 @@ public class UserController {
     @GetMapping("/users/visited/{userId}/{profileUserId}")
     public BaseResponse<List<GetNewsRes>> getUserVisited(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
                                                          @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "all") List<String> category,
-                                                         @RequestParam(required = false,defaultValue = "all") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking,
-                                                         @RequestParam(required = false,defaultValue ="1") int page){
+                                                         @RequestParam(required = false,defaultValue = "all") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking
+                                                         ){
 
         return null;
     }
@@ -586,8 +603,8 @@ public class UserController {
     @GetMapping("/users/photos/{userId}/{profileUserId}")
     public BaseResponse<List<GetNewsRes>> getUserPhotos(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
                                                         @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "all") List<String> category,
-                                                        @RequestParam(required = false,defaultValue = "all") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking,
-                                                        @RequestParam(required = false,defaultValue ="1") int page){
+                                                        @RequestParam(required = false,defaultValue = "all") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking
+                                                       ){
 
         return null;
     }

@@ -12,7 +12,6 @@ import java.util.List;
 public class GetStoreListReq {
     private Long userId;
     private List<String> region;
-    private int page;
     private String filtering;
 
 }
