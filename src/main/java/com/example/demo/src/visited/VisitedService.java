@@ -6,6 +6,7 @@ import com.example.demo.src.review.ReviewProvider;
 import com.example.demo.src.review.model.PostCommentReq;
 import com.example.demo.src.review.model.PostReviewListReq;
 import com.example.demo.src.store.StoreDao;
+import com.example.demo.src.visited.model.PatchVisitedCommentsReq;
 import com.example.demo.src.visited.model.PatchVisitedReq;
 import com.example.demo.src.visited.model.PostVisitedCommentsReq;
 import com.example.demo.src.visited.model.PostVisitedReq;
@@ -14,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.sql.SQLException;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -38,7 +39,7 @@ public class VisitedService {
         this.jwtService = jwtService;
     }
 
-    @Transactional(rollbackFor = BaseException.class)
+    @Transactional(rollbackOn = BaseException.class)
     public void createVisited(PostVisitedReq postVisitedReq) throws BaseException {
         if(storeDao.checkStoreId(postVisitedReq.getStoreId()) == 0){
             throw new BaseException(NON_EXIST_STORE);
@@ -62,12 +63,25 @@ public class VisitedService {
         }
     }
 
+    @Transactional(rollbackOn = BaseException.class)
     public void deleteVisited(Long visitedId, Long userId) throws BaseException {
         if(visitedDao.checkVisitedId(visitedId) == 0){
             throw new BaseException(NON_EXIST_VISITED);
         }
         if(visitedDao.checkCreateUser(visitedId) != userId){
             throw new BaseException(WRONG_USERID);
+        }
+        // 해당 가봤어요 댓글 모두 삭제
+        try {
+            visitedDao.deleteAllComments(visitedId);
+        } catch (Exception e) {
+            throw new BaseException(DELETE_ALL_COMMENTS_FAIL);
+        }
+        //해당 가봤어요 좋아요 모두 삭제
+        try {
+            visitedDao.deleteAllLikes(visitedId);
+        } catch (Exception e) {
+            throw new BaseException(DELETE_ALL_LIKES_FAIL);
         }
         try {
             visitedDao.deleteVisited(visitedId);
@@ -141,6 +155,23 @@ public class VisitedService {
         }
         try {
             visitedDao.deleteVisitedComment(commentId);
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void modifyVisitedComment(Long commentId, Long userId, PatchVisitedCommentsReq patchVisitedCommentsReq) throws BaseException {
+        if(visitedDao.checkCommentId(commentId)==0){
+            throw new BaseException(NON_EXISTS_COMMENT);
+        }
+        if(visitedDao.checkCommentCreateUser(commentId) != userId){
+            throw new BaseException(WRONG_USER_ID);
+        }
+        if(visitedDao.checkTagUserId(patchVisitedCommentsReq.getTagUserId())==0){
+            throw new BaseException(NON_EXISTS_TAG_USER);
+        }
+        try {
+            visitedDao.modifyVisitedComment(commentId, patchVisitedCommentsReq);
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }

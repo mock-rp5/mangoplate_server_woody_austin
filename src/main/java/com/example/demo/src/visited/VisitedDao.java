@@ -1,9 +1,6 @@
 package com.example.demo.src.visited;
 
-import com.example.demo.src.review.model.GetCommentRes;
-import com.example.demo.src.review.model.GetReviewDetailRes;
-import com.example.demo.src.review.model.GetReviewRes;
-import com.example.demo.src.review.model.PostReviewListReq;
+import com.example.demo.src.review.model.*;
 import com.example.demo.src.visited.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -49,6 +46,16 @@ public class VisitedDao {
     public void deleteVisited(Long visitedId) {
         String deleteVisitedQuery = "delete from Visited where id = ?";
         this.jdbcTemplate.update(deleteVisitedQuery,visitedId);
+    }
+
+    public void deleteAllComments(Long visitedId) {
+        String deleteAllCommentsQuery="delete from VisitedComments where visitedId = ?";
+        this.jdbcTemplate.update(deleteAllCommentsQuery, visitedId);
+    }
+
+    public void deleteAllLikes(Long visitedId) {
+        String deleteAllLikesQuery="delete from VisitedLikes where visitedId = ?";
+        this.jdbcTemplate.update(deleteAllLikesQuery, visitedId);
     }
 
     public void modifyVisited(Long visitedId, PatchVisitedReq patchVisitedReq) {
@@ -157,6 +164,31 @@ public class VisitedDao {
     public void deleteVisitedComment(Long commentId) {
         String deleteVisitedCommentQuery="delete from VisitedComments where id = ?";
         this.jdbcTemplate.update(deleteVisitedCommentQuery, commentId);
+    }
+
+    public void modifyVisitedComment(Long commentId, PatchVisitedCommentsReq patchVisitedCommentsReq) {
+        String modifyVisitedCommentQuery = "update VisitedComments set tagUserId = ?, comment = ? where id = ?";
+        this.jdbcTemplate.update(modifyVisitedCommentQuery,patchVisitedCommentsReq.getTagUserId(), patchVisitedCommentsReq.getComment(), commentId);
+    }
+
+    public List<GetVisitedLikeUserRes> getVisitedLikeUser(Long visitedId, Long userId) {
+        String getVisitedLikesUserQuery="select Users.id as 'userId', profileImgUrl, Users.name as userName, isHolic,\n" +
+                "       (select count(userId) from Review join Users on Users.id=Review.userId where Review.userId=VisitedLikes.userId)'reviewCount',\n" +
+                "       (select count(follwedUserId) from Following where follwedUserId=VisitedLikes.userId)'followerCount',\n" +
+                "       (select exists(select Following.id from Following where userId=? and VisitedLikes.userId=follwedUserId ))'followCheck'\n" +
+                "    from Users, Visited, VisitedLikes\n" +
+                "where Visited.id=? && Visited.id = VisitedLikes.visitedId && VisitedLikes.userId=Users.id";
+
+        return this.jdbcTemplate.query(getVisitedLikesUserQuery,
+                (rs,rowNum)->new GetVisitedLikeUserRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("userName"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followerCount"),
+                        rs.getInt("followCheck")
+                ),userId, visitedId);
     }
 
 

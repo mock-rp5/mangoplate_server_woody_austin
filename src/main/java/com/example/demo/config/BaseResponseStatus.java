@@ -80,6 +80,10 @@ public enum BaseResponseStatus {
 
     // [GET] /review
     NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),
+    WRONG_USERID_REVIEW(false, 3081, "해당 리뷰를 생성한 유저가 아닙니다."),
+    DELETE_ALL_REVIEW_COMMENTS_FAIL(false,3082,"해당 리뷰 모든 댓글 삭제에 실패하였습니다."),
+    DELETE_ALL_REVIEW_LIKES_FAIL(false,3083,"해당 리뷰 모든 좋아요 삭제에 실패하였습니다."),
+    DELETE_ALL_REVIEW_IMAGES_FAIL(false,3084,"해당 리뷰 모든 이미지 삭제에 실패하였습니다."),
     EXISTS_REVIEW_LIKE(false,3001,"이미 존재하는 리뷰 좋아요 입니다."),
     NON_EXIST_REViEW_LIKE(false,3002,"존재 하지 않는 리뷰 좋아요 입니다."),
 
@@ -96,6 +100,8 @@ public enum BaseResponseStatus {
     NON_EXISTS_TAG_USER(false,3007,"태그한 유저 아이디가 존재하지 않습니다."),
     NON_EXISTS_COMMENT(false,3008,"존재하지 않는 가봤어요 댓글 아이디 입니다."),
     WRONG_USER_ID(false,3009,"해당 댓글을 생성한 유저가 아닙니다."),
+    DELETE_ALL_COMMENTS_FAIL(false,3010,"해당 가봤어요 모든 댓글 삭제에 실패하였습니다."),
+    DELETE_ALL_LIKES_FAIL(false,3011,"해당 가봤어요 모든 좋아요 삭제에 실패하였습니다."),
 
 
     /**
