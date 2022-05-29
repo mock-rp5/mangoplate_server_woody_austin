@@ -2,7 +2,6 @@ package com.example.demo.src.news;
 
 import com.example.demo.src.news.model.GetImgRes;
 import com.example.demo.src.news.model.GetNewsByFollowingReq;
-import com.example.demo.src.news.model.GetNewsImgRes;
 import com.example.demo.src.news.model.GetNewsRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

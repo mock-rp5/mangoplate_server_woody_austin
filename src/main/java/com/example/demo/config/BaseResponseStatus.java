@@ -24,6 +24,7 @@ public enum BaseResponseStatus {
 
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
+    NON_EXIST_FILTER(false,2011,"존재하지 않는 필터 번호입니다. 다시 입력해주세요."),
 
 
     // [POST] /users

@@ -1,6 +1,8 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.src.news.model.GetImgRes;
+import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,10 +10,12 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDao {
 
+    List<GetImgRes> ImgList;
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -322,4 +326,128 @@ public class UserDao {
         String getIdByEmail="select userId from KakaoUsers where kakaoEmail=?";
         return this.jdbcTemplate.queryForObject(getIdByEmail,Long.class,k_email);
     }
+
+    public List<GetReviewRes> getUserReview(GetUserReviewReq getUserReviewReq) {
+        String regionList = String.join(",",getUserReviewReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",",getUserReviewReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",",getUserReviewReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",",getUserReviewReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+
+        String order=null;
+        String regionAndOr = null;
+        String categoryAndOr=null;
+        String priceAndOr=null;
+
+        System.out.println(getUserReviewReq.getRegion().contains("all"));
+
+        System.out.println(getUserReviewReq.getOrder());
+        if(getUserReviewReq.getOrder()=="recent"){
+            order="Review.createdAt desc";
+        }
+        else if(getUserReviewReq.getOrder()=="distance"){
+            order="distance asc";
+        }
+
+        String region="";
+        if(getUserReviewReq.getRegion().contains("all")){
+            regionAndOr="or";
+        }
+        else{
+            regionAndOr = "and";
+            region = regionAndOr+" subRegion IN "+"("+regionList+")";
+        }
+
+        String category="";
+        if(getUserReviewReq.getCategory().contains("all")){
+            categoryAndOr="or";
+        }
+        else{
+            categoryAndOr = "and";
+            category=categoryAndOr+" foodCategory IN ("+categoryList+")";
+        }
+        String price="";
+        if(getUserReviewReq.getPriceRange().contains("all")){
+            priceAndOr="or";
+        }
+        else{
+            priceAndOr = "and";
+            price=priceAndOr+" priceInfo IN ("+priceRangeList+")";
+        }
+
+        String getUserReviewQuery="";
+
+        Object[] getReviewParams = new Object[]{
+                getUserReviewReq.getUserId(),getUserReviewReq.getUserId(),
+                getUserReviewReq.getUserId(), getUserReviewReq.getProfileUserId(), (getUserReviewReq.getPage()-1)*10
+        };
+
+        getUserReviewQuery = String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "                      *cos(radians(Stores.longitude) -radians(U.longitude))\n" +
+                "                      +sin(radians(U.Latitude))*sin(radians(Stores.Latitude)))) from Users U where U.id=?)'distance',Review.id as 'reviewId',Users.id as 'userId'," +
+                "                       Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
+                    "       (select count(follwedUserId) from Following)'followCount',evaluation,Stores.id as 'storeId',\n" +
+                    "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
+                    "       case when YEAR(Review.createdAt)<YEAR(now())\n" +
+                    "                    then concat(YEAR(Review.createdAt),'년 ',MONTH(Review.createdAt),'월 ',DAY(Review.createdAt),'일')\n" +
+                    "                                 when YEAR(Review.createdAt)=YEAR(now()) then\n" +
+                    "                                       case\n" +
+                    "                                           when TIMESTAMPDIFF(minute,Review.createdAt,now())<1\n" +
+                    "                                                then concat(TIMESTAMPDIFF(second,Review.createdAt,now()),' 초 전')\n" +
+                    "                                           when TIMESTAMPDIFF(hour,Review.createdAt,now())<1\n" +
+                    "                                                then concat(TIMESTAMPDIFF(minute,Review.createdAt,now()),'분 전')\n" +
+                    "                                            when TIMESTAMPDIFF(hour,Review.createdAt,now())<24\n" +
+                    "                                                then concat(TIMESTAMPDIFF(hour,Review.createdAt,now()),' 시간 전')\n" +
+                    "                                              when (TIMESTAMPDIFF(DAY,Review.createdAt,now()))>7\n" +
+                    "                                               then concat(year(Review.createdAt),'년 ',month(Review.createdAt),'월 ',DAY(Review.createdAt),'일')\n" +
+                    "                                            when TIMESTAMPDIFF(minute,Review.createdAt,now())<1\n" +
+                    "                                                then concat(TIMESTAMPDIFF(second,Review.createdAt,now()))\n" +
+                    "                                            when TIMESTAMPDIFF(hour,Review.createdAt,now())>24\n" +
+                    "                                                then concat(TIMESTAMPDIFF(DAY,Review.createdAt,now()),' 일 전')\n" +
+                    "                                        end end as reviewCreated,\n" +
+                    "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
+                    "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                    ",(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
+                    ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
+                    "from Users\n" +
+                    "    join Review on Review.userId=Users.id\n" +
+                    "    join Stores on Stores.id = Review.storeId \n" +
+                    "    where Users.id=? %s " +
+                    "    %s %s and parkingInfo IN (%s) \n" +
+                    "    order by %s limit ?,10", region,category, price, parkingInfoList,order);
+
+        System.out.println(getUserReviewQuery);
+        String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
+                "    join Review on Review.storeId=Stores.id\n" +
+                "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
+                "    join Users on Review.userId=Users.id " +
+                "where Review.id=? and isHolic='TRUE' order by Review.createdAt ";
+        return this.jdbcTemplate.query(getUserReviewQuery,
+                (rs,rowNum)->new GetReviewRes(
+                        rs.getString("distance"),
+                        rs.getLong("reviewId"),
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("followCount"),
+                        rs.getString("evaluation"),
+                        rs.getLong("storeId"),
+                        rs.getString("storeName"),
+                        rs.getString("review"),
+                        rs.getString("reviewCreated"),
+                        rs.getInt("reviewLikes"),
+                        rs.getInt("reviewComments"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("likeCheck"),
+                        ImgList=this.jdbcTemplate.query(getImgQuery,
+                                (rk,rownum)->new GetImgRes(
+                                        rk.getLong("reviewId"),
+                                        rk.getString("imgUrl")
+                                ),rs.getLong("reviewId"))
+                ),getReviewParams);
+
+    }
+
+
 }

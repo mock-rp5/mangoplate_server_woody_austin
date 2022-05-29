@@ -41,7 +41,6 @@ public class StoreController {
     @GetMapping("/{userId}")
     public BaseResponse<List<GetStoreMainRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam(defaultValue = "1") int filter,@RequestParam int page){
         try {
-            System.out.println(filter);
             String filtering="";
             if(filter==1){
                 filtering="rating";
@@ -51,6 +50,9 @@ public class StoreController {
             }
             else if(filter==3){
                 filtering="reviewCount";
+            }
+            else{
+                return new BaseResponse<>(NON_EXIST_FILTER);
             }
             System.out.println(filtering);
             Long userIdxByJwt = jwtService.getUserIdx();

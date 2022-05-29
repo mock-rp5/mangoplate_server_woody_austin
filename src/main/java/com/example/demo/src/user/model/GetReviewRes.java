@@ -1,16 +1,19 @@
-package com.example.demo.src.news.model;
+package com.example.demo.src.user.model;
 
+import com.example.demo.src.news.model.GetImgRes;
+
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetNewsImgRes {
+public class GetReviewRes {
+    private String distance;
     private Long reviewId;
+    private Long userId;
     private String profileImgUrl;
     private String name;
     private String isHolic;
@@ -25,5 +28,5 @@ public class GetNewsImgRes {
     private int reviewComments;
     private int wishCheck;
     private int likeCheck;
-    private List<GetImgRes> getImgRes;
+    private List<GetImgRes> ImgList;
 }
