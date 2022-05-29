@@ -137,7 +137,7 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/distance/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoreListByDistance(@PathVariable("userId") Long userId, @RequestParam int distance,@RequestParam int page){
+    public BaseResponse<List<GetStoreListRes>> getStoreListByDistance(@PathVariable("userId") Long userId, @RequestParam int distance){
         try {
             if(userId == null){
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
@@ -150,7 +150,7 @@ public class StoreController {
             if (IntStream.of(POSSIBLE_DISTANCE).anyMatch(x -> x == distance) == false)
                 return new BaseResponse<>(DISTANCE_VALUE_WRONG);
 
-            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByDistance(userId, distance, page);
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByDistance(userId, distance);
             return new BaseResponse<>(getStoreListRes);
 
         }catch (BaseException e) {
@@ -165,13 +165,13 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/foodCategory/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoresListByFood(@PathVariable("userId") Long userId, @RequestParam List<String> category, @RequestParam List<String> region, @RequestParam int page){
+    public BaseResponse<List<GetStoreListRes>> getStoresListByFood(@PathVariable("userId") Long userId, @RequestParam List<String> category, @RequestParam List<String> region){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetStoreListByFoodReq getStoreListByFoodReq = new GetStoreListByFoodReq(userId, category, region, page);
+            GetStoreListByFoodReq getStoreListByFoodReq = new GetStoreListByFoodReq(userId, category, region);
             List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByFood(getStoreListByFoodReq);
 
             return new BaseResponse<>(getStoreListRes);
@@ -188,13 +188,13 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/parking/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoresListByParking(@PathVariable("userId") Long userId, @RequestParam List<String> region, @RequestParam int page){
+    public BaseResponse<List<GetStoreListRes>> getStoresListByParking(@PathVariable("userId") Long userId, @RequestParam List<String> region){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByParking(userId, region, page);
+            List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByParking(userId, region);
 
             return new BaseResponse<>(getStoreListRes);
 
@@ -210,7 +210,7 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/reviews/{storeId}/{userId}")
-    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @PathVariable("userId") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter, @RequestParam int page){
+    public BaseResponse<List<GetStoreReviewRes>> getStoreReviews(@PathVariable("storeId") Long storeId, @PathVariable("userId") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
@@ -228,7 +228,7 @@ public class StoreController {
                     return new BaseResponse<>(WRONG_FILTER_VALUE);
                 }
             }
-            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,userId, evaluation,page);
+            List<GetStoreReviewRes> getStoreReviewRes = storeProvider.getStoreReviews(storeId,userId, evaluation);
             return new BaseResponse<>(getStoreReviewRes);
         }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
