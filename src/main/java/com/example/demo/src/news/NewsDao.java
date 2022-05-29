@@ -61,12 +61,12 @@ public class NewsDao {
                 "       ,(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
-                "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) order by Review.createdAt desc limit ?,10  ", inSql);
+                "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) order by Review.createdAt desc  ", inSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id where Review.id=? order by Review.createdAt ";
         Object[] getNewsParams=new Object[]{
-                userId,userId,(page-1)*10};
+                userId,userId};
         List<GetNewsRes> getNewsRes;
         return getNewsRes=this.jdbcTemplate.query(getNewsQuery,
                 (rs, rowNum) -> new GetNewsRes(
@@ -138,7 +138,7 @@ public class NewsDao {
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
                 "    join Following on Users.id = Following.follwedUserId where Following.userid=? and evaluation IN(%s)" +
-                "   order by Review.createdAt desc limit ?,10",inSql);
+                "   order by Review.createdAt desc",inSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
@@ -217,14 +217,14 @@ public class NewsDao {
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
                 "    where isHolic='True' and evaluation IN(%s)" +
-                "   order by Review.createdAt desc limit ?,10",inSql);
+                "   order by Review.createdAt desc ",inSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
                 "    join Users on Review.userId=Users.id " +
                 "where Review.id=? and isHolic='TRUE' order by Review.createdAt ";
         Object[] getNewsParams=new Object[]{
-                userId,userId,(page-1)*10
+                userId,userId
         };
 
         return this.jdbcTemplate.query(getNewsQuery,

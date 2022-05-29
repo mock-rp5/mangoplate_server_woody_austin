@@ -17,5 +17,4 @@ public class GetUserReviewReq {
     private List<String> category;
     private List<String> priceRange;
     private List<String> parking;
-    private int page;
 }

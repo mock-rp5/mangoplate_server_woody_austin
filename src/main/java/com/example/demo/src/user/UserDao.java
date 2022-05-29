@@ -185,9 +185,9 @@ public class UserDao {
                 "        (select count(follwedUserId) from Following where Following.follwedUserId=Users.id)'followerCount',\n" +
                 "        (select exists(select Following.id from Following where userId=? and follwedUserId=Users.id ))'followCheck'\n" +
                 "from Users join Following on Users.id=Following.userId\n" +
-                "where follwedUserId=? limit ?,10";
+                "where follwedUserId=?";
         Object[] getUserFollowerParams = new Object[]{
-                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId(),(getUserFollowReq.getPage()-1)*20
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId()
         };
 
         return this.jdbcTemplate.query(getUserFollowerQuery,
@@ -209,9 +209,9 @@ public class UserDao {
                 "       (select count(userId) from Review join Users on Users.id=Review.userId where Review.userId=Following.follwedUserId)'reviewCount',\n" +
                 "       (select count(follwedUserId) from Following where Following.userId=Users.id)'followerCount',\n" +
                 "       (select exists(select Following.id from Following where userId=? and follwedUserId=Users.id ))'followCheck'\n" +
-                "from Users join Following on Users.id=Following.follwedUserId where Following.userId=? limit ?,10";
+                "from Users join Following on Users.id=Following.follwedUserId where Following.userId=? ";
         Object[] getUserFollowingParams = new Object[]{
-                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId(),(getUserFollowReq.getPage()-1)*20
+                getUserFollowReq.getUserId(),getUserFollowReq.getFollowedUserId()
         };
 
         return this.jdbcTemplate.query(getUserFollowingQuery,
@@ -378,7 +378,7 @@ public class UserDao {
 
         Object[] getReviewParams = new Object[]{
                 getUserReviewReq.getUserId(),getUserReviewReq.getUserId(),
-                getUserReviewReq.getUserId(), getUserReviewReq.getProfileUserId(), (getUserReviewReq.getPage()-1)*10
+                getUserReviewReq.getUserId(), getUserReviewReq.getProfileUserId()
         };
 
         getUserReviewQuery = String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(Stores.Latitude))\n" +
@@ -413,7 +413,7 @@ public class UserDao {
                     "    join Stores on Stores.id = Review.storeId \n" +
                     "    where Users.id=? %s " +
                     "    %s %s and parkingInfo IN (%s) \n" +
-                    "    order by %s limit ?,10", region,category, price, parkingInfoList,order);
+                    "    order by %s ", region,category, price, parkingInfoList,order);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +

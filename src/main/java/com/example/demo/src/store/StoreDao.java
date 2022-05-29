@@ -68,12 +68,12 @@ public class StoreDao {
                     "    concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                     "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                     "FROM Users,Stores\n" +
-                    "where Users.id=? and Stores.subRegion IN (%s) order by reviewCount desc LIMIT ?,10 ", inSql);
+                    "where Users.id=? and Stores.subRegion IN (%s) order by reviewCount desc ", inSql);
         }
 
 
         Object[] getStoreListParams=new Object[]{
-                getStoreListReq.getUserId(),(getStoreListReq.getPage()-1)*10
+                getStoreListReq.getUserId()
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreMainRes(
@@ -159,10 +159,10 @@ public class StoreDao {
                 "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                 "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                 "FROM Users,Stores\n" +
-                "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? LIMIT ?,10 ",inSql);
+                "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? ",inSql);
         String keyword="%"+getStoreListByKeyWordReq.getKeyword()+"%";
         Object[] getStoreListParams=new Object[]{
-                getStoreListByKeyWordReq.getUserId(),keyword,(getStoreListByKeyWordReq.getPage()-1)*10
+                getStoreListByKeyWordReq.getUserId(),keyword
         };
         return this.jdbcTemplate.query(getStoreListQuery,
                 (rs,rowNum)-> new GetStoreListRes(

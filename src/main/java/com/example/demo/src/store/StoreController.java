@@ -39,7 +39,7 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/{userId}")
-    public BaseResponse<List<GetStoreMainRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam(defaultValue = "1") int filter,@RequestParam int page){
+    public BaseResponse<List<GetStoreMainRes>> getStoresList(@PathVariable("userId") Long userId, @RequestParam List<String> region,@RequestParam(defaultValue = "1") int filter){
         try {
             String filtering="";
             if(filter==1){
@@ -59,7 +59,7 @@ public class StoreController {
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,page,filtering);
+            GetStoreListReq getStoreListReq = new GetStoreListReq(userId, region,filtering);
             List<GetStoreMainRes> getStoreListRes=storeProvider.getStoreList(getStoreListReq);
 
             return new BaseResponse<>(getStoreListRes);
@@ -76,14 +76,14 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/search/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoreListByKeyWord(@PathVariable("userId") Long userId,@RequestParam("keyword") String keyword,@RequestParam List<String> region
-            ,@RequestParam int page){
+    public BaseResponse<List<GetStoreListRes>> getStoreListByKeyWord(@PathVariable("userId") Long userId,@RequestParam("keyword") String keyword,@RequestParam List<String> region)
+      {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetStoreListByKeyWordReq getStoreListByKeyWord=new GetStoreListByKeyWordReq(userId,region,page, keyword);
+            GetStoreListByKeyWordReq getStoreListByKeyWord=new GetStoreListByKeyWordReq(userId,region,keyword);
             List<GetStoreListRes> getStoreListRes=storeProvider.getStoreListByKeyWord(getStoreListByKeyWord);
 
             return new BaseResponse<>(getStoreListRes);

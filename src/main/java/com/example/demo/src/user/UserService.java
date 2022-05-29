@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -84,7 +85,7 @@ public class UserService {
     }
 
 
-    public String getKaKaoAccessToken(String code){
+    public String getKaKaoAccessToken(String code) throws BaseException{
         String access_Token="";
         String refresh_Token ="";
         String reqURL = "https://kauth.kakao.com/oauth/token";
@@ -102,7 +103,7 @@ public class UserService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=98dde62928c7a676ea17b1241492fe0b"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=https://dev.austinserver.shop/users/oauth"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://localhost:9000/users/oauth"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -129,9 +130,9 @@ public class UserService {
 
             System.out.println("access_token : " + access_Token);
             System.out.println("refresh_token : " + refresh_Token);
-
             br.close();
             bw.close();
+            return access_Token;
         }catch (IOException e) {
             e.printStackTrace();
         }
