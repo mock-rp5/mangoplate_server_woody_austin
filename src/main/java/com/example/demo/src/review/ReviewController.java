@@ -88,7 +88,28 @@ public class ReviewController {
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
+    }
+
+    /**
+     * 리뷰 삭제 API
+     * [DELETE] /review/:reviewId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/{reviewId}/{userId}")
+    public BaseResponse<String> deleteReview(@PathVariable("reviewId") Long reviewId,@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="리뷰 삭제 성공";
+            reviewService.deleteReview(reviewId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
         }
+    }
 
     /**
      * 리뷰 좋아요 생성 API

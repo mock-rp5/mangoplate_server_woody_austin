@@ -5,15 +5,14 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.review.ReviewProvider;
 import com.example.demo.src.review.ReviewService;
 import com.example.demo.src.review.model.*;
-import com.example.demo.src.visited.model.GetVisitedRes;
-import com.example.demo.src.visited.model.PatchVisitedReq;
-import com.example.demo.src.visited.model.PostVisitedCommentsReq;
-import com.example.demo.src.visited.model.PostVisitedReq;
+import com.example.demo.src.visited.model.*;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
@@ -204,5 +203,47 @@ public class VisitedController {
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
+    }
+
+    /**
+     * 가봤어요 댓글 수정 API
+     * [PATCH] /comments/:commentId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/comments/{commentId}/{userId}")
+    public BaseResponse<String> modifyVisitedComment(@PathVariable ("commentId") Long commentId, @PathVariable ("userId") Long userId, @RequestBody PatchVisitedCommentsReq patchVisitedCommentsReq){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="가봤어요 댓글 수정 성공";
+            visitedService.modifyVisitedComment(commentId, userId,patchVisitedCommentsReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 가봤어요 좋아요 한 유저 조회 API
+     * [GET] /likes/:visitedId/:userId
+     * * @return BaseResponse<List<GetVisitedLikeUserRes>
+     */
+    @ResponseBody
+    @GetMapping("/likes/{visitedId}/{userId}")
+    public BaseResponse<List<GetVisitedLikeUserRes>> getVisitedLikesUser(@PathVariable("visitedId") Long visitedId, @PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetVisitedLikeUserRes> getVisitedLikesUserRes = visitedProvider.getVisitedLikesUser(visitedId,userId);
+            return new BaseResponse<>(getVisitedLikesUserRes);
+        }catch(BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
     }
 }
