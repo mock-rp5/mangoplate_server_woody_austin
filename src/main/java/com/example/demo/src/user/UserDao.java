@@ -414,8 +414,6 @@ public class UserDao {
                     "    where Users.id=? %s " +
                     "    %s %s and parkingInfo IN (%s) \n" +
                     "    order by %s limit ?,10", region,category, price, parkingInfoList,order);
-
-        System.out.println(getUserReviewQuery);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
