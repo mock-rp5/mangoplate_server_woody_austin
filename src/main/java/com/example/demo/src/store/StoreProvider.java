@@ -91,12 +91,12 @@ public class StoreProvider {
         }
     }
 
-    public List<GetStoreListRes> getStoreListByParking(Long userId, List<String> region, int page)throws BaseException{
+    public List<GetStoreListRes> getStoreListByParking(Long userId, List<String> region)throws BaseException{
         if(region.size()==0){
             throw new BaseException(NO_REGION_VALUE);
         }
         try {
-            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByParking(userId, region, page);
+            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByParking(userId, region);
             return getStoreListRes;
 
         }catch(Exception exception){
@@ -104,21 +104,21 @@ public class StoreProvider {
         }
     }
 
-    public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance, int page) throws BaseException {
+    public List<GetStoreListRes> getStoreListByDistance(Long userId, int distance) throws BaseException {
         try {
-            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByDistance(userId, distance, page);
+            List<GetStoreListRes> getStoreListRes=storeDao.getStoreListByDistance(userId, distance);
             return getStoreListRes;
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetStoreReviewRes> getStoreReviews(Long storeId, Long userId, List<String> evaluation, int page) throws BaseException {
+    public List<GetStoreReviewRes> getStoreReviews(Long storeId, Long userId, List<String> evaluation) throws BaseException {
         if(storeDao.checkStoreId(storeId) == 0){
             throw new BaseException(NON_EXIST_STORE);
         }
         try {
-            List<GetStoreReviewRes> getStoreReviewRes = storeDao.getStoreReviews(storeId, userId, evaluation,page);
+            List<GetStoreReviewRes> getStoreReviewRes = storeDao.getStoreReviews(storeId, userId, evaluation);
             return getStoreReviewRes;
         } catch(Exception e){
             throw new BaseException(DATABASE_ERROR);

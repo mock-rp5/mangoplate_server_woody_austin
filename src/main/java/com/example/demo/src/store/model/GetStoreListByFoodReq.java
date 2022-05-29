@@ -14,5 +14,4 @@ public class GetStoreListByFoodReq {
     private Long userId;
     private List<String> category;
     private List<String> region;
-    private int page;
 }
