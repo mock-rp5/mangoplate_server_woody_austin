@@ -84,12 +84,18 @@ public enum BaseResponseStatus {
     NON_EXIST_REViEW_LIKE(false,3002,"존재 하지 않는 리뷰 좋아요 입니다."),
 
 
+
     NON_EXIST_COMMENT(false,3003,"존재하지 않는 댓글입니다"),
 
     //[DELETE] /comment
 
     INVALID_USER(false,3004,"권한이 없는 유저의 접근입니다."),
 
+    EXISTS_VISITED_LIKE(false,3005,"이미 존재하는 가봤어요 좋아요 입니다."),
+    NON_EXISTS_VISITED_LIKE(false,3006,"존재하지 않는 가봤어요 좋아요 입니다."),
+    NON_EXISTS_TAG_USER(false,3007,"태그한 유저 아이디가 존재하지 않습니다."),
+    NON_EXISTS_COMMENT(false,3008,"존재하지 않는 가봤어요 댓글 아이디 입니다."),
+    WRONG_USER_ID(false,3009,"해당 댓글을 생성한 유저가 아닙니다."),
 
 
     /**

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,8 +20,8 @@ public class GetStoreReviewRes {
     private String evaluation;
     private String review;
     private String updatedAt;
-    private String imgUrlList;
     private int reviewLikes;
     private int reviewComments;
     private int likeCheck;
+    List<GetStoreReviewImgRes> imgList;
 }
