@@ -1,7 +1,7 @@
 com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
-com/example/demo/src/store/StoreDao.java
- com.example.demo.src.store.StoreDao
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
 com/example/demo/src/review/model/GetReviewRes.java
  com.example.demo.src.review.model.GetReviewRes
 com/example/demo/src/review/model/PostCommentReq.java
@@ -40,8 +40,8 @@ com/example/demo/src/store/model/GetStoreRes.java
  com.example.demo.src.store.model.GetStoreRes
 com/example/demo/src/review/ReviewController.java
  com.example.demo.src.review.ReviewController
-com/example/demo/src/visited/VisitedService.java
- com.example.demo.src.visited.VisitedService
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
 com/example/demo/src/review/model/GetReviewDetailRes.java
  com.example.demo.src.review.model.GetReviewDetailRes
 com/example/demo/src/user/model/PatchUserNameReq.java
@@ -54,14 +54,14 @@ com/example/demo/src/user/model/PatchUserEmailReq.java
  com.example.demo.src.user.model.PatchUserEmailReq
 com/example/demo/src/user/model/GetKakaoTokenRes.java
  com.example.demo.src.user.model.GetKakaoTokenRes
-com/example/demo/src/visited/VisitedController.java
- com.example.demo.src.visited.VisitedController
+com/example/demo/src/visited/model/PatchVisitedCommentsReq.java
+ com.example.demo.src.visited.model.PatchVisitedCommentsReq
 com/example/demo/src/user/model/GetUserNameRes.java
  com.example.demo.src.user.model.GetUserNameRes
 com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
-com/example/demo/src/store/StoreController.java
- com.example.demo.src.store.StoreController
+com/example/demo/src/review/model/GetReviewLikeUserRes.java
+ com.example.demo.src.review.model.GetReviewLikeUserRes
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
 com/example/demo/src/user/model/PostKakaoLogInReq.java
@@ -76,8 +76,8 @@ com/example/demo/src/store/model/GetStoreReviewImgRes.java
  com.example.demo.src.store.model.GetStoreReviewImgRes
 com/example/demo/src/user/model/GetMyProfileRes.java
  com.example.demo.src.user.model.GetMyProfileRes
-com/example/demo/src/store/StoreProvider.java
- com.example.demo.src.store.StoreProvider
+com/example/demo/src/user/model/PostUserKakaoReq.java
+ com.example.demo.src.user.model.PostUserKakaoReq
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/user/model/GetReviewRes.java
@@ -150,8 +150,8 @@ com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
 com/example/demo/src/review/model/PutCommentsReq.java
  com.example.demo.src.review.model.PutCommentsReq
-com/example/demo/src/store/StoreService.java
- com.example.demo.src.store.StoreService
+com/example/demo/src/store/model/GetStoreListReq.java
+ com.example.demo.src.store.model.GetStoreListReq
 com/example/demo/src/store/model/GetMenuDetailRes.java
  com.example.demo.src.store.model.GetMenuDetailRes
 com/example/demo/src/user/model/User.java
@@ -170,15 +170,15 @@ com/example/demo/src/user/model/GetUserFollowListReq.java
  com.example.demo.src.user.model.GetUserFollowListReq
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
-com/example/demo/src/store/model/GetStoreListReq.java
- com.example.demo.src.store.model.GetStoreListReq
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
-com/example/demo/src/review/model/GetReviewLikeUserRes.java
- com.example.demo.src.review.model.GetReviewLikeUserRes
-com/example/demo/src/visited/model/PatchVisitedCommentsReq.java
- com.example.demo.src.visited.model.PatchVisitedCommentsReq
-com/example/demo/src/user/model/PostUserKakaoReq.java
- com.example.demo.src.user.model.PostUserKakaoReq
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
+com/example/demo/src/store/StoreDao.java
+ com.example.demo.src.store.StoreDao
+com/example/demo/src/store/StoreProvider.java
+ com.example.demo.src.store.StoreProvider
+com/example/demo/src/visited/VisitedController.java
+ com.example.demo.src.visited.VisitedController
+com/example/demo/src/store/StoreController.java
+ com.example.demo.src.store.StoreController
+com/example/demo/src/visited/VisitedService.java
+ com.example.demo.src.visited.VisitedService
+com/example/demo/src/store/StoreService.java
+ com.example.demo.src.store.StoreService
