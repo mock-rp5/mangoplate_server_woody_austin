@@ -46,8 +46,41 @@ public class ReviewService {
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
-
     }
+
+    @javax.transaction.Transactional(rollbackOn = BaseException.class)
+    public void deleteReview(Long reviewId, Long userId) throws BaseException {
+        if(reviewProvider.checkReviewExists(reviewId)==0){
+            throw new BaseException(NON_EXIST_REVIEW);
+        }
+        if(reviewDao.checkCreateUser(reviewId) != userId){
+            throw new BaseException(WRONG_USERID_REVIEW);
+        }
+        // 해당 리뷰 이미지 모두 삭제
+        try {
+            reviewDao.deleteAllImg(reviewId);
+        } catch (Exception e) {
+            throw new BaseException(DELETE_ALL_REVIEW_IMAGES_FAIL);
+        }
+        // 해당 리뷰 댓글 모두 삭제
+        try {
+            reviewDao.deleteAllComments(reviewId);
+        } catch (Exception e) {
+            throw new BaseException(DELETE_ALL_REVIEW_COMMENTS_FAIL);
+        }
+        //해당 리뷰 좋아요 모두 삭제
+        try {
+            reviewDao.deleteAllLikes(reviewId);
+        } catch (Exception e) {
+            throw new BaseException(DELETE_ALL_REVIEW_LIKES_FAIL);
+        }
+        try {
+            reviewDao.deleteReview(reviewId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public void createReviewLike(Long reviewId, Long userId) throws BaseException{
         if(reviewProvider.checkReviewLike(reviewId,userId)==1){
             throw new BaseException(EXISTS_REVIEW_LIKE);

@@ -230,5 +230,30 @@ public class ReviewDao {
                 ),getReviewLikesUserParams
         );
     }
+
+    public int checkCreateUser(Long reviewId) {
+        String checkCreateUserQuery="select userId from Review where id = ? ";
+        return this.jdbcTemplate.queryForObject(checkCreateUserQuery,int.class,reviewId);
+    }
+
+    public void deleteReview(Long reviewId) {
+        String deleteVisitedQuery = "delete from Review where id = ?";
+        this.jdbcTemplate.update(deleteVisitedQuery, reviewId);
+    }
+
+    public void deleteAllImg(Long reviewId) {
+        String deleteAllCommentsQuery="delete from ReviewImg where reviewId = ?";
+        this.jdbcTemplate.update(deleteAllCommentsQuery, reviewId);
+    }
+
+    public void deleteAllComments(Long reviewId) {
+        String deleteAllCommentsQuery="delete from ReviewComments where reviewId = ?";
+        this.jdbcTemplate.update(deleteAllCommentsQuery, reviewId);
+    }
+
+    public void deleteAllLikes(Long reviewId) {
+        String deleteAllLikesQuery="delete from ReviewLikes where reviewId = ?";
+        this.jdbcTemplate.update(deleteAllLikesQuery, reviewId);
+    }
 }
 
