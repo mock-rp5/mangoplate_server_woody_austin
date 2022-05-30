@@ -888,29 +888,28 @@ public class UserController {
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * 내정보 조회 API
+     * [GET] /profile/{userId}
+     *
+     * @return BaseResponse<GetMyInfoRes>
+     */
+    @ResponseBody
+    @GetMapping("/profile/{userId}")
+    public BaseResponse<GetMyInfoRes> getMyInfo(@PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetMyInfoRes getMyInfoRes = userProvider.getMyInfo(userId);
+            return new BaseResponse<>(getMyInfoRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 
 }
