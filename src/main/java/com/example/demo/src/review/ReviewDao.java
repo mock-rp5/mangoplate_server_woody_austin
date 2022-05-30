@@ -27,15 +27,17 @@ public class ReviewDao {
     }
 
     public GetReviewRes getReview(Long reviewId, Long userId) {
-        String getReviewDetailQuery = "SELECT U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic, COUNT(DISTINCT R2.id) AS userReviewCount, COUNT(DISTINCT F.id) AS userFollowCount,\n" +
-                "       R.evaluation, S.id AS storeId, S.name AS storeName, R.review, R.updatedAt,\n" +
-                "       (SELECT COUNT(DISTINCT L.id) FROM ReviewLikes L, Review R WHERE L.reviewId = ?) AS likeCount,\n" +
-                "       (SELECT COUNT(DISTINCT C.id) FROM ReviewComments C, Review R WHERE C.reviewId = ?) AS commentCount,\n" +
-                " (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && U2.id = ? && Wishes.storeId=R.storeId))'wishCheck',\n" +
-                " (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id && U2.id = ? && Visited.storeId=R.storeId))'visitedCheck'," +
-                "(select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and R.id=ReviewLikes.reviewId))'likeCheck'" +
-                "FROM Review R, Users U, Stores S, Review R2, Following F\n" +
-                "WHERE  R.id = ? && R.userId = U.id && R.storeId = S.id && R2.userId = U.id && F.follwedUserId = U.id";
+        String getReviewDetailQuery = "SELECT U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic,\n" +
+                "                (select count(Review.id) from Review where Review.userId = R.userId) as userReviewCount,\n" +
+                "                (select count(Following.id) from Following where Following.follwedUserId = R.userId) as UserFollowCount,\n" +
+                "                R.evaluation, S.id AS storeId, S.name AS storeName, R.review, R.updatedAt,\n" +
+                "                (SELECT COUNT(DISTINCT L.id) FROM ReviewLikes L, Review R WHERE L.reviewId = R.id) AS likeCount,\n" +
+                "                (SELECT COUNT(DISTINCT C.id) FROM ReviewComments C, Review R WHERE C.reviewId = R.id) AS commentCount,\n" +
+                "                (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && U2.id = ? && Wishes.storeId=R.storeId))'wishCheck',\n" +
+                "                (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id && U2.id = ? && Visited.storeId=R.storeId))'visitedCheck',\n" +
+                "                (select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and R.id=ReviewLikes.reviewId))'likeCheck'\n" +
+                "                FROM Review R, Stores S, Users U\n" +
+                "                WHERE  R.id = ? && R.userId = U.id && R.storeId = S.id ";
         String getReviewImgQuery = "SELECT I.imgUrl\n" +
                 "FROM ReviewImg I\n" +
                 "WHERE I.reviewId = ?";
@@ -44,7 +46,7 @@ public class ReviewDao {
                 "FROM Users U, ReviewComments C\n" +
                 "LEFT JOIN Users U2 ON U2.id = C.tagUserId\n" +
                 "WHERE C.userId = U.id && C.reviewId = ?";
-        Object[] getReviewDetailParams=new Object[]{reviewId, reviewId, userId, userId, reviewId};
+        Object[] getReviewDetailParams=new Object[]{userId, userId, reviewId};
         Long param = reviewId;
 
         GetReviewDetailRes getReviewDetailRes;
