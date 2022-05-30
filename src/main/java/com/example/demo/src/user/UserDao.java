@@ -2,7 +2,6 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.src.news.model.GetImgRes;
-import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +14,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDao {
 
+    List<GetVisitedStoreRes> storeInfo;
     List<GetImgRes> ImgList;
     private JdbcTemplate jdbcTemplate;
 
@@ -328,19 +328,17 @@ public class UserDao {
     }
 
     public List<GetReviewRes> getUserReview(GetUserReviewReq getUserReviewReq) {
-        String regionList = String.join(",",getUserReviewReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
-        String categoryList=String.join(",",getUserReviewReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
-        String priceRangeList=String.join(",",getUserReviewReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
-        String parkingInfoList=String.join(",",getUserReviewReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+        String evaluationList=String.join(",", getUserReviewReq.getEvaluation().stream().map(evaluation->"'"+evaluation+"'").collect(Collectors.toList()));
+        String regionList = String.join(",", getUserReviewReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",", getUserReviewReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",", getUserReviewReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",", getUserReviewReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
 
         String order=null;
         String regionAndOr = null;
         String categoryAndOr=null;
         String priceAndOr=null;
 
-        System.out.println(getUserReviewReq.getRegion().contains("all"));
-
-        System.out.println(getUserReviewReq.getOrder());
         if(getUserReviewReq.getOrder()=="recent"){
             order="Review.createdAt desc";
         }
@@ -377,16 +375,18 @@ public class UserDao {
         String getUserReviewQuery="";
 
         Object[] getReviewParams = new Object[]{
-                getUserReviewReq.getUserId(),getUserReviewReq.getUserId(),
+                getUserReviewReq.getUserId(), getUserReviewReq.getUserId(),
                 getUserReviewReq.getUserId(), getUserReviewReq.getProfileUserId()
         };
 
         getUserReviewQuery = String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(U.longitude))\n" +
                 "                      +sin(radians(U.Latitude))*sin(radians(Stores.Latitude)))) from Users U where U.id=?)'distance',Review.id as 'reviewId',Users.id as 'userId'," +
-                "                       Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
-                    "       (select count(follwedUserId) from Following)'followCount',evaluation,Stores.id as 'storeId',\n" +
+                "                       Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'userReviewCount',\n" +
+                    "       (select count(follwedUserId) from Following where follwedUserId=Users.id)'userFollowCount',evaluation,Stores.id as 'storeId',\n" +
                     "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
+                "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
+                "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments',\n" +
                     "       case when YEAR(Review.createdAt)<YEAR(now())\n" +
                     "                    then concat(YEAR(Review.createdAt),'년 ',MONTH(Review.createdAt),'월 ',DAY(Review.createdAt),'일')\n" +
                     "                                 when YEAR(Review.createdAt)=YEAR(now()) then\n" +
@@ -403,22 +403,20 @@ public class UserDao {
                     "                                                then concat(TIMESTAMPDIFF(second,Review.createdAt,now()))\n" +
                     "                                            when TIMESTAMPDIFF(hour,Review.createdAt,now())>24\n" +
                     "                                                then concat(TIMESTAMPDIFF(DAY,Review.createdAt,now()),' 일 전')\n" +
-                    "                                        end end as reviewCreated,\n" +
-                    "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
-                    "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'\n" +
+                    "                                        end end as reviewCreated \n" +
                     ",(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
                     ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                     "from Users\n" +
                     "    join Review on Review.userId=Users.id\n" +
                     "    join Stores on Stores.id = Review.storeId \n" +
-                    "    where Users.id=? %s " +
+                    "    where Users.id=? and evaluation IN (%s) %s " +
                     "    %s %s and parkingInfo IN (%s) \n" +
-                    "    order by %s ", region,category, price, parkingInfoList,order);
+                    "    order by %s ", evaluationList,region,category, price, parkingInfoList,order);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
                 "    join Users on Review.userId=Users.id " +
-                "where Review.id=? and isHolic='TRUE' order by Review.createdAt ";
+                "where Review.id=? order by Review.createdAt ";
         return this.jdbcTemplate.query(getUserReviewQuery,
                 (rs,rowNum)->new GetReviewRes(
                         rs.getString("distance"),
@@ -427,15 +425,15 @@ public class UserDao {
                         rs.getString("profileImgUrl"),
                         rs.getString("name"),
                         rs.getString("isHolic"),
-                        rs.getInt("reviewCount"),
-                        rs.getInt("followCount"),
+                        rs.getInt("userReviewCount"),
+                        rs.getInt("userFollowCount"),
                         rs.getString("evaluation"),
                         rs.getLong("storeId"),
                         rs.getString("storeName"),
                         rs.getString("review"),
-                        rs.getString("reviewCreated"),
                         rs.getInt("reviewLikes"),
                         rs.getInt("reviewComments"),
+                        rs.getString("reviewCreated"),
                         rs.getInt("wishCheck"),
                         rs.getInt("likeCheck"),
                         ImgList=this.jdbcTemplate.query(getImgQuery,
@@ -448,4 +446,123 @@ public class UserDao {
     }
 
 
+    public List<GetUserVisitedRes> getUserVisited(GetUserVisitedReq getUserVisitedReq) {
+        String regionList = String.join(",", getUserVisitedReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",", getUserVisitedReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",", getUserVisitedReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",", getUserVisitedReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+
+        String order=null;
+        String regionAndOr = null;
+        String categoryAndOr=null;
+        String priceAndOr=null;
+
+
+        if(getUserVisitedReq.getOrder()=="recent"){
+            order="V.createdAt desc";
+        }
+        else if(getUserVisitedReq.getOrder()=="distance"){
+            order="distance asc";
+        }
+
+        String region="";
+        if(getUserVisitedReq.getRegion().contains("all")){
+            regionAndOr="or";
+        }
+        else{
+            regionAndOr = "and";
+            region = regionAndOr+" subRegion IN "+"("+regionList+")";
+        }
+
+        String category="";
+        if(getUserVisitedReq.getCategory().contains("all")){
+            categoryAndOr="or";
+        }
+        else{
+            categoryAndOr = "and";
+            category=categoryAndOr+" foodCategory IN ("+categoryList+")";
+        }
+        String price="";
+        if(getUserVisitedReq.getPriceRange().contains("all")){
+            priceAndOr="or";
+        }
+        else{
+            priceAndOr = "and";
+            price=priceAndOr+" priceInfo IN ("+priceRangeList+")";
+        }
+
+        Object[] getVisitedParams = new Object[]{
+                getUserVisitedReq.getUserId(), getUserVisitedReq.getUserId(), getUserVisitedReq.getUserId(),
+                getUserVisitedReq.getUserId(), getUserVisitedReq.getProfileUserId()
+        };
+        String getUserVisitedQuery=String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(S.Latitude))   +\n" +
+                "                \"                      *cos(radians(S.longitude) -radians(U.longitude))    +\n" +
+                "                \"                      +sin(radians(U.Latitude))*sin(radians(S.Latitude)))) from Users U where U.id=?)'distance',V.id 'visitedId',Users.id as 'userId',profileImgUrl,Users.name as 'userName',isHolic," +
+                "       (select count(Re.review) from Review Re where Re.userId=Users.id)'userReviewCount',\n" +
+                "       (select count(follwedUserId) from Following where follwedUserId=Users.id)'userFollowCount',\n" +
+                "           S.id as'storeId',\n" +
+                "       concat('@',S.name,' - ',S.subRegion)as'storeTag',description,\n" +
+                "       (select count(VL.id) from VisitedLikes VL where VL.visitedId=V.id)as'likeCount',\n" +
+                "       (select count(VC.id) from VisitedComments VC where VC.visitedId=V.id)as'commentCount'," +
+                "       case when YEAR(V.createdAt)<YEAR(now())\n" +
+                "                    then concat(YEAR(V.createdAt),'년 ',MONTH(V.createdAt),'월 ',DAY(V.createdAt),'일')\n" +
+                "                                 when YEAR(V.createdAt)=YEAR(now()) then\n" +
+                "                                       case\n" +
+                "                                           when TIMESTAMPDIFF(minute,V.createdAt,now())<1\n" +
+                "                                                then concat(TIMESTAMPDIFF(second,V.createdAt,now()),' 초 전')\n" +
+                "                                           when TIMESTAMPDIFF(hour,V.createdAt,now())<1\n" +
+                "                                                then concat(TIMESTAMPDIFF(minute,V.createdAt,now()),'분 전')\n" +
+                "                                            when TIMESTAMPDIFF(hour,V.createdAt,now())<24\n" +
+                "                                                then concat(TIMESTAMPDIFF(hour,V.createdAt,now()),' 시간 전')\n" +
+                "                                              when (TIMESTAMPDIFF(DAY,V.createdAt,now()))>7\n" +
+                "                                               then concat(year(V.createdAt),'년 ',month(V.createdAt),'월 ',DAY(V.createdAt),'일')\n" +
+                "                                            when TIMESTAMPDIFF(minute,V.createdAt,now())<1\n" +
+                "                                                then concat(TIMESTAMPDIFF(second,V.createdAt,now()))\n" +
+                "                                            when TIMESTAMPDIFF(hour,V.createdAt,now())>24\n" +
+                "                                                then concat(TIMESTAMPDIFF(DAY,V.createdAt,now()),' 일 전')\n" +
+                "                                        end end as visitedCreated,\n" +
+                "       (select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && U2.id = ? && Wishes.storeId=V.storeId))'wishCheck',\n" +
+                "       (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id  && U2.id = ? && Visited.storeId=V.storeId))'visitedCheck',\n" +
+                "       (select exists(select VisitedLikes.id from VisitedLikes, Users U2 where VisitedLikes.userId=U2.id and V.id=VisitedLikes.visitedId and U2.id=?))'likeCheck'\n" +
+                "from Users\n" +
+                "    join Visited V on Users.id = V.userId\n" +
+                "    join Stores S on V.storeId = S.id\n" +
+                "where Users.id=? %s " +
+                "    %s %s and parkingInfo IN (%s) \n" +
+                "    order by %s ", region,category, price, parkingInfoList,order);
+        String getStoreInfoQuery="select S.id as'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect left join Review on Review.id=reviewId " +
+                "       where ReviewImgSelect.reviewId=Review.id and S.id=Review.storeId limit 1)as 'storeImg',\n" +
+                "       name as'storeName',subRegion,foodCategory,viewCount,(select count(Review.id) from Review where Review.storeId=S.id)'reviewCount'\n" +
+                "from Stores S where S.id=?";
+        return this.jdbcTemplate.query(getUserVisitedQuery,
+                (rs,rowNum)->new GetUserVisitedRes(
+                        rs.getString("distance"),
+                        rs.getLong("visitedId"),
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("userName"),
+                        rs.getString("isHolic"),
+                        rs.getInt("userReviewCount"),
+                        rs.getInt("userFollowCount"),
+                        rs.getLong("storeId"),
+                        rs.getString("storeTag"),
+                        rs.getString("description"),
+                        rs.getInt("likeCount"),
+                        rs.getInt("commentCount"),
+                        rs.getString("visitedCreated"),
+                        rs.getInt("visitedCheck"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("likeCheck"),
+                        storeInfo=this.jdbcTemplate.query(getStoreInfoQuery,
+                                (rk,rownum)-> new GetVisitedStoreRes(
+                                        rk.getLong("storeId"),
+                                        rk.getString("storeImg"),
+                                        rk.getString("storeName"),
+                                        rk.getString("subRegion"),
+                                        rk.getString("foodCategory"),
+                                        rk.getInt("viewCount"),
+                                        rk.getInt("reviewCount")
+                                ),rs.getLong("storeId"))
+                ),getVisitedParams );
+    }
 }

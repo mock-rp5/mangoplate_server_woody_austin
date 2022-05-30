@@ -23,9 +23,9 @@ public class GetReviewRes {
     private Long storeId;
     private String storeName;
     private String review;
-    private String reviewCreated;
     private int reviewLikes;
     private int reviewComments;
+    private String reviewCreated;
     private int wishCheck;
     private int likeCheck;
     private List<GetImgRes> ImgList;

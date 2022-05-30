@@ -30,16 +30,16 @@ public class NewsController {
     @GetMapping("/{userid}")
     public BaseResponse<List<GetNewsRes>> getNews(@PathVariable("userid") Long userId,@RequestParam(defaultValue = "1") List<Integer> filter,@RequestParam(defaultValue = "1") int page){
         try {
-            List<String> evaluation = new ArrayList<>(filter.size());
-            for (int i = 0; i < filter.size(); i++) {
-                if (filter.get(i) == 1) {
-                    evaluation.add("맛있다!");
-                } else if (filter.get(i) == 2) {
-                    evaluation.add("괜찮다");
-                } else {
-                    evaluation.add("별로");
+                List<String> evaluation = new ArrayList<>(filter.size());
+                for (int i = 0; i < filter.size(); i++) {
+                    if (filter.get(i) == 1) {
+                        evaluation.add("맛있다!");
+                    } else if (filter.get(i) == 2) {
+                        evaluation.add("괜찮다");
+                    } else {
+                        evaluation.add("별로");
+                    }
                 }
-            }
             List<GetNewsRes> getNewsRes = newsProvider.getNews(userId,evaluation,page);
             System.out.println(getNewsRes);
             return new BaseResponse<>(getNewsRes);

@@ -9,7 +9,6 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -488,9 +487,123 @@ public class UserController {
      */
     @ResponseBody
     @GetMapping("/reviews/new/{userId}/{profileUserId}")
-    public BaseResponse<List<GetReviewRes>> getUserReview(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
-                                                          @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "0") List<Integer> category,
-                                                        @RequestParam(required = false,defaultValue = "0") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking){
+    public BaseResponse<List<GetReviewRes>> getUserReview(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") List<Integer> evaluation,
+                                                          @RequestParam(required = false,defaultValue = "1") int order, @RequestParam(required = false,defaultValue = "all") List<String> region,
+                                                          @RequestParam(required = false,defaultValue = "0") List<Integer> category, @RequestParam(required = false,defaultValue = "0") List<Integer> priceRange,
+                                                          @RequestParam(required = false,defaultValue = "1")int parking){
+        try {
+            List<String> evaluationList = new ArrayList<>(evaluation.size());
+            for (int i = 0; i < evaluation.size(); i++) {
+                if (evaluation.get(i) == 1) {
+                    evaluationList.add("맛있다!");
+                } else if (evaluation.get(i) == 2) {
+                    evaluationList.add("괜찮다");
+                } else {
+                    evaluationList.add("별로");
+                }
+            }
+
+            String filter="";
+            if(order==1){
+                filter="recent";
+            }
+            else if(order==2){
+                filter="distance";
+            }
+            else{
+                return new BaseResponse<>(NON_EXIST_FILTER);
+            }
+
+            List<String> parkingInfo=new ArrayList<>(2);
+            if(parking==2){
+                parkingInfo.add("가능");
+            }else if(parking==1) {
+                parkingInfo.add("가능");
+                parkingInfo.add("불가");
+            }
+            else{
+                return new BaseResponse<>(NON_EXIST_FILTER);
+            }
+
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<String> foodCategory=new ArrayList(category.size());
+            for(int i=0;i<category.size();i++){
+                if(category.get(i)==1){
+                    foodCategory.add("한식");
+                }
+                else if(category.get(i)==2){
+                    foodCategory.add("일식");
+                }
+                else if(category.get(i)==3){
+                    foodCategory.add("중식");
+                }
+                else if(category.get(i)==4){
+                    foodCategory.add("양식");
+                }
+                else if(category.get(i)==5){
+                    foodCategory.add("세계음식");
+                }
+                else if(category.get(i)==6){
+                    foodCategory.add("뷔페");
+                }
+                else if(category.get(i)==7){
+                    foodCategory.add("카페");
+                }else if(category.get(i)==8){
+                    foodCategory.add("주점");
+                }
+                else if (category.get(i)==0){
+                    foodCategory.add("all");
+                }
+            }
+
+            List<String> price=new ArrayList<>(priceRange.size());
+            for (int i=0;i<priceRange.size();i++){
+                if(priceRange.get(i) >4){
+                    return new BaseResponse<>(NON_EXIST_FILTER);
+                }
+            }
+
+            for (int i=0;i<priceRange.size();i++){
+                if(priceRange.get(i)==1){
+                    price.add("만원 미만/1인");
+                }
+                else if(priceRange.get(i)==2){
+                    price.add("만원~2만원/1인");
+                }
+                else if(priceRange.get(i)==3){
+                    price.add("2만원~3만원/1인");
+                }
+                else if(priceRange.get(i)==4){
+                    price.add("3만원 이상");
+                }
+                else if(priceRange.get(i)==0){
+                    price.add("all");
+                }
+            }
+            System.out.println(price);
+            GetUserReviewReq getUserReviewReq =new GetUserReviewReq(userId, profileUserId, evaluationList,filter,region,foodCategory, price, parkingInfo);
+            List<GetReviewRes> getNewsRes=userProvider.getUserReview(getUserReviewReq);
+            return new BaseResponse<>(getNewsRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
+    /**
+     * 유저의 리뷰 조회
+     *
+     */
+    @ResponseBody
+    @GetMapping("/visited/{userId}/{profileUserId}")
+    public BaseResponse<List<GetUserVisitedRes>> getUserVisited(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
+                                                         @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "0") List<Integer> category,
+                                                         @RequestParam(required = false,defaultValue = "0") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking
+                                                         ){
+
         try {
             String filter="";
             if(order==1){
@@ -573,27 +686,12 @@ public class UserController {
                 }
             }
             System.out.println(price);
-            GetUserReviewReq getUserReviewReq=new GetUserReviewReq(userId, profileUserId, filter,region,foodCategory, price, parkingInfo);
-            List<GetReviewRes> getNewsRes=userProvider.getUserReview(getUserReviewReq);
-            return new BaseResponse<>(getNewsRes);
+            GetUserVisitedReq getUserVisitedReq =new GetUserVisitedReq(userId, profileUserId, filter,region,foodCategory, price, parkingInfo);
+            List<GetUserVisitedRes> getVisitedRes=userProvider.getUserVisited(getUserVisitedReq);
+            return new BaseResponse<>(getVisitedRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-    }
-
-
-    /**
-     * 유저의 리뷰 조회
-     *
-     */
-    @ResponseBody
-    @GetMapping("/users/visited/{userId}/{profileUserId}")
-    public BaseResponse<List<GetNewsRes>> getUserVisited(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,
-                                                         @RequestParam(required = false,defaultValue = "all") List<String> region,@RequestParam(required = false,defaultValue = "all") List<String> category,
-                                                         @RequestParam(required = false,defaultValue = "all") List<Integer> priceRange,@RequestParam(required = false,defaultValue = "1")int parking
-                                                         ){
-
-        return null;
     }
     /**
      * 유저의 리뷰 조회
