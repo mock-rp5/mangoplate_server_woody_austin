@@ -62,4 +62,21 @@ public class StoreService {
         }
     }
 
+    public void addStoreToMylist(Long storeId, Long mylistId, Long userId) throws BaseException {
+        if(storeDao.checkStoreId(storeId) == 0){
+            throw new BaseException(NON_EXIST_STORE);
+        }
+        if(storeDao.checkMylistId(mylistId) == 0){
+            throw new BaseException(NON_EXIST_MYLIST);
+        }
+        if(storeDao.checkMylistUser(mylistId) != userId){
+            throw new BaseException(WRONG_MYLIST_USER);
+        }
+        try {
+            storeDao.addStoreToMylist(storeId, mylistId);
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }

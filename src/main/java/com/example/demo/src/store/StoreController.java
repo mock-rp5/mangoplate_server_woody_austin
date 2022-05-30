@@ -278,4 +278,26 @@ public class StoreController {
         }
     }
 
+    /**
+     * 가게 마이리스트에 추가 API
+     * [POST] /stores/mylists/:storeId/:mylistId/:userId
+     * * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/mylists/{storeId}/{mylistId}/{userId}")
+    public BaseResponse<String> addStoreToMylist(@PathVariable("storeId") Long storeId,@PathVariable("mylistId") Long mylistId, @PathVariable("userId") Long userId){
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result="마이리스트에 가게 추가 성공";
+            storeService.addStoreToMylist(storeId,mylistId,userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
 }

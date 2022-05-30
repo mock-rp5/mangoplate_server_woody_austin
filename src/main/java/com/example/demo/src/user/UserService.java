@@ -276,5 +276,13 @@ public class UserService {
         }
     }
 
+    public Long createMylist(Long userId, PostMylistReq postMylistReq) throws BaseException {
+        try {
+            return userDao.createMylist(userId, postMylistReq);
+        } catch(Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 
 }
