@@ -1,9 +1,6 @@
 package com.example.demo.src.store;
 
 
-import com.example.demo.config.BaseException;
-import com.example.demo.src.news.model.GetImgRes;
-import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.store.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Repository
 public class StoreDao {
@@ -36,9 +31,9 @@ public class StoreDao {
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                     "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                     "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                    "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                    "      subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
-                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
+                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance',\n" +
                     "    concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                     "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                     "FROM Users,Stores\n" +
@@ -49,9 +44,9 @@ public class StoreDao {
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                     "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                     "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                    "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                    "      subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
-                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
+                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance',\n" +
                     "    concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                     "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                     "FROM Users,Stores\n" +
@@ -62,9 +57,9 @@ public class StoreDao {
                     "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                     "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                     "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                    "      concat(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                    "      subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                     "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
-                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),' km')'distance',\n" +
+                    "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance',\n" +
                     "    concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                     "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                     "FROM Users,Stores\n" +
@@ -81,7 +76,8 @@ public class StoreDao {
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
                         rs.getInt("visitedCheck"),
-                        rs.getString("distance"),
+                        rs.getString("subRegion"),
+                        rs.getFloat("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
                         rs.getInt("viewCount"),
@@ -153,10 +149,10 @@ public class StoreDao {
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "       (select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                 "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                "       concat(ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "       subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
-                "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km')\n" +
-                "    AS distance,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
+                "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance'" +
+                "                   ,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                 "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                 "FROM Users,Stores\n" +
                 "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? ",inSql);
@@ -170,7 +166,8 @@ public class StoreDao {
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
                         rs.getInt("visitedCheck"),
-                        rs.getString("distance"),
+                        rs.getString("subRegion"),
+                        rs.getFloat("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
                         rs.getInt("viewCount"),
@@ -212,8 +209,9 @@ public class StoreDao {
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                 "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "       subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
+                "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance',\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
                 "FROM Users,Stores\n" +
                 "WHERE Users.id=? && Stores.foodCategory IN (%s) && Stores.subRegion IN (%s)",categoryList, regionList);
@@ -223,7 +221,8 @@ public class StoreDao {
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
                         rs.getInt("visitedCheck"),
-                        rs.getString("distance"),
+                        rs.getString("subRegion"),
+                        rs.getFloat("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
                         rs.getInt("viewCount"),
@@ -237,8 +236,9 @@ public class StoreDao {
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                 "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "       subRegion,ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "                      *cos(radians(Stores.longitude) -radians(Users.longitude))\n" +
+                "                      +sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2)'distance',\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
                 "FROM Users,Stores\n" +
                 "WHERE Users.id=? && Stores.parkingInfo = '가능' && Stores.subRegion IN (%s)", regionList);
@@ -248,7 +248,8 @@ public class StoreDao {
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
                         rs.getInt("visitedCheck"),
-                        rs.getString("distance"),
+                        rs.getString("subRegion"),
+                        rs.getFloat("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
                         rs.getInt("viewCount"),
@@ -268,14 +269,15 @@ public class StoreDao {
                 "FROM Users,Stores\n" +
                 "WHERE Users.id=? && (6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
                 "*cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))) <= ?";
-        Object[] getStoreListParams=new Object[]{userId,distance * 0.001};
+        Object[] getStoreListParams=new Object[]{userId,distance * 0.0001};
         return this.jdbcTemplate.query(getStoreListByDistanceQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
                         rs.getString("reviewImg"),
                         rs.getInt("wishCheck"),
                         rs.getInt("visitedCheck"),
-                        rs.getString("distance"),
+                        rs.getString("subRegion"),
+                        rs.getFloat("distance"),
                         rs.getString("storeName"),
                         rs.getFloat("rating"),
                         rs.getInt("viewCount"),
