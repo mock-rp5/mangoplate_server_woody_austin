@@ -181,9 +181,7 @@ public class StoreDao {
     public int checkStoreId(Long storeId){
         String checkStoreIdQuery = "select exists(select id from Stores where id = ?)";
         Long checkStoreIdParams = storeId;
-        return this.jdbcTemplate.queryForObject(checkStoreIdQuery,
-                int.class,
-                checkStoreIdParams);
+        return this.jdbcTemplate.queryForObject(checkStoreIdQuery, int.class, checkStoreIdParams);
     }
 
     public int checkWish(Long storeId, Long userId) {

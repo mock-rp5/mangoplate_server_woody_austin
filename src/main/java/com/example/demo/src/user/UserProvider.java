@@ -152,8 +152,7 @@ public class UserProvider {
             throw new BaseException(NON_EXIST_USER);
         }
         try {
-            List<GetUserProfileRes> getUserProfileRes = userDao.getUserProfile(getUserProfileReq);
-            return getUserProfileRes;
+            return userDao.getUserProfile(getUserProfileReq);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -164,8 +163,7 @@ public class UserProvider {
             throw new BaseException(NON_EXIST_USER);
         }
         try {
-            List<GetUserNameRes> getUserNameRes = userDao.getUserName(userId);
-            return getUserNameRes;
+            return userDao.getUserName(userId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -189,8 +187,7 @@ public class UserProvider {
             throw new BaseException(NON_EXIST_USER);
         }
         try {
-            List<GetMyProfileRes> getMyProfileRes = userDao.getMyProfile(userId);
-            return getMyProfileRes;
+            return userDao.getMyProfile(userId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -201,21 +198,42 @@ public class UserProvider {
             throw new BaseException(NON_EXIST_USER);
         }
         try {
-            List<GetReviewRes> getNewsRes = userDao.getUserReview(getUserReviewReq);
-            return getNewsRes;
+            return userDao.getUserReview(getUserReviewReq);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
 
-    public List<GetUserVisitedRes> getUserVisited(GetUserVisitedReq getUserVisitedReq) throws BaseException {
-        if (checkUserExist(getUserVisitedReq.getProfileUserId()) == 0) {
+    public List<GetUserVisitedRes> getUserVisited(GetTimeLineReq getTimeLineReq) throws BaseException {
+        if (checkUserExist(getTimeLineReq.getProfileUserId()) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
         try {
-            List<GetUserVisitedRes> getUserVisitedRes = userDao.getUserVisited(getUserVisitedReq);
+            List<GetUserVisitedRes> getUserVisitedRes = userDao.getUserVisited(getTimeLineReq);
             return getUserVisitedRes;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserPhotoRes> getUserPhotos(GetTimeLineReq getTimeLineReq) throws BaseException {
+        if (checkUserExist(getTimeLineReq.getProfileUserId()) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            return userDao.getUserPhotos(getTimeLineReq);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserWishesRes> getUserWishes(GetTimeLineReq getTimeLineReq) throws BaseException {
+        if (checkUserExist(getTimeLineReq.getProfileUserId()) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            return userDao.getUserWishes(getTimeLineReq);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

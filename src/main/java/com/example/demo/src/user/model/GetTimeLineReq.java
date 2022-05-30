@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetUserVisitedReq {
+public class GetTimeLineReq {
     private Long userId;
     private Long profileUserId;
     private String order;
