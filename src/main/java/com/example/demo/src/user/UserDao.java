@@ -446,11 +446,11 @@ public class UserDao {
     }
 
 
-    public List<GetUserVisitedRes> getUserVisited(GetUserVisitedReq getUserVisitedReq) {
-        String regionList = String.join(",", getUserVisitedReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
-        String categoryList=String.join(",", getUserVisitedReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
-        String priceRangeList=String.join(",", getUserVisitedReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
-        String parkingInfoList=String.join(",", getUserVisitedReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+    public List<GetUserVisitedRes> getUserVisited(GetTimeLineReq getTimeLineReq) {
+        String regionList = String.join(",", getTimeLineReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",", getTimeLineReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",", getTimeLineReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",", getTimeLineReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
 
         String order=null;
         String regionAndOr = null;
@@ -458,15 +458,15 @@ public class UserDao {
         String priceAndOr=null;
 
 
-        if(getUserVisitedReq.getOrder()=="recent"){
+        if(getTimeLineReq.getOrder()=="recent"){
             order="V.createdAt desc";
         }
-        else if(getUserVisitedReq.getOrder()=="distance"){
+        else if(getTimeLineReq.getOrder()=="distance"){
             order="distance asc";
         }
 
         String region="";
-        if(getUserVisitedReq.getRegion().contains("all")){
+        if(getTimeLineReq.getRegion().contains("all")){
             regionAndOr="or";
         }
         else{
@@ -475,7 +475,7 @@ public class UserDao {
         }
 
         String category="";
-        if(getUserVisitedReq.getCategory().contains("all")){
+        if(getTimeLineReq.getCategory().contains("all")){
             categoryAndOr="or";
         }
         else{
@@ -483,7 +483,7 @@ public class UserDao {
             category=categoryAndOr+" foodCategory IN ("+categoryList+")";
         }
         String price="";
-        if(getUserVisitedReq.getPriceRange().contains("all")){
+        if(getTimeLineReq.getPriceRange().contains("all")){
             priceAndOr="or";
         }
         else{
@@ -492,8 +492,8 @@ public class UserDao {
         }
 
         Object[] getVisitedParams = new Object[]{
-                getUserVisitedReq.getUserId(), getUserVisitedReq.getUserId(), getUserVisitedReq.getUserId(),
-                getUserVisitedReq.getUserId(), getUserVisitedReq.getProfileUserId()
+                getTimeLineReq.getUserId(), getTimeLineReq.getUserId(), getTimeLineReq.getUserId(),
+                getTimeLineReq.getUserId(), getTimeLineReq.getProfileUserId()
         };
         String getUserVisitedQuery=String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(S.Latitude))   +\n" +
                 "                \"                      *cos(radians(S.longitude) -radians(U.longitude))    +\n" +
@@ -564,5 +564,146 @@ public class UserDao {
                                         rk.getInt("reviewCount")
                                 ),rs.getLong("storeId"))
                 ),getVisitedParams );
+    }
+
+    public List<GetUserPhotoRes> getUserPhotos(GetTimeLineReq getTimeLineReq) {
+        String regionList = String.join(",", getTimeLineReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",", getTimeLineReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",", getTimeLineReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",", getTimeLineReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+
+        String order=null;
+        String regionAndOr = null;
+        String categoryAndOr=null;
+        String priceAndOr=null;
+
+
+        if(getTimeLineReq.getOrder()=="recent"){
+            order="RI.createdAt desc";
+        }
+        else if(getTimeLineReq.getOrder()=="distance"){
+            order="distance asc";
+        }
+
+        String region="";
+        if(getTimeLineReq.getRegion().contains("all")){
+            regionAndOr="or";
+        }
+        else{
+            regionAndOr = "and";
+            region = regionAndOr+" subRegion IN "+"("+regionList+")";
+        }
+
+        String category="";
+        if(getTimeLineReq.getCategory().contains("all")){
+            categoryAndOr="or";
+        }
+        else{
+            categoryAndOr = "and";
+            category=categoryAndOr+" foodCategory IN ("+categoryList+")";
+        }
+        String price="";
+        if(getTimeLineReq.getPriceRange().contains("all")){
+            priceAndOr="or";
+        }
+        else{
+            priceAndOr = "and";
+            price=priceAndOr+" priceInfo IN ("+priceRangeList+")";
+        }
+        Object[] getUserPhotoParmas=new Object[]{
+            getTimeLineReq.getUserId(), getTimeLineReq.getProfileUserId()
+        };
+        String getUserPhotoQuery=String.format("select (select (6371*acos(cos(radians(U.Latitude))*cos(radians(S.Latitude))*cos(radians(S.longitude) -radians(U.longitude))\n" +
+                "        +sin(radians(U.Latitude))*sin(radians(S.Latitude)))) from Users U where U.id=?)'distance',\n" +
+                "       RI.id as'reviewImgId',imgUrl from ReviewImg RI\n" +
+                "    join Review R on RI.reviewId = R.id\n" +
+                "    join Users U on U.id=R.userId\n" +
+                "    join Stores S on R.storeId=S.id\n" +
+                "where U.id=? %s " +
+                "    %s %s and parkingInfo IN (%s) \n" +
+                "    order by %s ", region,category, price, parkingInfoList,order);
+
+        return this.jdbcTemplate.query(getUserPhotoQuery,
+                (rs,rowNum)->new GetUserPhotoRes(
+                        rs.getString("distance"),
+                        rs.getLong("reviewImgId"),
+                        rs.getString("imgUrl")
+                ),getUserPhotoParmas
+                );
+    }
+
+    public List<GetUserWishesRes> getUserWishes(GetTimeLineReq getTimeLineReq) {
+        String regionList = String.join(",", getTimeLineReq.getRegion().stream().map(region->"'"+region+"'").collect(Collectors.toList()));
+        String categoryList=String.join(",", getTimeLineReq.getCategory().stream().map(category -> "'"+category+"'").collect(Collectors.toList()));
+        String priceRangeList=String.join(",", getTimeLineReq.getPriceRange().stream().map(priceRange -> "'"+priceRange+"'").collect(Collectors.toList()));
+        String parkingInfoList=String.join(",", getTimeLineReq.getParking().stream().map(parking -> "'"+parking+"'").collect(Collectors.toList()));
+
+        String order=null;
+        String regionAndOr = null;
+        String categoryAndOr=null;
+        String priceAndOr=null;
+
+
+        if(getTimeLineReq.getOrder()=="recent"){
+            order="W.createdAt desc";
+        }
+        else if(getTimeLineReq.getOrder()=="distance"){
+            order="distance asc";
+        }
+
+        String region="";
+        if(getTimeLineReq.getRegion().contains("all")){
+            regionAndOr="or";
+        }
+        else{
+            regionAndOr = "and";
+            region = regionAndOr+" subRegion IN "+"("+regionList+")";
+        }
+
+        String category="";
+        if(getTimeLineReq.getCategory().contains("all")){
+            categoryAndOr="or";
+        }
+        else{
+            categoryAndOr = "and";
+            category=categoryAndOr+" foodCategory IN ("+categoryList+")";
+        }
+        String price="";
+        if(getTimeLineReq.getPriceRange().contains("all")){
+            priceAndOr="or";
+        }
+        else{
+            priceAndOr = "and";
+            price=priceAndOr+" priceInfo IN ("+priceRangeList+")";
+        }
+        Object[] getUserWishesParmas=new Object[]{
+            getTimeLineReq.getUserId(),getTimeLineReq.getUserId(),getTimeLineReq.getUserId(),getTimeLineReq.getProfileUserId()
+        };
+
+        String getUserWishesQuery=String.format("select (select (6371*acos(cos(radians(U2.Latitude))*cos(radians(S.Latitude))\n" +
+                "                      *cos(radians(S.longitude) -radians(U2.longitude))\n" +
+                "                      +sin(radians(U2.Latitude))*sin(radians(S.Latitude)))) from Users U2 where U2.id=?)'distance',S.id as 'storeId',\n" +
+                "       (select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and S.id=Review.storeId limit 1)as 'imgUrl',\n" +
+                "       subRegion,S.name,rating,viewCount,(select count(storeId) from Review where Review.storeId=S.id)'reviewCount',\n" +
+                "       (select exists(select Wishes.id from Wishes where Wishes.userId= ? && Wishes.storeId=S.id))'wishCheck',\n" +
+                "       (select exists(select Visited.id from Visited where  Visited.id = ? && S.id=Visited.storeId))'visitedCheck'\n" +
+                "from Stores S\n" +
+                "    join Wishes W on W.storeId=S.id\n" +
+                "    join Users U on U.id=W.userId where W.userId=?" +
+                " %s %s %s and parkingInfo IN (%s) \n" +
+                "    order by %s ", region,category, price, parkingInfoList,order);
+        return this.jdbcTemplate.query(getUserWishesQuery,
+                (rs,rowNum)->new GetUserWishesRes(
+                        rs.getString("distance"),
+                        rs.getLong("storeId"),
+                        rs.getString("imgUrl"),
+                        rs.getString("subRegion"),
+                        rs.getString("name"),
+                        rs.getInt("rating"),
+                        rs.getInt("viewCount"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck")
+                ),getUserWishesParmas);
     }
 }
