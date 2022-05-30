@@ -2,7 +2,6 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
@@ -31,182 +30,195 @@ public class UserProvider {
         this.jwtService = jwtService;
     }
 
-    public List<GetUserRes> getUsers() throws BaseException{
-        try{
+    public List<GetUserRes> getUsers() throws BaseException {
+        try {
             List<GetUserRes> getUserRes = userDao.getUsers();
             return getUserRes;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetUserRes> getUsersByEmail(String email) throws BaseException{
-        try{
+    public List<GetUserRes> getUsersByEmail(String email) throws BaseException {
+        try {
             List<GetUserRes> getUsersRes = userDao.getUsersByEmail(email);
             return getUsersRes;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public int getKakaoLogin(String email) throws BaseException{
-        try{
+    public int getKakaoLogin(String email) throws BaseException {
+        try {
             return userDao.getUserKakaoExists(email);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public PostLoginRes logInKakao(String k_email) throws BaseException{
+    public PostLoginRes logInKakao(String k_email) throws BaseException {
         if (userDao.checkKakaoEmail(k_email) == 1) {
             Long userIdx = userDao.getIdByKakaoEmail(k_email);
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx, jwt);
-        }
-        else{
+        } else {
             throw new BaseException(FAILED_TO_LOGIN);
         }
 
     }
 
-    public int checkEmail(String email) throws BaseException{
-        try{
+    public int checkEmail(String email) throws BaseException {
+        try {
             return userDao.checkEmail(email);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
+    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
         User user;
         try {
             user = userDao.getPwd(postLoginReq);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(NON_EXIST_EMAIL);
         }
         String encryptPwd;
         try {
-            encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());
+            encryptPwd = new SHA256().encrypt(postLoginReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_DECRYPTION_ERROR);
         }
 
-        if(user.getPassword().equals(encryptPwd)){
+        if (user.getPassword().equals(encryptPwd)) {
             Long userId = user.getUserId();
             String jwt = jwtService.createJwt(userId);
-            return new PostLoginRes(userId,jwt);
-        }
-        else{
+            return new PostLoginRes(userId, jwt);
+        } else {
             throw new BaseException(FAILED_TO_LOGIN);
         }
 
     }
 
-    public int checkFollowExist(GetUserFollowReq getUserFollowReq) throws BaseException{
-        try{
+    public int checkFollowExist(GetUserFollowReq getUserFollowReq) throws BaseException {
+        try {
             return userDao.checkFollowExist(getUserFollowReq);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public int checkUserExist(Long followedUserId) throws BaseException{
-        try{
+    public int checkUserExist(Long followedUserId) throws BaseException {
+        try {
             return userDao.checkUserExist(followedUserId);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public int checkFollowExistToUnFollow(DeleteUserFollowReq deleteUserFollowReq)throws BaseException {
-        try{
+    public int checkFollowExistToUnFollow(DeleteUserFollowReq deleteUserFollowReq) throws BaseException {
+        try {
             return userDao.checkFollowExistToUnFollow(deleteUserFollowReq);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetUserFollowerListRes> getUserFollower(GetUserFollowListReq getUserFollowReq) throws BaseException{
-        if(checkUserExist(getUserFollowReq.getFollowedUserId())==0){
+    public List<GetUserFollowerListRes> getUserFollower(GetUserFollowListReq getUserFollowReq) throws BaseException {
+        if (checkUserExist(getUserFollowReq.getFollowedUserId()) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetUserFollowerListRes> getUserFollowerListRes =userDao.getUserFollower(getUserFollowReq);
+        try {
+            List<GetUserFollowerListRes> getUserFollowerListRes = userDao.getUserFollower(getUserFollowReq);
             return getUserFollowerListRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetUserFollowerListRes> getUserFollowing(GetUserFollowListReq getUserFollowReq)throws BaseException {
-        if(checkUserExist(getUserFollowReq.getFollowedUserId())==0){
+    public List<GetUserFollowerListRes> getUserFollowing(GetUserFollowListReq getUserFollowReq) throws BaseException {
+        if (checkUserExist(getUserFollowReq.getFollowedUserId()) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetUserFollowerListRes> getUserFollowerListRes =userDao.getUserFollowing(getUserFollowReq);
+        try {
+            List<GetUserFollowerListRes> getUserFollowerListRes = userDao.getUserFollowing(getUserFollowReq);
             return getUserFollowerListRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetUserProfileRes> getUserProfile(GetUserProfileReq getUserProfileReq) throws BaseException{
-        if(checkUserExist(getUserProfileReq.getProfileUserId())==0){
+    public List<GetUserProfileRes> getUserProfile(GetUserProfileReq getUserProfileReq) throws BaseException {
+        if (checkUserExist(getUserProfileReq.getProfileUserId()) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetUserProfileRes> getUserProfileRes=userDao.getUserProfile(getUserProfileReq);
+        try {
+            List<GetUserProfileRes> getUserProfileRes = userDao.getUserProfile(getUserProfileReq);
             return getUserProfileRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
     public List<GetUserNameRes> getUserName(Long userId) throws BaseException {
-        if(checkUserExist(userId)==0){
+        if (checkUserExist(userId) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetUserNameRes> getUserNameRes=userDao.getUserName(userId);
+        try {
+            List<GetUserNameRes> getUserNameRes = userDao.getUserName(userId);
             return getUserNameRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
     public List<GetUserEmailRes> getUserEmail(Long userId) throws BaseException {
-        if(checkUserExist(userId)==0){
+        if (checkUserExist(userId) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetUserEmailRes> getUserEmailRes=userDao.getUserEmail(userId);
+        try {
+            List<GetUserEmailRes> getUserEmailRes = userDao.getUserEmail(userId);
             return getUserEmailRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
 
     }
 
-    public List<GetMyProfileRes> getMyProfile(Long userId) throws BaseException{
-        if(checkUserExist(userId)==0){
+    public List<GetMyProfileRes> getMyProfile(Long userId) throws BaseException {
+        if (checkUserExist(userId) == 0) {
             throw new BaseException(NON_EXIST_USER);
         }
-        try{
-            List<GetMyProfileRes> getMyProfileRes=userDao.getMyProfile(userId);
+        try {
+            List<GetMyProfileRes> getMyProfileRes = userDao.getMyProfile(userId);
             return getMyProfileRes;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public List<GetReviewRes> getUserReview(GetUserReviewReq getUserReviewReq) {
-        List<GetReviewRes> getNewsRes=userDao.getUserReview(getUserReviewReq);
-        return getNewsRes;
+    public List<GetReviewRes> getUserReview(GetUserReviewReq getUserReviewReq) throws BaseException {
+        if (checkUserExist(getUserReviewReq.getProfileUserId()) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            List<GetReviewRes> getNewsRes = userDao.getUserReview(getUserReviewReq);
+            return getNewsRes;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
 
+    public List<GetUserVisitedRes> getUserVisited(GetUserVisitedReq getUserVisitedReq) throws BaseException {
+        if (checkUserExist(getUserVisitedReq.getProfileUserId()) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            List<GetUserVisitedRes> getUserVisitedRes = userDao.getUserVisited(getUserVisitedReq);
+            return getUserVisitedRes;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
 

@@ -9,10 +9,9 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetUserReviewReq {
+public class GetUserVisitedReq {
     private Long userId;
     private Long profileUserId;
-    private List<String> evaluation;
     private String order;
     private List<String> region;
     private List<String> category;
