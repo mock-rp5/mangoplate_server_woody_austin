@@ -238,5 +238,16 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetMyInfoRes getMyInfo(Long userId) throws BaseException {
+        if (checkUserExist(userId) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            return userDao.getMyInfo(userId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
 
