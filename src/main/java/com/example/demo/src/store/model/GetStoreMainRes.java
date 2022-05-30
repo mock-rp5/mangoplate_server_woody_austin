@@ -12,7 +12,8 @@ public class GetStoreMainRes {
     private String reviewImg;
     private int wishCheck;
     private int visitedCheck;
-    private String distance;
+    private String subRegion;
+    private float distance;
     private String storeName;
     private float rating;
     private int viewCount;
