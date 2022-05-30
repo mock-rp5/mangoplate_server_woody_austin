@@ -181,6 +181,17 @@ public class StoreDao {
         return this.jdbcTemplate.queryForObject(checkStoreIdQuery, int.class, checkStoreIdParams);
     }
 
+    public int checkMylistId(Long mylistId){
+        String checkMylistIdQuery = "select exists(select id from Mylists where id = ?)";
+        Long checkMylistIdParams = mylistId;
+        return this.jdbcTemplate.queryForObject(checkMylistIdQuery, int.class, checkMylistIdParams);
+    }
+
+    public int checkMylistUser(Long mylistId) {
+        String checkUserQuery="select userId from Mylists where id = ? ";
+        return this.jdbcTemplate.queryForObject(checkUserQuery,int.class,mylistId);
+    }
+
     public int checkWish(Long storeId, Long userId) {
         String checkWishQuery="select exists(select Wishes.id from Wishes where storeId=? and userId=?)";
         return this.jdbcTemplate.queryForObject(checkWishQuery,int.class,storeId, userId);
@@ -319,6 +330,11 @@ public class StoreDao {
                                         rk.getString("imgUrl")
                                 ),rs.getLong("reviewId"))
                 ),userId, storeId);
+    }
+
+    public void addStoreToMylist(Long storeId, Long mylistId) {
+        String addQuery = "insert into MylistStores (mylistId, storeId) VALUES (?,?)";
+        this.jdbcTemplate.update(addQuery, mylistId, storeId);
     }
 }
 

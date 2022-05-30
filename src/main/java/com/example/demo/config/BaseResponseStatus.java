@@ -35,6 +35,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_NAME(false, 2018, "이름을 입력해주세요."),
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EMPTY_PHONENUMBER(false, 2020, "전화번호를 입력해주세요."),
+    EMPTY_MYLIST_NAME(false,2021,"마이리스트 제목을 입력해주세요."),
 
     // [GET] /stores
     DISTANCE_VALUE_WRONG(false, 2030, "필터링할 거리값을 알맞게 입력해주세요."),
@@ -77,6 +78,8 @@ public enum BaseResponseStatus {
     ALREADY_VISITED_TODAY(false,3075,"가봤어요는 가게당 24시간에 한번만 생성 가능합니다."),
     NON_EXIST_VISITED(false, 3076, "존재하지 않는 가봤어요 아이디 입니다."),
     WRONG_USERID(false, 3077, "해당 가봤어요를 생성한 유저가 아닙니다."),
+    NON_EXIST_MYLIST(false, 3078, "존재하지 않는 마이리스트 아이디 입니다."),
+    WRONG_MYLIST_USER(false, 3079, "해당 마이리스트를 생성한 유저가 아닙니다."),
 
     // [GET] /review
     NON_EXIST_REVIEW(false, 3080, "존재하지 않는 리뷰 아이디 입니다."),

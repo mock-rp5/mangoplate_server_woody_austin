@@ -739,5 +739,12 @@ public class UserDao {
                 ), userId);
     }
 
+    public Long createMylist(Long userId, PostMylistReq postMylistReq) {
+        String createMylistQuery = "insert into Mylists (userId, name, description) values (?, ?, ?)";
+
+        this.jdbcTemplate.update(createMylistQuery, userId, postMylistReq.getMylistName(), postMylistReq.getDescription());
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,Long.class);
+    }
 
 }
