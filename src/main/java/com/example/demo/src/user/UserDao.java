@@ -706,4 +706,37 @@ public class UserDao {
                         rs.getInt("visitedCheck")
                 ),getUserWishesParmas);
     }
+
+    public GetMyInfoRes getMyInfo(Long userId) {
+        String getMyInfoQuery = "select Users.id as 'userId',profileImgUrl,count(Following.id)'followerCount',\n" +
+                "       (select count(Following.id) from Following where Following.userId=Users.id)as'followingCount',name,isHolic,\n" +
+                "       (select count(EatDealPayment.id) from EatDealPayment where EatDealPayment.userId = Users.id)as 'eatDealCount', \n" +
+                "       (select count(Review.id)from Review where Review.userId=Users.id)as 'reviewCount',\n" +
+                "       (select count(Visited.id) from Visited where Visited.userId=Users.id)as 'visitedCount',\n" +
+                "       (select count(ReviewImg.id)from ReviewImg join Review on Review.id=reviewId where Review.userId=Users.id) as 'imgCount',\n" +
+                "       (select count(Wishes.id) from Wishes where Wishes.userId=Users.id) as 'wishesCount',\n" +
+                "       (select count(Mylists.id) from Mylists where Mylists.userId=Users.id) as 'myListCount',\n" +
+                "       (select count(BookMarks.id) from BookMarks where BookMarks.userId=Users.id) as 'bookmarkCount',\n" +
+                "       (select count(Stores.id) from Stores where Stores.creatorId=Users.id) as 'storeCount'\n" +
+                "from Users join Following on Following.follwedUserId=Users.id where Users.id=?";
+        return this.jdbcTemplate.queryForObject(getMyInfoQuery,
+                (rs, rowNum) -> new GetMyInfoRes(
+                        rs.getLong("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getInt("followerCount"),
+                        rs.getInt("followingCount"),
+                        rs.getString("name"),
+                        rs.getString("isHolic"),
+                        rs.getInt("eatDealCount"),
+                        rs.getInt("reviewCount"),
+                        rs.getInt("visitedCount"),
+                        rs.getInt("imgCount"),
+                        rs.getInt("wishesCount"),
+                        rs.getInt("myListCount"),
+                        rs.getInt("bookmarkCount"),
+                        rs.getInt("storeCount")
+                ), userId);
+    }
+
+
 }
