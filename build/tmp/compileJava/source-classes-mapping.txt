@@ -14,8 +14,8 @@ com/example/demo/src/store/model/GetStoreListByFoodReq.java
  com.example.demo.src.store.model.GetStoreListByFoodReq
 com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
-com/example/demo/src/store/model/GetStoreRes.java
- com.example.demo.src.store.model.GetStoreRes
+com/example/demo/config/BaseResponseStatus.java
+ com.example.demo.config.BaseResponseStatus
 com/example/demo/src/review/model/GetReviewDetailRes.java
  com.example.demo.src.review.model.GetReviewDetailRes
 com/example/demo/src/user/model/PatchUserLocationReq.java
@@ -32,8 +32,8 @@ com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
 com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
-com/example/demo/src/store/model/GetMenuRes.java
- com.example.demo.src.store.model.GetMenuRes
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
 com/example/demo/src/user/model/GetMyProfileRes.java
  com.example.demo.src.user.model.GetMyProfileRes
 com/example/demo/src/review/model/GetReviewLikeUserRes.java
@@ -60,8 +60,8 @@ com/example/demo/src/user/model/GetUserPhotoRes.java
  com.example.demo.src.user.model.GetUserPhotoRes
 com/example/demo/src/user/model/PostLoginRes.java
  com.example.demo.src.user.model.PostLoginRes
-com/example/demo/src/store/model/GetMenuDetailRes.java
- com.example.demo.src.store.model.GetMenuDetailRes
+com/example/demo/src/store/model/GetStoreRes.java
+ com.example.demo.src.store.model.GetStoreRes
 com/example/demo/src/user/model/GetUserFollowerListRes.java
  com.example.demo.src.user.model.GetUserFollowerListRes
 com/example/demo/src/user/model/PatchUserReq.java
@@ -180,14 +180,12 @@ com/example/demo/src/visited/VisitedProvider.java
  com.example.demo.src.visited.VisitedProvider
 com/example/demo/src/user/UserProvider.java
  com.example.demo.src.user.UserProvider
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
-com/example/demo/config/BaseResponseStatus.java
- com.example.demo.config.BaseResponseStatus
 com/example/demo/src/store/StoreDao.java
  com.example.demo.src.store.StoreDao
 com/example/demo/src/store/StoreProvider.java
  com.example.demo.src.store.StoreProvider
+com/example/demo/src/store/model/GetMenuRes.java
+ com.example.demo.src.store.model.GetMenuRes
 com/example/demo/src/visited/VisitedController.java
  com.example.demo.src.visited.VisitedController
 com/example/demo/src/store/StoreController.java
@@ -196,3 +194,5 @@ com/example/demo/src/visited/VisitedService.java
  com.example.demo.src.visited.VisitedService
 com/example/demo/src/store/StoreService.java
  com.example.demo.src.store.StoreService
+com/example/demo/src/store/model/GetMenuDetailRes.java
+ com.example.demo.src.store.model.GetMenuDetailRes

@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 @Setter
 @AllArgsConstructor
 public class GetStoreRes {
+    private Long storeId;
     private String storeName;
     private Long viewCount;
     private Long reviewCount;
