@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 import com.example.demo.src.user.model.DeleteUserFollowReq;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
@@ -395,9 +396,24 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+    //전화번호 인증 오스틴
+    @GetMapping("/sms")
+        public String mySms(){
+        return "order/sms";
+    }
+
+    //전화번호 인증 오스틴
+    @ResponseBody
+    @GetMapping("/check/sendSMS")
+    public BaseResponse<String> sendSMS(@RequestParam(value="to")String to)throws CoolsmsException {
+        String result = userService.PhoneNumberCheck(to);
+        return new BaseResponse<>(result);
+    }
+
+
     /**
      * 유저 전화번호 수정 API
-     * [PATCH] /phone_number//{userId}
+     * [PATCH] /phone_number/{userId}
      *
      * @return BaseResponse<String>
      */
@@ -594,7 +610,7 @@ public class UserController {
 
 
     /**
-     * 유저의 리뷰 조회
+     * 유저의 방문 조회
      *
      */
     @ResponseBody
@@ -694,7 +710,7 @@ public class UserController {
         }
     }
     /**
-     * 유저의 리뷰 조회
+     * 유저의 업로드사진 조회
      *
      */
     @ResponseBody
@@ -794,6 +810,7 @@ public class UserController {
         }
     }
 
+    //유저 가고싶어요 조회
     @ResponseBody
     @GetMapping("/wishes/{userId}/{profileUserId}")
     public BaseResponse<List<GetUserWishesRes>> getUserWishes(@PathVariable("userId") Long userId,@PathVariable("profileUserId") Long profileUserId,@RequestParam(required = false,defaultValue = "1") int order,

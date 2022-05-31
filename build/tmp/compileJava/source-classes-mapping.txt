@@ -1,11 +1,11 @@
 com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
+com/example/demo/src/review/ReviewDao.java
+ com.example.demo.src.review.ReviewDao
 com/example/demo/src/store/model/GetStoreReviewRes.java
  com.example.demo.src.store.model.GetStoreReviewRes
 com/example/demo/src/user/model/GetUserReviewReq.java
  com.example.demo.src.user.model.GetUserReviewReq
-com/example/demo/src/user/model/GetUserEmailRes.java
- com.example.demo.src.user.model.GetUserEmailRes
 com/example/demo/src/user/model/GetUserFollowReq.java
  com.example.demo.src.user.model.GetUserFollowReq
 com/example/demo/src/visited/model/GetVisitedRes.java
@@ -18,12 +18,10 @@ com/example/demo/src/store/model/GetStoreRes.java
  com.example.demo.src.store.model.GetStoreRes
 com/example/demo/src/review/model/GetReviewDetailRes.java
  com.example.demo.src.review.model.GetReviewDetailRes
-com/example/demo/src/user/model/PatchUserLocationReq.java
- com.example.demo.src.user.model.PatchUserLocationReq
 com/example/demo/src/user/model/PatchUserEmailReq.java
  com.example.demo.src.user.model.PatchUserEmailReq
-com/example/demo/DemoApplication.java
- com.example.demo.DemoApplication
+com/example/demo/src/user/model/PatchUserLocationReq.java
+ com.example.demo.src.user.model.PatchUserLocationReq
 com/example/demo/src/user/model/GetUserNameRes.java
  com.example.demo.src.user.model.GetUserNameRes
 com/example/demo/src/user/model/GetUserRes.java
@@ -52,24 +50,24 @@ com/example/demo/src/user/model/PatchUserPhoneNumberReq.java
  com.example.demo.src.user.model.PatchUserPhoneNumberReq
 com/example/demo/src/news/model/GetNewsByFollowingReq.java
  com.example.demo.src.news.model.GetNewsByFollowingReq
-com/example/demo/src/visited/model/PatchVisitedReq.java
- com.example.demo.src.visited.model.PatchVisitedReq
 com/example/demo/src/store/model/GetStoreMainRes.java
  com.example.demo.src.store.model.GetStoreMainRes
+com/example/demo/src/visited/model/PatchVisitedReq.java
+ com.example.demo.src.visited.model.PatchVisitedReq
 com/example/demo/src/user/model/GetUserPhotoRes.java
  com.example.demo.src.user.model.GetUserPhotoRes
 com/example/demo/src/user/model/PostLoginRes.java
  com.example.demo.src.user.model.PostLoginRes
-com/example/demo/src/store/model/GetMenuDetailRes.java
- com.example.demo.src.store.model.GetMenuDetailRes
 com/example/demo/src/user/model/GetUserFollowerListRes.java
  com.example.demo.src.user.model.GetUserFollowerListRes
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
 com/example/demo/src/user/model/PatchUserReq.java
  com.example.demo.src.user.model.PatchUserReq
-com/example/demo/src/visited/model/GetVisitedDetailRes.java
- com.example.demo.src.visited.model.GetVisitedDetailRes
 com/example/demo/src/test/TestController.java
  com.example.demo.src.test.TestController
+com/example/demo/src/visited/model/GetVisitedDetailRes.java
+ com.example.demo.src.visited.model.GetVisitedDetailRes
 com/example/demo/src/news/NewsService.java
  com.example.demo.src.news.NewsService
 com/example/demo/src/review/model/GetReviewStoreRes.java
