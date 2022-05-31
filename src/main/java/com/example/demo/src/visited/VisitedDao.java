@@ -64,7 +64,9 @@ public class VisitedDao {
     }
 
     public GetVisitedRes getVisited(Long visitedId, Long userId) {
-        String getVisitedDetailQuery = "SELECT V.id AS visitedId, U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic, COUNT(DISTINCT R2.id) AS userReviewCount, COUNT(DISTINCT F.id) AS userFollowCount,\n" +
+        String getVisitedDetailQuery = "SELECT V.id AS visitedId, U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic,\n" +
+                "(select count(Review.id) from Review where Review.userId = V.userId) as userReviewCount,\n" +
+                "(select count(Following.id) from Following where Following.follwedUserId = V.userId) as UserFollowCount,\n" +
                 "S.id AS storeId, S.name AS storeName,(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and V.storeId=Review.storeId limit 1)as 'storeImgUrl',\n" +
                 "S.subRegion, V.description, S.foodCategory, S.viewCount AS storeViewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=V.storeId) AS storeReviewCount, V.updatedAt,\n" +
@@ -73,8 +75,8 @@ public class VisitedDao {
                 "(select exists(select Wishes.id from Wishes, Users U2 where Wishes.userId=U2.id && U2.id = ? && Wishes.storeId=V.storeId))'wishCheck',\n" +
                 " (select exists(select Visited.id from Visited, Users U2 where Visited.userId=U2.id  && U2.id = ? && Visited.storeId=V.storeId))'visitedCheck',\n" +
                 "(select exists(select ReviewLikes.id from ReviewLikes, Users U2 where ReviewLikes.userId=U2.id and V.id=ReviewLikes.reviewId))'likeCheck'\n" +
-                "FROM Visited V, Users U, Stores S, Visited R2, Following F\n" +
-                "WHERE  V.id = ? && V.userId = U.id && V.storeId = S.id && R2.userId = U.id && F.follwedUserId = U.id";
+                "FROM Visited V, Users U, Stores S\n" +
+                "WHERE  V.id = ? && V.userId = U.id && V.storeId = S.id ";
         String getVisitedCommentsQuery = "SELECT C.id AS commentId, U.id AS userId, U.profileImgUrl, U.name AS userName, U.isHolic,\n" +
                 "                       U2.name AS tagUserName, C.comment, C.updatedAt\n" +
                 "                FROM Users U, VisitedComments C\n" +

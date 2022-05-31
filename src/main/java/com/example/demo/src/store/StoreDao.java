@@ -181,6 +181,17 @@ public class StoreDao {
         return this.jdbcTemplate.queryForObject(checkStoreIdQuery, int.class, checkStoreIdParams);
     }
 
+    public int checkMylistId(Long mylistId){
+        String checkMylistIdQuery = "select exists(select id from Mylists where id = ?)";
+        Long checkMylistIdParams = mylistId;
+        return this.jdbcTemplate.queryForObject(checkMylistIdQuery, int.class, checkMylistIdParams);
+    }
+
+    public int checkMylistUser(Long mylistId) {
+        String checkUserQuery="select userId from Mylists where id = ? ";
+        return this.jdbcTemplate.queryForObject(checkUserQuery,int.class,mylistId);
+    }
+
     public int checkWish(Long storeId, Long userId) {
         String checkWishQuery="select exists(select Wishes.id from Wishes where storeId=? and userId=?)";
         return this.jdbcTemplate.queryForObject(checkWishQuery,int.class,storeId, userId);
@@ -263,13 +274,13 @@ public class StoreDao {
                 "                            left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
                 "(select exists(select Visited.id from Visited where Visited.userId=Users.id and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                "       CONCAT(subRegion,' ',ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),3),'km') AS distance,\n" +
+                "      subRegion, ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "           *cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2) AS distance,\n" +
                 "       Stores.name AS storeName, rating, viewCount, (SELECT count(Review.id) FROM Review WHERE Review.storeId=Stores.id) AS reviewCount\n" +
                 "FROM Users,Stores\n" +
-                "WHERE Users.id=? && (6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
-                "*cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))) <= ?";
-        Object[] getStoreListParams=new Object[]{userId,distance * 0.0001};
+                "WHERE Users.id=? && ROUND((6371*acos(cos(radians(Users.Latitude))*cos(radians(Stores.Latitude))\n" +
+                "*cos(radians(Stores.longitude) -radians(Users.longitude))+sin(radians(Users.Latitude))*sin(radians(Stores.Latitude)))),2) <= ?";
+        Object[] getStoreListParams=new Object[]{userId,distance * 0.001};
         return this.jdbcTemplate.query(getStoreListByDistanceQuery,
                 (rs,rowNum)-> new GetStoreListRes(
                         rs.getLong("storeId"),
@@ -319,6 +330,11 @@ public class StoreDao {
                                         rk.getString("imgUrl")
                                 ),rs.getLong("reviewId"))
                 ),userId, storeId);
+    }
+
+    public void addStoreToMylist(Long storeId, Long mylistId) {
+        String addQuery = "insert into MylistStores (mylistId, storeId) VALUES (?,?)";
+        this.jdbcTemplate.update(addQuery, mylistId, storeId);
     }
 }
 

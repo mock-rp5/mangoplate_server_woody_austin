@@ -228,7 +228,7 @@ public class UserDao {
     }
 
     public List<GetUserProfileRes> getUserProfile(GetUserProfileReq getUserProfileReq) {
-        String getUserProfileQuery="select Users.id as 'userId',profileImgUrl,count(Following.id)'followerCount',\n" +
+        String getUserProfileQuery="select Users.id as 'userId',profileImgUrl,(select count(Following.id) from Following where Following.follwedUserId = Users.id)as'followerCount',\n" +
                 "       (select count(Following.id) from Following where Following.userId=Users.id)as'followingCount',\n" +
                 "       (select exists(select Following.id from Following where Following.userId=? and Following.follwedUserId=Users.id))as'followCheck',name,isHolic,\n" +
                 "       (select count(Review.id)from Review where Review.userId=Users.id)as 'reviewCount',\n" +
@@ -236,7 +236,7 @@ public class UserDao {
                 "       (select count(ReviewImg.id)from ReviewImg join Review on Review.id=reviewId where Review.userId=Users.id) as 'imgCount',\n" +
                 "       (select count(Wishes.id) from Wishes where Wishes.userId=Users.id) as 'wishesCount',\n" +
                 "       (select count(Mylists.id) from Mylists where Mylists.userId=Users.id) as 'myListCount'\n" +
-                "from Users join Following on Following.follwedUserId=Users.id where Users.id=?";
+                "from Users  where Users.id=?";
         Object[] getUserProfileParams = new Object[]{
                 getUserProfileReq.getUserId(),getUserProfileReq.getProfileUserId()
         };
@@ -707,7 +707,8 @@ public class UserDao {
     }
 
     public GetMyInfoRes getMyInfo(Long userId) {
-        String getMyInfoQuery = "select Users.id as 'userId',profileImgUrl,count(Following.id)'followerCount',\n" +
+        String getMyInfoQuery = "select Users.id as 'userId',profileImgUrl," +
+                "       (select count(Following.id) from Following where Following.follwedUserId = Users.id)as'followerCount',\n" +
                 "       (select count(Following.id) from Following where Following.userId=Users.id)as'followingCount',name,isHolic,\n" +
                 "       (select count(EatDealPayment.id) from EatDealPayment where EatDealPayment.userId = Users.id)as 'eatDealCount', \n" +
                 "       (select count(Review.id)from Review where Review.userId=Users.id)as 'reviewCount',\n" +
@@ -717,7 +718,7 @@ public class UserDao {
                 "       (select count(Mylists.id) from Mylists where Mylists.userId=Users.id) as 'myListCount',\n" +
                 "       (select count(BookMarks.id) from BookMarks where BookMarks.userId=Users.id) as 'bookmarkCount',\n" +
                 "       (select count(Stores.id) from Stores where Stores.creatorId=Users.id) as 'storeCount'\n" +
-                "from Users join Following on Following.follwedUserId=Users.id where Users.id=?";
+                "from Users where Users.id=?";
         return this.jdbcTemplate.queryForObject(getMyInfoQuery,
                 (rs, rowNum) -> new GetMyInfoRes(
                         rs.getLong("userId"),
@@ -737,5 +738,12 @@ public class UserDao {
                 ), userId);
     }
 
+    public Long createMylist(Long userId, PostMylistReq postMylistReq) {
+        String createMylistQuery = "insert into Mylists (userId, name, description) values (?, ?, ?)";
+
+        this.jdbcTemplate.update(createMylistQuery, userId, postMylistReq.getMylistName(), postMylistReq.getDescription());
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,Long.class);
+    }
 
 }

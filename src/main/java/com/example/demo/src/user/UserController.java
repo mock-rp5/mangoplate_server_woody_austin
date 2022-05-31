@@ -928,5 +928,29 @@ public class UserController {
         }
     }
 
+    /**
+     * 마이리스트 생성 API
+     * [POST] /mylists/{userId}
+     *
+     * @return BaseResponse<Long>
+     */
+    @ResponseBody
+    @PostMapping("/mylists/{userId}")
+    public BaseResponse<Long> createMylist(@PathVariable("userId") Long userId, @RequestBody PostMylistReq postMylistReq) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            if (postMylistReq.getMylistName() == null) {
+                return new BaseResponse<>(EMPTY_MYLIST_NAME);
+            }
+            Long myListId = userService.createMylist(userId, postMylistReq);
+            return new BaseResponse<>(myListId);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 
 }
