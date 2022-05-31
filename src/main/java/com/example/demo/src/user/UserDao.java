@@ -68,8 +68,7 @@ public class UserDao {
     }
     public int getUserKakaoExists(String email) {
         String getUserKakaoexistsQuery="select exists(select kakaoId from KakaoUsers where kakaoEmail=?)";
-        String getUserKakaoexistsParams=email;
-        return this.jdbcTemplate.queryForObject(getUserKakaoexistsQuery,int.class,getUserKakaoexistsParams);
+        return this.jdbcTemplate.queryForObject(getUserKakaoexistsQuery,int.class, email);
     }
     
 
