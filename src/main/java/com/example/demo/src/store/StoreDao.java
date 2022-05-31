@@ -86,7 +86,7 @@ public class StoreDao {
     }
 
     public GetStoreRes getStore(Long storeId, Long userId){
-        String getStoreQuery = "SELECT DISTINCT S.*,  COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount,\n" +
+        String getStoreQuery = "SELECT DISTINCT S.id AS storeId, S.*,  COUNT(R.id) AS reviewCount, COUNT(W.id) AS wishCount,\n" +
                 "                (select exists(select Wishes.id from Wishes where Wishes.userId=U.id && Wishes.storeId=S.id))'wishCheck',\n" +
                 "                (select COUNT(Visited.id) from Visited where Visited.userId = U.id && Visited.storeId = S.id)'visitedCount'\n" +
                 "                FROM Users U, Stores S LEFT JOIN Review R on S.id = R.storeId\n" +
@@ -95,6 +95,7 @@ public class StoreDao {
 
         return this.jdbcTemplate.queryForObject(getStoreQuery,
                 (rs, rowNum) -> new GetStoreRes(
+                        rs.getLong("storeId"),
                         rs.getString("name"),
                         rs.getLong("viewCount"),
                         rs.getLong("reviewCount"),
@@ -134,6 +135,7 @@ public class StoreDao {
         return new GetMenuRes(
                 getMenuDetailRes = this.jdbcTemplate.query(getMenuListQuery,
                         (rs,rowNum) -> new GetMenuDetailRes(
+                                rs.getLong("storeId"),
                                 rs.getString("name"),
                                 rs.getInt("price"),
                                 rs.getString("updatedAt")), Param),

@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetMenuDetailRes {
+    private Long storeId;
     private String menuName;
     private int price;
     private String lastUpdate;
