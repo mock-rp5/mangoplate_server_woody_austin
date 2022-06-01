@@ -20,10 +20,10 @@ public class NewsProvider {
         this.newsDao=newsDao;
     }
 
-    public List<GetNewsRes> getNews(Long userId, List<String> evaluation, int page) throws BaseException {
+    public List<GetNewsRes> getNews(Long userId, List<String> evaluation, List<String> region) throws BaseException {
 
         try {
-            List<GetNewsRes> getNewsRes = newsDao.getNews(userId,evaluation,page);
+            List<GetNewsRes> getNewsRes = newsDao.getNews(userId,evaluation,region);
             return getNewsRes;
         } catch(Exception e){
             throw new BaseException(DATABASE_ERROR);
@@ -39,9 +39,9 @@ public class NewsProvider {
         }
     }
 
-    public List<GetNewsRes> getNewsHolic(Long userId, List<String> evaluation, int page)throws BaseException {
+    public List<GetNewsRes> getNewsHolic(Long userId, List<String> evaluation, List<String> region)throws BaseException {
         try{
-            List<GetNewsRes> getNewsRes = newsDao.getNewsHolic(userId, evaluation,page);
+            List<GetNewsRes> getNewsRes = newsDao.getNewsHolic(userId, evaluation,region);
             return getNewsRes;
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);

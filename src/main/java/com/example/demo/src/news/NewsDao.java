@@ -21,9 +21,16 @@ public class NewsDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<GetNewsRes> getNews(Long userId, List<String> evaluation, int page) {
+    public List<GetNewsRes> getNews(Long userId, List<String> evaluation, List<String> region) {
         String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
-
+        String regionList=String.join(",", region.stream().map(regionFilter -> "'" + regionFilter + "'").collect(Collectors.toList()));
+        String regionSql="";
+        if(region.contains("all")){
+            regionSql="";
+        }
+        else{
+            regionSql="and"+" subRegion IN"+"("+regionList+")";
+        }
         String getNewsQuery = String.format("select Review.id as 'reviewId',Users.profileImgUrl,Users.name,isHolic," +
                 "       (select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
                 "       (select count(follwedUserId) from Following where follwedUserId=Review.userId)'followCount',evaluation,Stores.id as 'storeId',\n" +
@@ -61,7 +68,7 @@ public class NewsDao {
                 "       ,(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
-                "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) order by Review.createdAt desc  ", inSql);
+                "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) %s order by Review.createdAt desc  ", inSql,regionSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id where Review.id=? order by Review.createdAt ";
@@ -100,6 +107,14 @@ public class NewsDao {
 
     public List<GetNewsRes> getNewsByFollowing(GetNewsByFollowingReq getNewsByFollowingReq) {
         String inSql=String.join(",",getNewsByFollowingReq.getEvaluation().stream().map(evaluationFilter->"'"+evaluationFilter+"'").collect(Collectors.toList()));
+        String regionList=String.join(",", getNewsByFollowingReq.getRegion().stream().map(regionFilter -> "'" + regionFilter + "'").collect(Collectors.toList()));
+        String regionSql="";
+        if(getNewsByFollowingReq.getRegion().contains("all")){
+            regionSql="";
+        }
+        else{
+            regionSql="and"+" subRegion IN"+"("+regionList+")";
+        }
         String getNewsQuery=String.format("select Review.id as 'reviewId' ,Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
                 "       (select count(follwedUserId) from Following where follwedUserId=Review.userId)'followCount',evaluation,Stores.id as 'storeId',\n" +
                 "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
@@ -137,8 +152,8 @@ public class NewsDao {
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
-                "    join Following on Users.id = Following.follwedUserId where Following.userid=? and evaluation IN(%s)" +
-                "   order by Review.createdAt desc",inSql);
+                "    join Following on Users.id = Following.follwedUserId where Following.userid=? and evaluation IN(%s) %s" +
+                "   order by Review.createdAt desc",inSql,regionSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
@@ -146,9 +161,8 @@ public class NewsDao {
                 "    join Following on Users.id = Following.follwedUserId  " +
                 "where Review.id=? and Following.userid=?  order by Review.createdAt ";
         Object[] getNewsParams= new Object[]{
-                getNewsByFollowingReq.getUserid(),getNewsByFollowingReq.getUserid(),getNewsByFollowingReq.getUserid(),(getNewsByFollowingReq.getPage()-1)*10
+                getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid()
         };
-
         return this.jdbcTemplate.query(getNewsQuery,
                 (rs,rowNum)->new GetNewsRes(
                         rs.getLong("reviewId"),
@@ -177,8 +191,16 @@ public class NewsDao {
     }
 
 
-    public List<GetNewsRes> getNewsHolic(Long userId, List<String> evaluation, int page) {
+    public List<GetNewsRes> getNewsHolic(Long userId, List<String> evaluation, List<String> region) {
         String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
+        String regionList=String.join(",", region.stream().map(regionFilter -> "'" + regionFilter + "'").collect(Collectors.toList()));
+        String regionSql="";
+        if(region.contains("all")){
+            regionSql="";
+        }
+        else{
+            regionSql="and"+" subRegion IN"+"("+regionList+")";
+        }
         String getNewsQuery=String.format("select Review.id as 'reviewId' ,Users.profileImgUrl,Users.name,isHolic,(select count(Re.review) from Review Re where Re.userId=Users.id)'reviewCount',\n" +
                 "       (select count(follwedUserId) from Following where follwedUserId=Review.userId)'followCount',evaluation,Stores.id as 'storeId',\n" +
                 "       concat('@ ',Stores.name,' - ',Stores.subRegion)'storeName',review,\n" +
@@ -216,8 +238,8 @@ public class NewsDao {
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
-                "    where isHolic='True' and evaluation IN(%s)" +
-                "   order by Review.createdAt desc ",inSql);
+                "    where isHolic='True' and evaluation IN(%s) %s" +
+                "   order by Review.createdAt desc ",inSql,regionSql);
         String getImgQuery="select Review.id as 'ReviewId',imgUrl from Stores\n" +
                 "    join Review on Review.storeId=Stores.id\n" +
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id " +
