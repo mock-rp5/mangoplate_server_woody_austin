@@ -28,7 +28,8 @@ public class NewsController {
 
     @ResponseBody
     @GetMapping("/{userid}")
-    public BaseResponse<List<GetNewsRes>> getNews(@PathVariable("userid") Long userId,@RequestParam(defaultValue = "1") List<Integer> filter,@RequestParam(defaultValue = "1") int page){
+    public BaseResponse<List<GetNewsRes>> getNews(@PathVariable("userid") Long userId,@RequestParam(defaultValue = "1") List<Integer> filter,
+                                                  @RequestParam(required = false,defaultValue = "all") List<String> region){
         try {
                 List<String> evaluation = new ArrayList<>(filter.size());
                 for (int i = 0; i < filter.size(); i++) {
@@ -40,8 +41,7 @@ public class NewsController {
                         evaluation.add("별로");
                     }
                 }
-            List<GetNewsRes> getNewsRes = newsProvider.getNews(userId,evaluation,page);
-            System.out.println(getNewsRes);
+            List<GetNewsRes> getNewsRes = newsProvider.getNews(userId,evaluation,region);
             return new BaseResponse<>(getNewsRes);
         }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -50,8 +50,8 @@ public class NewsController {
 
     @ResponseBody
     @GetMapping("/following/{userid}")
-    public BaseResponse<List<GetNewsRes>> getNewsByFollowing(@PathVariable("userid") Long userId,
-                                                             @RequestParam(defaultValue = "1") List<Integer> filter,@RequestParam(defaultValue = "1") int page){
+    public BaseResponse<List<GetNewsRes>> getNewsByFollowing(@PathVariable("userid") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter,
+                                                             @RequestParam(required = false,defaultValue = "all") List<String> region){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
@@ -67,9 +67,8 @@ public class NewsController {
                     evaluation.add("별로");
                 }
             }
-            GetNewsByFollowingReq getNewsByFollowingReq = new GetNewsByFollowingReq(userId,evaluation,page);
+            GetNewsByFollowingReq getNewsByFollowingReq = new GetNewsByFollowingReq(userId,evaluation,region);
             List<GetNewsRes> getNewsRes=newsProvider.getNewsByFollowing(getNewsByFollowingReq);
-            System.out.println(getNewsRes);
             return new BaseResponse<>(getNewsRes);
         }catch(BaseException e){
                 return new BaseResponse<>(e.getStatus());
@@ -79,7 +78,8 @@ public class NewsController {
 
     @ResponseBody
     @GetMapping("/holic/{userId}")
-    public BaseResponse<List<GetNewsRes>> getNewsHolic(@PathVariable("userId") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter,@RequestParam(defaultValue = "1") int page){
+    public BaseResponse<List<GetNewsRes>> getNewsHolic(@PathVariable("userId") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter,
+                                                       @RequestParam(required = false,defaultValue = "all") List<String> region){
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
             if (userId != userIdxByJwt) {
@@ -95,7 +95,7 @@ public class NewsController {
                     evaluation.add("별로");
                 }
             }
-            List<GetNewsRes> getNewsRes=newsProvider.getNewsHolic(userId, evaluation,page);
+            List<GetNewsRes> getNewsRes=newsProvider.getNewsHolic(userId, evaluation,region);
             return new BaseResponse<>(getNewsRes);
 
 

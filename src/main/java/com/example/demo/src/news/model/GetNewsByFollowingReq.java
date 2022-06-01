@@ -12,5 +12,5 @@ import java.util.List;
 public class GetNewsByFollowingReq {
     private Long userid;
     private List<String> evaluation;
-    private int page;
+    private List<String> region;
 }
