@@ -2,6 +2,7 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.store.StoreDao;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
@@ -19,14 +20,16 @@ import static com.example.demo.config.BaseResponseStatus.*;
 public class UserProvider {
 
     private final UserDao userDao;
+    private final StoreDao storeDao;
     private final JwtService jwtService;
 
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public UserProvider(UserDao userDao, JwtService jwtService) {
+    public UserProvider(UserDao userDao, JwtService jwtService, StoreDao storeDao) {
         this.userDao = userDao;
+        this.storeDao = storeDao;
         this.jwtService = jwtService;
     }
 
@@ -249,5 +252,30 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetUserMylistsRes> getUserMylists(Long userId, Long profileUserId) throws BaseException {
+        if (checkUserExist(profileUserId) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            return userDao.getUserMylists(userId, profileUserId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetMylistRes getMylist(Long userId, Long mylistId) throws BaseException {
+        if(storeDao.checkMylistId(mylistId) == 0){
+            throw new BaseException(NON_EXIST_MYLIST);
+        }
+        try {
+            return userDao.getMylist(userId, mylistId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+
 }
 

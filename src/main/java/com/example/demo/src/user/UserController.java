@@ -952,5 +952,46 @@ public class UserController {
         }
     }
 
+    /**
+     * 유저의 마이리스트 조회 API
+     * [GET] /mylists/:userId/:profileUserId
+     *
+     * @return BaseResponse<List<GetUserMylistsRes>>
+     */
+    @ResponseBody
+    @GetMapping("/mylists/{userId}/{profileUserId}")
+    public BaseResponse<List<GetUserMylistsRes>> getUserMylists(@PathVariable("userId") Long userId, @PathVariable("profileUserId") Long profileUserId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetUserMylistsRes> getUserMylistsRes = userProvider.getUserMylists(userId, profileUserId);
+            return new BaseResponse<>(getUserMylistsRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 마이리스트 상세 조회 API
+     * [GET] /mylists/detail/:userId/:mylistId
+     *
+     * @return BaseResponse<GetMylistDetailRes>
+     */
+    @ResponseBody
+    @GetMapping("/mylists/detail/{userId}/{mylistId}")
+    public BaseResponse<GetMylistRes> getMylistDetail(@PathVariable("userId") Long userId, @PathVariable("mylistId") Long mylistId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            GetMylistRes getMylistRes = userProvider.getMylist(userId, mylistId);
+            return new BaseResponse<>(getMylistRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
 }

@@ -746,4 +746,60 @@ public class UserDao {
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,Long.class);
     }
 
+    public List<GetUserMylistsRes> getUserMylists(Long userId, Long profileUserId) {
+        String getUserMylistsQuery = "SELECT *, M.id AS mylistId, (select I.imgurl from MylistStores S, ReviewImg I\n" +
+                "left join Review on Review.id=reviewId where I.reviewId=Review.id && S.storeId=Review.storeId && S.mylistId = M.id limit 1) AS imgUrl,\n" +
+                "(select exists(select B.id from BookMarks B where B.mylistId = M.id && B.userId = ?)) AS bookmarkCheck,\n" +
+                "(select count(B.id) from BookMarks B where B.mylistId = M.id) AS bookmarkCount\n" +
+                "FROM Mylists M\n" +
+                "WHERE M.userId = ?";
+        return this.jdbcTemplate.query(getUserMylistsQuery,
+                (rs, rowNum) -> new GetUserMylistsRes(
+                        rs.getLong("mylistId"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getString("imgUrl"),
+                        rs.getInt("bookmarkCheck"),
+                        rs.getInt("bookmarkCount")
+                ), userId, profileUserId);
+    }
+
+    public GetMylistRes getMylist(Long userId, Long mylistId) {
+        String getDetailQuery = "SELECT M.updatedAt, M.viewCount, (select count(B.id) FROM BookMarks B WHERE B.mylistId = M.id)AS bookmarkCount,\n" +
+                "       M.name AS mylistName, U.name AS userName, U.profileImgUrl, (select count(R.id) FROM Review R WHERE R.userId = M.userId)AS reviewCount,\n" +
+                "       (select count(F.id) FROM Following F WHERE F.follwedUserId = M.userId)AS followerCount,\n" +
+                "       (select exists(select F2.id FROM Following F2 WHERE F2.follwedUserId = M.userId && F2.userId = ?)) AS followCheck, M.description\n" +
+                "FROM Mylists M, Users U\n" +
+                "WHERE M.id = ? && U.id = M.userId";
+        String getStoreQuery = "";
+        GetMylistDetailRes getMylistDetailRes;
+        List<GetMylistStoresRes> getMylistStoresRes;
+        return new GetMylistRes(
+                getMylistDetailRes = this.jdbcTemplate.queryForObject(getDetailQuery,
+                        (rs, rowNum) -> new GetMylistDetailRes(
+                                rs.getString("updatedAt"),
+                                rs.getInt("viewCount"),
+                                rs.getInt("bookmarkCount"),
+                                rs.getString("mylistName"),
+                                rs.getString("userName"),
+                                rs.getString("profileImgUrl"),
+                                rs.getInt("reviewCount"),
+                                rs.getInt("followerCount"),
+                                rs.getInt("followCheck"),
+                                rs.getString("description")), userId, mylistId),
+                        getMylistStoresRes = this.jdbcTemplate.query(getStoreQuery,
+                                (rs, rowNum) -> new GetMylistStoresRes(
+                                        rs.getLong("storeId"),
+                                        rs.getString("name"),
+                                        rs.getString("address"),
+                                        rs.getFloat("rating"),
+                                        rs.getInt("wishCheck"),
+                                        rs.getInt("visitedCheck"),
+                                        rs.getString("userName"),
+                                        rs.getString("profileImgUrl"),
+                                        rs.getString("isHolic"),
+                                        rs.getString("review")))
+        );
+
+    }
 }
