@@ -150,9 +150,9 @@ public class NewsDao {
                 ") AS alljsonas )imgUrl,\n" +
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
                 "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
-                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck',\n" +
                 "(select exists(select Visited.id from Visited where Visited.userId=? and Visited.storeId=Stores.id))'visitedCheck',\n" +
-                ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'" +
+                "(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
@@ -182,8 +182,8 @@ public class NewsDao {
                         rs.getString("reviewCreated"),
                         rs.getInt("reviewLikes"),
                         rs.getInt("reviewComments"),
-                        rs.getInt("visitedCheck"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getInt("likeCheck"),
                         ImgList=this.jdbcTemplate.query(getImgQuery,
                                 (rk,rownum)->new GetImgRes(
