@@ -146,7 +146,15 @@ public class StoreDao {
     }
 
     public List<GetStoreListRes> getStoreListByKeyWord(GetStoreListByKeyWordReq getStoreListByKeyWordReq) {
+
         String inSql=String.join(",",getStoreListByKeyWordReq.getRegion().stream().map(region -> "'"+region+"'").collect(Collectors.toList()));
+        String regionSql="";
+        if(getStoreListByKeyWordReq.getRegion().contains("all")){
+            regionSql="";
+        }
+        else{
+            regionSql = "and subRegion IN "+"("+inSql+")";
+        }
         String getStoreListQuery = String.format("SELECT Stores.id as 'storeId',(select ReviewImgSelect.imgurl from ReviewImg ReviewImgSelect\n" +
                 "        left join Review on Review.id=reviewId where ReviewImgSelect.reviewId=Review.id and Stores.id=Review.storeId limit 1)as 'reviewImg'," +
                 "       (select exists(select Wishes.id from Wishes where Wishes.userId=Users.id and Wishes.storeId=Stores.id))'wishCheck'," +
@@ -157,7 +165,7 @@ public class StoreDao {
                 "                   ,concat(Stores.name)'storeName',Stores.foodCategory,rating,viewCount,\n" +
                 "        (select count(Review.id) from Review where Review.storeId=Stores.id limit 1)'reviewCount'\n" +
                 "FROM Users,Stores\n" +
-                "where Users.id=? and Stores.subRegion IN (%s) and Stores.name like ? ",inSql);
+                "where Users.id=? %s and Stores.name like ? ",regionSql);
         String keyword="%"+getStoreListByKeyWordReq.getKeyword()+"%";
         Object[] getStoreListParams=new Object[]{
                 getStoreListByKeyWordReq.getUserId(),keyword

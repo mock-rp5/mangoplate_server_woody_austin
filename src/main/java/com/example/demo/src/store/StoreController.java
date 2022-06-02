@@ -76,7 +76,7 @@ public class StoreController {
      */
     @ResponseBody
     @GetMapping("/search/{userId}")
-    public BaseResponse<List<GetStoreListRes>> getStoreListByKeyWord(@PathVariable("userId") Long userId,@RequestParam("keyword") String keyword,@RequestParam List<String> region)
+    public BaseResponse<List<GetStoreListRes>> getStoreListByKeyWord(@PathVariable("userId") Long userId,@RequestParam("keyword") String keyword,@RequestParam(required = false,defaultValue = "all") List<String> region)
       {
         try {
             Long userIdxByJwt = jwtService.getUserIdx();
