@@ -25,6 +25,7 @@ public class GetNewsRes {
     private int reviewLikes;
     private int reviewComments;
     private int wishCheck;
+    private int visitedCheck;
     private int likeCheck;
     private List<GetImgRes> ImgList;
 }
