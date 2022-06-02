@@ -3,6 +3,7 @@ package com.example.demo.src.news;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.news.model.GetNewsByFollowingReq;
+import com.example.demo.src.news.model.GetNewsMainRes;
 import com.example.demo.src.news.model.GetNewsRes;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class NewsController {
 
     @ResponseBody
     @GetMapping("/{userid}")
-    public BaseResponse<List<GetNewsRes>> getNews(@PathVariable("userid") Long userId,@RequestParam(defaultValue = "1") List<Integer> filter,
-                                                  @RequestParam(required = false,defaultValue = "all") List<String> region){
+    public BaseResponse<List<GetNewsMainRes>> getNews(@PathVariable("userid") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter,
+                                                      @RequestParam(required = false,defaultValue = "all") List<String> region){
         try {
                 List<String> evaluation = new ArrayList<>(filter.size());
                 for (int i = 0; i < filter.size(); i++) {
@@ -41,7 +42,7 @@ public class NewsController {
                         evaluation.add("별로");
                     }
                 }
-            List<GetNewsRes> getNewsRes = newsProvider.getNews(userId,evaluation,region);
+            List<GetNewsMainRes> getNewsRes = newsProvider.getNews(userId,evaluation,region);
             return new BaseResponse<>(getNewsRes);
         }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
