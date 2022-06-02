@@ -764,6 +764,12 @@ public class UserDao {
                 ), userId, profileUserId);
     }
 
+    public void increaseViewCount(Long mylistId){
+        String increaseQuery = "UPDATE Mylists SET viewCount = viewCount + 1 WHERE id = ?";
+        Long increaseParam = mylistId;
+        this.jdbcTemplate.update(increaseQuery, increaseParam);
+    }
+
     public GetMylistRes getMylist(Long userId, Long mylistId) {
         String getDetailQuery = "SELECT M.updatedAt, M.viewCount, (select count(B.id) FROM BookMarks B WHERE B.mylistId = M.id)AS bookmarkCount,\n" +
                 "       M.name AS mylistName, U.name AS userName, U.profileImgUrl, (select count(R.id) FROM Review R WHERE R.userId = M.userId)AS reviewCount,\n" +
@@ -771,7 +777,15 @@ public class UserDao {
                 "       (select exists(select F2.id FROM Following F2 WHERE F2.follwedUserId = M.userId && F2.userId = ?)) AS followCheck, M.description\n" +
                 "FROM Mylists M, Users U\n" +
                 "WHERE M.id = ? && U.id = M.userId";
-        String getStoreQuery = "";
+        String getStoreQuery = "SELECT S.id AS storeId, S.name, S.address, S.rating,\n" +
+                "       (SELECT exists(select W.id FROM Wishes W WHERE W.userId = ? && W.storeId = MS.storeId))AS wishCheck,\n" +
+                "       (SELECT exists(select V.id FROM Visited V WHERE V.userId = ? && V.storeId = MS.storeId))AS visitedCheck,\n" +
+                "       (SELECT DISTINCT R.review FROM Review R WHERE R.storeId = MS.storeId LIMIT 1)AS review,\n" +
+                "       (SELECT DISTINCT U.name FROM Users U, Review R WHERE R.storeId = MS.storeId && U.id = R.userId LIMIT 1 )AS userName,\n" +
+                "       (SELECT DISTINCT U.profileImgUrl FROM Users U, Review R WHERE R.storeId = MS.storeId && U.id = R.userId LIMIT 1 )AS profileImgUrl,\n" +
+                "       (SELECT DISTINCT U.isHolic FROM Users U, Review R WHERE R.storeId = MS.storeId && U.id = R.userId LIMIT 1 )AS isHolic\n" +
+                "FROM MylistStores MS, Stores S\n" +
+                "WHERE MS.mylistId = ? && MS.storeId = S.id";
         GetMylistDetailRes getMylistDetailRes;
         List<GetMylistStoresRes> getMylistStoresRes;
         return new GetMylistRes(
@@ -798,8 +812,31 @@ public class UserDao {
                                         rs.getString("userName"),
                                         rs.getString("profileImgUrl"),
                                         rs.getString("isHolic"),
-                                        rs.getString("review")))
+                                        rs.getString("review")), userId, userId, mylistId)
         );
 
     }
+    public List<GetUserBookmarksRes> getUserBookmarks(Long userId, Long profileUserId) {
+        String getUserBookmarksQuery = "SELECT *, M.id AS mylistId, M.name AS mylistName, (select I.imgurl from MylistStores S, ReviewImg I\n" +
+                "left join Review on Review.id=reviewId where I.reviewId=Review.id && S.storeId=Review.storeId && S.mylistId = M.id limit 1) AS imgUrl,\n" +
+                "(select exists(select B.id from BookMarks B where B.mylistId = M.id && B.userId = ?)) AS bookmarkCheck,\n" +
+                "(select U.name from Users U where U.id = M.userId)AS userName, (select U.isHolic from Users U where U.id = M.userId)AS isHolic,\n" +
+                "(select count(B.id) from BookMarks B where B.mylistId = M.id) AS bookmarkCount\n" +
+                "FROM Mylists M, BookMarks B\n" +
+                "WHERE B.userId = ? && B.mylistId = M.id";
+        return this.jdbcTemplate.query(getUserBookmarksQuery,
+                (rs, rowNum) -> new GetUserBookmarksRes(
+                        rs.getLong("mylistId"),
+                        rs.getString("userName"),
+                        rs.getString("isHolic"),
+                        rs.getString("mylistName"),
+                        rs.getString("description"),
+                        rs.getString("imgUrl"),
+                        rs.getInt("bookmarkCheck"),
+                        rs.getInt("bookmarkCount")
+                ), userId, profileUserId);
+    }
+
+
+
 }

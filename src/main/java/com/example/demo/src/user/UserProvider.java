@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -264,12 +265,29 @@ public class UserProvider {
         }
     }
 
+    @Transactional(rollbackOn = BaseException.class)
     public GetMylistRes getMylist(Long userId, Long mylistId) throws BaseException {
         if(storeDao.checkMylistId(mylistId) == 0){
             throw new BaseException(NON_EXIST_MYLIST);
         }
         try {
+            userDao.increaseViewCount(mylistId);
+        } catch (Exception e) {
+            throw new BaseException(UPDATE_VIEW_COUNT_FAIL);
+        }
+        try {
             return userDao.getMylist(userId, mylistId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserBookmarksRes> getUserBookmarks(Long userId, Long profileUserId) throws BaseException {
+        if (checkUserExist(profileUserId) == 0) {
+            throw new BaseException(NON_EXIST_USER);
+        }
+        try {
+            return userDao.getUserBookmarks(userId, profileUserId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
