@@ -32,6 +32,10 @@ public class NewsController {
     public BaseResponse<List<GetNewsMainRes>> getNews(@PathVariable("userid") Long userId, @RequestParam(defaultValue = "1") List<Integer> filter,
                                                       @RequestParam(required = false,defaultValue = "all") List<String> region){
         try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
                 List<String> evaluation = new ArrayList<>(filter.size());
                 for (int i = 0; i < filter.size(); i++) {
                     if (filter.get(i) == 1) {
