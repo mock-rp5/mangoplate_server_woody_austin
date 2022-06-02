@@ -151,7 +151,8 @@ public class NewsDao {
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
                 "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
                 "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
-                ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
+                "(select exists(select Visited.id from Visited where Visited.userId=? and Visited.storeId=Stores.id))'visitedCheck',\n" +
+                ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId  " +
@@ -164,7 +165,7 @@ public class NewsDao {
                 "    join Following on Users.id = Following.follwedUserId  " +
                 "where Review.id=? and Following.userid=?  order by Review.createdAt ";
         Object[] getNewsParams= new Object[]{
-                getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid()
+                getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid(), getNewsByFollowingReq.getUserid()
         };
         return this.jdbcTemplate.query(getNewsQuery,
                 (rs,rowNum)->new GetNewsRes(
@@ -181,6 +182,7 @@ public class NewsDao {
                         rs.getString("reviewCreated"),
                         rs.getInt("reviewLikes"),
                         rs.getInt("reviewComments"),
+                        rs.getInt("visitedCheck"),
                         rs.getInt("wishCheck"),
                         rs.getInt("likeCheck"),
                         ImgList=this.jdbcTemplate.query(getImgQuery,
@@ -236,7 +238,8 @@ public class NewsDao {
                 ") AS alljsonas )imgUrl,\n" +
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
                 "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
-                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
+                "(select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'," +
+                "(select exists(select Visited.id from Visited where Visited.userId=? and Visited.storeId=Stores.id))'visitedCheck'\n" +
                 ",(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
@@ -249,7 +252,7 @@ public class NewsDao {
                 "    join Users on Review.userId=Users.id " +
                 "where Review.id=? and isHolic='TRUE' order by Review.createdAt ";
         Object[] getNewsParams=new Object[]{
-                userId,userId
+                userId,userId,userId
         };
 
         return this.jdbcTemplate.query(getNewsQuery,
@@ -268,6 +271,7 @@ public class NewsDao {
                         rs.getInt("reviewLikes"),
                         rs.getInt("reviewComments"),
                         rs.getInt("wishCheck"),
+                        rs.getInt("visitedCheck"),
                         rs.getInt("likeCheck"),
                         ImgList=this.jdbcTemplate.query(getImgQuery,
                                 (rk,rownum)->new GetImgRes(
