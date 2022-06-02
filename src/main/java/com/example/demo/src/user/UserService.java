@@ -284,6 +284,7 @@ public class UserService {
     }
 
 
+    // 오스틴
     public String PhoneNumberCheck(String to) throws CoolsmsException {
         String api_key = "NCSSDCQD8ZPSDL7H";
         String api_secret = "3JNFD9A9JPB14TMPOUFOOXT6RVC43BFD";
@@ -305,5 +306,31 @@ public class UserService {
         coolsms.send(params); // 메시지 전송
 
         return numStr;
+    }
+
+    // 우디
+    public String sendRandomNumber(String to) throws CoolsmsException {
+
+        String api_key = "NCSBOBCIASXO7YXH";
+        String api_secret = "OYIKZMVKSLPNWZUTD7DKX4T33TBZ6NVI";
+        Message coolsms = new Message(api_key, api_secret);
+
+        Random rand  = new Random();
+        String numStr = "";
+        for(int i=0; i<4; i++) {
+            String ran = Integer.toString(rand.nextInt(10));
+            numStr+=ran;
+        }
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", to);    // 수신전화번호 (ajax로 view 화면에서 받아온 값으로 넘김)
+        params.put("from", "01054139492");    // 발신전화번호. 테스트시에는 발신,수신 둘다 본인 번호로 하면 됨
+        params.put("type", "sms");
+        params.put("text", "본인확인 인증번호 [" + numStr + "] 를 입력해주세요.");
+
+        coolsms.send(params); // 메시지 전송
+
+        return numStr;
+
     }
 }
