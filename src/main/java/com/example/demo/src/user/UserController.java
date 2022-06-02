@@ -994,4 +994,24 @@ public class UserController {
         }
     }
 
+    /**
+     * 유저의 북마크 조회 API
+     * [GET] /bookmarks/:userId/:profileUserId
+     *
+     * @return BaseResponse<List<GetUserBookmarksRes>>
+     */
+    @ResponseBody
+    @GetMapping("/bookmarks/{userId}/{profileUserId}")
+    public BaseResponse<List<GetUserBookmarksRes>> getUserBookmarks(@PathVariable("userId") Long userId, @PathVariable("profileUserId") Long profileUserId) {
+        try {
+            Long userIdxByJwt = jwtService.getUserIdx();
+            if (userId != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetUserBookmarksRes> getUserBookmarksRes = userProvider.getUserBookmarks(userId, profileUserId);
+            return new BaseResponse<>(getUserBookmarksRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
