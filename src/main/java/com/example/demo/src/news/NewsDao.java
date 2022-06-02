@@ -2,6 +2,7 @@ package com.example.demo.src.news;
 
 import com.example.demo.src.news.model.GetImgRes;
 import com.example.demo.src.news.model.GetNewsByFollowingReq;
+import com.example.demo.src.news.model.GetNewsMainRes;
 import com.example.demo.src.news.model.GetNewsRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,7 @@ public class NewsDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<GetNewsRes> getNews(Long userId, List<String> evaluation, List<String> region) {
+    public List<GetNewsMainRes> getNews(Long userId, List<String> evaluation, List<String> region) {
         String inSql = String.join(",", evaluation.stream().map(evaluationFilter -> "'" + evaluationFilter + "'").collect(Collectors.toList()));
         String regionList=String.join(",", region.stream().map(regionFilter -> "'" + regionFilter + "'").collect(Collectors.toList()));
         String regionSql="";
@@ -65,7 +66,8 @@ public class NewsDao {
                 "       (select count(*) from ReviewLikes where ReviewLikes.reviewId= Review.id)'reviewLikes',\n" +
                 "        (select count(*) from ReviewComments where ReviewComments.reviewId=Review.id)'reviewComments'," +
                 "       (select exists(select Wishes.id from Wishes where Wishes.userId=? and Wishes.storeId=Stores.id))'wishCheck'\n" +
-                "       ,(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'\n" +
+                "       ,(select exists(select ReviewLikes.id from ReviewLikes where ReviewLikes.userId=? and Review.id=ReviewLikes.reviewId))'likeCheck'," +
+                "        (select imgUrl from ReviewImg where ReviewImg.reviewId=Review.id limit 1) as 'reviewImgUrl'\n" +
                 "    from Users\n" +
                 "    join Review on Review.userId=Users.id\n" +
                 "    join Stores on Stores.id = Review.storeId where evaluation IN(%s) %s order by Review.createdAt desc  ", inSql,regionSql);
@@ -74,9 +76,9 @@ public class NewsDao {
                 "    left join ReviewImg on ReviewImg.reviewId=Review.id where Review.id=? order by Review.createdAt ";
         Object[] getNewsParams=new Object[]{
                 userId,userId};
-        List<GetNewsRes> getNewsRes;
+        List<GetNewsMainRes> getNewsRes;
         return getNewsRes=this.jdbcTemplate.query(getNewsQuery,
-                (rs, rowNum) -> new GetNewsRes(
+                (rs, rowNum) -> new GetNewsMainRes(
                         rs.getLong("reviewId"),
                         rs.getString("profileImgUrl"),
                         rs.getString("name"),
@@ -92,6 +94,7 @@ public class NewsDao {
                         rs.getInt("reviewComments"),
                         rs.getInt("wishCheck"),
                         rs.getInt("likeCheck"),
+                        rs.getString("reviewImgUrl"),
                         ImgList=this.jdbcTemplate.query(getImgQuery,
                                 (rk,rownum)->new GetImgRes(
                                         rk.getLong("reviewId"),
