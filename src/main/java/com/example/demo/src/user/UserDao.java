@@ -466,7 +466,7 @@ public class UserDao {
 
         String region="";
         if(getTimeLineReq.getRegion().contains("all")){
-            regionAndOr="or";
+            region="";
         }
         else{
             regionAndOr = "and";
@@ -475,7 +475,7 @@ public class UserDao {
 
         String category="";
         if(getTimeLineReq.getCategory().contains("all")){
-            categoryAndOr="or";
+            category="";
         }
         else{
             categoryAndOr = "and";
@@ -483,7 +483,7 @@ public class UserDao {
         }
         String price="";
         if(getTimeLineReq.getPriceRange().contains("all")){
-            priceAndOr="or";
+            price="";
         }
         else{
             priceAndOr = "and";
