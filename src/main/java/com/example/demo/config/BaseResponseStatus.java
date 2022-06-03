@@ -69,6 +69,9 @@ public enum BaseResponseStatus {
     // [POST] /stores
     UPDATE_VIEW_COUNT_FAIL(false, 3050, "조회수 업데이트에 실패하였습니다."),
 
+    NON_EXIST_EAT_DEAL(false, 3060, "존재하지 않는 잇딜 아이디 입니다."),
+    WRONG_PAYMENT_WAY(false, 3061, "결제수단을 알맞게 입력해주세요."),
+
     // [GET] /stores
     NON_EXIST_STORE(false, 3070, "존재하지 않는 가게 아이디 입니다."),
     EXISTS_WISH(false,3071,"이미 가고싶다를 생성한 가게입니다."),

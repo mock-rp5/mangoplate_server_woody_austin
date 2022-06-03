@@ -1014,4 +1014,13 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    // 문자 인증 (CoolSMS) 우디
+
+    @ResponseBody
+    @GetMapping("/sendMessage")
+    public BaseResponse<String> sendMessage(@RequestParam(value="to") String to) throws CoolsmsException {
+        String result =  userService.sendRandomNumber(to);
+        return new BaseResponse<>(result);
+    }
 }
